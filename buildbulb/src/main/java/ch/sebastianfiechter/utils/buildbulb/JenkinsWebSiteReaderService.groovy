@@ -5,15 +5,22 @@ import org.springframework.stereotype.Service;
 class JenkinsWebSiteReaderService implements IJenkinsWebSiteReaderService {
 
 	def read() {
-		def addr       = "https://ci.jenkins-ci.org/view/All/rssAll"
-		def authString = "username:password".getBytes().encodeBase64().toString()
+		def addr       = "https://www.haus-der-religionen.ch/webdav"
+		def authString = "webdav:w3d45".getBytes().encodeBase64().toString()
 
 		def conn = addr.toURL().openConnection()
 		conn.setRequestProperty( "Authorization", "Basic ${authString}" )
 		if( conn.responseCode == 200 ) {
-			def feed = new XmlSlurper().parseText( conn.content.text )
+			
+			def html = conn.content.text
+			
+			println html
+			
+			def feed = new XmlSlurper().parseText( html )
 
 			// Work with the xml document
+			println feed.body.h1
+			
 
 		} else {
 			println "Something bad happened."
