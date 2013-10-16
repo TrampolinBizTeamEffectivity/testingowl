@@ -7,8 +7,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.0.xsd">
  
  	<context:annotation-config /> 
- 
-
     <context:component-scan base-package="ch.sebastianfiechter.utils.buildbulb"/>
-  
+    
 </beans>

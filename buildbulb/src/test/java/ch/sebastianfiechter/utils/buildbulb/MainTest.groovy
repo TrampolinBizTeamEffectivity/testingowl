@@ -16,11 +16,16 @@ class MainTest {
 	Main main;
 	
 	@Test
-	public void testMain() {
+	public void testPoll() {
+		main.poll();
+	}
+	
+	@Test
+	public void testTimerTask() {
 		
-		main.repeat();
-		
-		//fail("Not yet implemented");
+		main.startPolling();
+		sleep 5000
+		main.stopPolling()
 	}
 
 }

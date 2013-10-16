@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<address>http://a99t-bld-se01.kud.bedag.ch/jenkins/</address>
+	<user>rbqq</user>
+	<password>sommer16!sommer</password>
+	<jobs>
+		<job>A7A_ZPV_BATCH_Ahvn13_Ruecklieferung_AlleStpfl</job>
+		<job>A5A_Outsourcing_BlueBull_Branch_0.3</job>
+	</jobs>
+</configuration>

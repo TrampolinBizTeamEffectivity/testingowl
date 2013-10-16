@@ -1,7 +1,7 @@
 package ch.sebastianfiechter.utils.buildbulb
 
 
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.*
 import org.springframework.stereotype.Component
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
@@ -9,26 +9,44 @@ import org.springframework.context.support.ClassPathXmlApplicationContext
 @Component
 class Main {
 
+	public static final int POLL_INTERVAL = 2000
+	
 	@Autowired
-	IJenkinsWebSiteReaderService webSiteReader;
+	@Qualifier("jenkinsWebSiteReaderService")
+	IJenkinsWebSiteReaderService webSiteReader
+	
+	@Autowired
+	ConfigurationService configuration
+	
+	@Autowired
+	JobsCheckerService jobsChecker
+	
+	TimerTask timerTask
 	
 	static main(args) {
 		
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
 		Main p = applicationContext.getBean(Main.class)
-		p.repeat()
+		p.startPolling()
 		
 	}
 	
-	def repeat() {
-		
-		println 'will read website'
-		webSiteReader.read()
-		
-		
-		new Timer().runAfter(1000) {
-			repeat()
+	def startPolling() {
+		timerTask = new Timer().runAfter(POLL_INTERVAL) {
+			poll()
+			startPolling();
 		}
+	}
+	
+	def poll() {
+		println 'will read website'
+		
+		//def html = webSiteReader.read(configuration.config.address, configuration.config.user, configuration.config.password)
+		jobsChecker.checkSuccessfull("html", configuration.config.jobs.job as List)
+	}
+	
+	def stopPolling() {
+		timerTask.cancel();
 	}
 
 }
