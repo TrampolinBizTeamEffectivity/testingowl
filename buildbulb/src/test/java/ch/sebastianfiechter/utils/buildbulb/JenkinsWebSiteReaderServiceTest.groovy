@@ -10,15 +10,29 @@ import org.springframework.test.context.ContextConfiguration
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class JenkinsWebSiteReaderServiceDummyTest {
+class JenkinsWebSiteReaderServiceTest {
 
 	@Autowired
 	@Qualifier("jenkinsWebSiteReaderServiceDummy")
+	IJenkinsWebSiteReaderService serviceDummy;
+	
+	@Autowired
+	@Qualifier("jenkinsWebSiteReaderService")
 	IJenkinsWebSiteReaderService service;
 	
 	@Test
-	public void testRead() {
-		println service.read(null, null, null);
+	public void testReadDummy() {
+		println service.read(null);
+	}
+	
+	@Test
+	public void testReadNoAuth() {
+		println service.read("https://ci.jenkins-ci.org/view/All/");
+	}
+	
+	@Test
+	public void testReadAuth() {
+		println service.read("http://a99t-bld-se01.kud.bedag.ch/jenkins/", "rbqq", "***");
 	}
 
 }

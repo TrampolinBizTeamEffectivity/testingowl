@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 class JenkinsWebSiteReaderService implements IJenkinsWebSiteReaderService {
 
 	
-	def read(address, user, password) {
-		def authString = "${user}:${password}".getBytes().encodeBase64().toString()
-
+	def read(address, user=null, password=null) {
+		
 		def conn = address.toURL().openConnection()
-		conn.setRequestProperty( "Authorization", "Basic ${authString}" )
+		if (user?.trim() && password?.trim()) {
+			def authString = "${user}:${password}".getBytes().encodeBase64().toString()
+			conn.setRequestProperty( "Authorization", "Basic ${authString}" )
+		}
 		if( conn.responseCode == 200 ) {
 			
 			return conn.content.text
