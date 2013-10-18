@@ -119,6 +119,8 @@
 						<configuration>
 							<tasks>
 								<copy file="${basedir}/configuration.xml" tofile="${basedir}/target/configuration.xml" />
+								<copy file="${basedir}/Installation.txt" tofile="${basedir}/target/Installation.txt" />
+								<copy file="${basedir}/RunBuildBulb.bat" tofile="${basedir}/target/RunBuildBulb.bat" />
 								<copy todir="${basedir}/target/USB_Mail_Notifier">
 									<fileset dir="${basedir}/USB_Mail_Notifier" />
 								</copy>
