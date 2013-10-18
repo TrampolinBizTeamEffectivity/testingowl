@@ -13,8 +13,8 @@ class ConfigurationService {
 	}
 	
 	def readConfig() {
-		def pathToApp = new File(".").getCanonicalPath()
-		config = new XmlSlurper().parse(pathToApp+"\\configuration.xml");
+		//def pathToApp = new File(".").getCanonicalPath()
+		config = new XmlSlurper().parse("configuration.xml");
 	}
 	
 }
