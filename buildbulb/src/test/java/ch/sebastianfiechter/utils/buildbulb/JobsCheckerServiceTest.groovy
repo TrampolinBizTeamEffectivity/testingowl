@@ -8,6 +8,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.beans.factory.annotation.*
 import org.springframework.test.context.ContextConfiguration
 
+import ch.sebastianfiechter.utils.buildbulb.JobsCheckerService.JobStatus;
+
+/**
+ * upload - blue - Success
+ * NB-Core-Build - blue_anime - Success
+ * uml - red - Failed
+ * visualweb - disabled - Disabled
+ * web-main-tests-checkout - grey - Pending
+ * ergonomics - yellow - Unstable
+ * 
+ * @author rbqq
+ *
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
 class JobsCheckerServiceTest {
@@ -20,29 +33,38 @@ class JobsCheckerServiceTest {
 	IJenkinsWebSiteReaderService htmlService
 	
 	@Test
-	public void testCheckSuccessfull() {
-		assert true == service.checkSuccessfull(htmlService.read(), ["A7A_ZPV_BATCH_Ahvn13_Ruecklieferung_AlleStpfl"])
+	public void testCheckStates() {
+		assert JobStatus.Success == service.checkStatus(htmlService.read(), ["upload"])
+		assert JobStatus.Success == service.checkStatus(htmlService.read(), ["NB-Core-Build"])
+		assert JobStatus.Failed == service.checkStatus(htmlService.read(), ["uml"])
+		assert JobStatus.Disabled == service.checkStatus(htmlService.read(), ["visualweb"])
+		assert JobStatus.Pending == service.checkStatus(htmlService.read(), ["web-main-tests-checkout"])
+		assert JobStatus.Unstable == service.checkStatus(htmlService.read(), ["ergonomics"])
+	}
+	
+	@Test
+	public void testCheckSuccess() {
+		assert JobStatus.Success == service.checkStatus(htmlService.read(), ["upload", "NB-Core-Build"])
+	}
+	
+	@Test
+	public void testCheckFailed() {
+		assert JobStatus.Failed == service.checkStatus(htmlService.read(), ["uml", "NB-Core-Build"])
 	}
 	
 	@Test
 	public void testCheckDisabled() {
-		assert true == service.checkSuccessfull(htmlService.read(), ["A7A ZPV Webservices R8.1"])
+		assert JobStatus.Disabled == service.checkStatus(htmlService.read(), ["upload", "visualweb"])
 	}
 	
 	@Test
-	public void testRegex() {
-		def htmlSource = htmlService.read()
-		htmlSource = ''' Success.
-k>s>d>jf</A7A_ZPV_BATCH_Ahvn13_Ruecklieferung_AlleStpfl> '''
-		println htmlSource
-		assert htmlSource ==~ '(?s).*Success([^>]*>){3}[^>]*'+"A7A_ZPV_BATCH_Ahvn13_Ruecklieferung_AlleStpfl"+'.*' //single line mode //between the word Success and the job name, are three >
-		/*([^>]*>){3}[^>]*
-		if (htmlSource =~ 'Success.*A7A') {
-			
-		} else {
-			fail("failed!!")
-		}
-		*/
+	public void testCheckPending() {
+		assert JobStatus.Pending == service.checkStatus(htmlService.read(), ["upload", "web-main-tests-checkout"])
+	}
+	
+	@Test
+	public void testCheckUnstable() {
+		assert JobStatus.Unstable == service.checkStatus(htmlService.read(), ["upload", "ergonomics"])
 	}
 
 }

@@ -17,13 +17,11 @@ class ConfigurationServiceTest {
 	
 	@Test
 	public void testReadUser() {
-		println service.config.user
 		assert "rbqq" == service.config.user.toString()
 	}
 	
 	@Test
 	public void testReadJobs() {
-		println service.config.jobs.job
 		assert 2 == service.config.jobs.job.size()
 	}
 
