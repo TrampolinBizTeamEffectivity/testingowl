@@ -1,0 +1,1 @@
+Webmail Notifier Setup.msi ausführen und Programm installieren. Anschliessend kann das Programm wieder deinstalliert werden.

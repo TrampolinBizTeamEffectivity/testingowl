@@ -42,7 +42,7 @@ class Main {
 		println 'will read website'
 		
 		//def html = webSiteReader.read(configuration.config.address, configuration.config.user, configuration.config.password)
-		jobsChecker.checkSuccessfull("html", configuration.config.jobs.job as List)
+		//jobsChecker.checkSuccessfull("html", configuration.config.jobs.job as List)
 	}
 	
 	def stopPolling() {
