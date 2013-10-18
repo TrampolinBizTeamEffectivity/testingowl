@@ -17,7 +17,7 @@ class ConfigurationServiceTest {
 	
 	@Test
 	public void testReadUser() {
-		assert "rbqq" == service.config.user.toString()
+		assert null != service.config.user.toString()
 	}
 	
 	@Test
