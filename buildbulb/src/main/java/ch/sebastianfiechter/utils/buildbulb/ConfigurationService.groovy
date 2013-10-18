@@ -8,10 +8,12 @@ class ConfigurationService {
 	def config
 	
 	def ConfigurationService() {
-		config = new XmlSlurper().parse("configuration.xml");
+		readConfig();
 		
-					// Work with the xml document
-					//println feed.body.h1
+	}
+	
+	def readConfig() {
+		config = new XmlSlurper().parse("configuration.xml");
 	}
 	
 }

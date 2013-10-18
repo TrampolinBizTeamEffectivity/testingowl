@@ -5,5 +5,6 @@ interface IBulbService {
 	def showRed() //for Failed, Disabled, Unstable, Pending
 	def showGreen() //for Success
 	def switchOff()
+	def showError()
 	
 }

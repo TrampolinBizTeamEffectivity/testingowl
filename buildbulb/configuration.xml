@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<address>http://a99t-bld-se01.kud.bedag.ch/jenkins/api/xml</address>
-	<user>rbqq</user>
-	<password>sommer16!sommer</password>
+	<address>http://deadlock.netbeans.org/hudson/api/xml</address>
+	<user></user>
+	<password></password>
+	<pollintervall>2000</pollintervall>
 	<jobs>
-		<job>A7A_ZPV_BATCH_Ahvn13_Ruecklieferung_AlleStpfl</job>
-		<job>A5A_Outsourcing_BlueBull_Branch_0.3</job>
+		<job>upload</job>
+		<job>NB-Core-Build</job>
 	</jobs>
 </configuration>
+<!-- 
+
+upload - blue
+NB-Core-Build - blue_anime
+web-main-tests-checkout - grey
+visualweb - disabled
+ergonomics - yellow
+uml - red
+
+ -->

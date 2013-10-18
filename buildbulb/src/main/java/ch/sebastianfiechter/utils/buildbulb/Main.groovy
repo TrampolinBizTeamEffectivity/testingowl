@@ -9,11 +9,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext
 @Component
 class Main {
 
-	public static final int POLL_INTERVAL = 2000
 	
 	@Autowired
 	@Qualifier("jenkinsWebSiteReaderService")
 	IJenkinsWebSiteReaderService webSiteReader
+	
+	@Autowired
+	@Qualifier("bulbService")
+	IBulbService bulb
 	
 	@Autowired
 	ConfigurationService configuration
@@ -24,29 +27,57 @@ class Main {
 	TimerTask timerTask
 	
 	static main(args) {
-		
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
 		Main p = applicationContext.getBean(Main.class)
-		p.startPolling()
+		p.startUp()
 		
 	}
 	
+	def startUp() {
+		bulb.showStartup()
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				stopPolling();
+			}
+		});
+		startPolling()
+	}
+	
 	def startPolling() {
-		timerTask = new Timer().runAfter(POLL_INTERVAL) {
+		timerTask = new Timer().runAfter(configuration.config.pollintervall.toString() as int) {
 			poll()
 			startPolling();
 		}
 	}
 	
 	def poll() {
-		println 'will read website'
+		println 'poll'
 		
-		//def html = webSiteReader.read(configuration.config.address, configuration.config.user, configuration.config.password)
-		//jobsChecker.checkSuccessfull("html", configuration.config.jobs.job as List)
+		configuration.readConfig()
+		def restXml = webSiteReader.read(configuration.config.address, configuration.config.user, configuration.config.password)
+		def status = jobsChecker.checkStatus(restXml, configuration.config.jobs.job as List)
+		switch (status) {
+			case JobsCheckerService.JobStatus.Success:
+				bulb.showGreen()
+				break
+			case JobsCheckerService.JobStatus.Failed:
+			case JobsCheckerService.JobStatus.Unstable:
+			case JobsCheckerService.JobStatus.Disabled:
+			case JobsCheckerService.JobStatus.Pending:
+				bulb.showRed()
+				break
+			case JobsCheckerService.JobStatus.Job_Not_Found:
+				bulb.showError()
+				break
+			default:	
+				throw new Exception("Uups, JobStatus undefined: ${status}")
+			
+		}
 	}
 	
 	def stopPolling() {
-		timerTask.cancel();
+		bulb.switchOff()
+		timerTask.cancel()
 	}
 
 }

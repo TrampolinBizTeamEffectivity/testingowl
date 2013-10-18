@@ -2,8 +2,7 @@ package ch.sebastianfiechter.utils.buildbulb;
 
 import static org.junit.Assert.*;
 
-import org.junit.Test;
-import org.junit.Ignore
+import org.junit.*
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.beans.factory.annotation.*
@@ -29,6 +28,16 @@ class JenkinsWebSiteReaderServiceTest {
 	@Test
 	public void testReadNoAuth() {
 		println service.read("http://deadlock.netbeans.org/hudson/api/xml");
+	}
+	
+	@Test
+	public void testReadNoAuthEmptyCredentials() {
+		println service.read("http://deadlock.netbeans.org/hudson/api/xml", "", "");
+	}
+	
+	@Test(expected = Exception.class)
+	public void testReadAuthFail() {
+		service.read("http://deadlock.netbeans.org/hudson/api/xml", "test", "test");
 	}
 	
 	@Test

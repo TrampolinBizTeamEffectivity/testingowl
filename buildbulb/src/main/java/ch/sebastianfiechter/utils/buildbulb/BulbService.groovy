@@ -23,6 +23,11 @@ class BulbService implements IBulbService {
 	def switchOff() {
 		executeMailNotifierCommand("-Q", 1000)
 	}
+	
+	@Override
+	def showError() {
+		executeMailNotifierCommand("-C 64 0 0 -P 100", 5000)
+	}
 
 	/**
 	 * siehe http://stackoverflow.com/questions/159148/groovy-executing-shell-commands/159270#159270
@@ -40,7 +45,7 @@ class BulbService implements IBulbService {
 		def proc = command.execute()
 		proc.consumeProcessOutput(sout, serr)
 		proc.waitForOrKill(waitForOrKill)
-		println "out> $sout err> $serr"
+		//println "out> $sout err> $serr"
 	}
 	
 }

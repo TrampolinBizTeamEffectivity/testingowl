@@ -67,4 +67,8 @@ class JobsCheckerServiceTest {
 		assert JobStatus.Unstable == service.checkStatus(htmlService.read(), ["upload", "ergonomics"])
 	}
 
+	@Test
+	public void testJobNotFound() {
+		assert JobStatus.Job_Not_Found == service.checkStatus(htmlService.read(), ["upload", "NOTFIND"])
+	}
 }

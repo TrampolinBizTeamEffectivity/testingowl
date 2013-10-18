@@ -114,10 +114,9 @@
 		</plugins>
 		<resources>
 			<resource>
-				<directory>src/test/ressources/</directory>
+				<directory>src/main/ressources</directory>
 				<includes>
 					<include>*.xml</include>
-					<include>*.txt</include>
 				</includes>
 			</resource>
 		</resources>

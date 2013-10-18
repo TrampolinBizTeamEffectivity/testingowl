@@ -23,5 +23,10 @@ class BulbServiceDummy implements IBulbService {
 	def switchOff() {
 		println "switchingOff..."
 	}
+	
+	@Override
+	def showError() {
+		println "showError..."
+	}
 
 }

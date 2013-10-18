@@ -8,7 +8,7 @@ class JenkinsWebSiteReaderService implements IJenkinsWebSiteReaderService {
 	def read(address, user=null, password=null) {
 		
 		def conn = address.toURL().openConnection()
-		if (user?.trim() && password?.trim()) {
+		if (user != null && user.toString().trim().length()>0 && password != null) {
 			def authString = "${user}:${password}".getBytes().encodeBase64().toString()
 			conn.setRequestProperty( "Authorization", "Basic ${authString}" )
 		}
@@ -17,8 +17,7 @@ class JenkinsWebSiteReaderService implements IJenkinsWebSiteReaderService {
 			return conn.content.text
 		
 		} else {
-			println "Something bad happened."
-			println "${conn.responseCode}: ${conn.responseMessage}"
+			throw new Exception("Couldnt get REST XML from jenkins: ${conn.responseCode}: ${conn.responseMessage}")
 		}
 	}
 }
