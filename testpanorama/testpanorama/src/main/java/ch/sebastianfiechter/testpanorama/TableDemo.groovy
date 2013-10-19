@@ -24,7 +24,8 @@ class TableDemo {
 	void run() {
 		swing = new SwingBuilder()
 
-		frame = swing.frame(title:'Groovy TableModel Demo', location:[200, 200], size:[300, 200]) {
+		frame = swing.frame(title:'Groovy TableModel Demo', location:[200, 200], 
+			size:[300, 200], alwaysOnTop: true) {
 			menuBar {
 				menu(text:'Help') {
 					menuItem() {
@@ -56,12 +57,6 @@ class TableDemo {
 							}
 
 						} as ListSelectionListener)
-
-						//						bind(source:swing.table.selectionModel, sourceEvent:'TableModelEvent')
-						//						selectionModel.addListSelectionListener({evt->
-						//							println("selection changed")
-						//						} as ListSelectionListener)
-
 
 					}
 				}

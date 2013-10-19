@@ -65,29 +65,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	private int frameCount = 0;
 
 	
-	@PostConstruct
-	public void postConstruct() {
-
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				shutdown();
-			}
-		});
-
-		control = new JButton("Start Recording");
-		control.setActionCommand("start");
-		control.addActionListener(this);
-		this.getContentPane().add(control, BorderLayout.WEST);
-		
-		this.getContentPane().add(decorator.getButtons(), BorderLayout.EAST);
-
-		text = new JLabel("Ready to record");
-		this.getContentPane().add(text, BorderLayout.SOUTH);
-
-		this.setAlwaysOnTop(true);
-		this.pack();
-		this.setVisible(true);
-	}
 
 	public boolean startRecording(String fileName) {
 
@@ -187,9 +164,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			FileHelper.delete(temp);
 	}
 
-	public static void main(String[] args) {
+	public void init(String[] args) {
 
-		if (args.length >= 1)
+		if (args.length >= 1) {
 			if (args[0].equals("-white_cursor"))
 				DesktopScreenRecorder.useWhiteCursor = true;
 			else {
@@ -201,8 +178,32 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 						.println("   -white_cursor   record with white cursor");
 				System.exit(0);
 			}
-		@SuppressWarnings("unused")
-		JRecorder jRecorder = new JRecorder();
+		}
+		
+		showFrame();
+
+	}
+	
+	private void showFrame() {
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				shutdown();
+			}
+		});
+
+		control = new JButton("Start Recording");
+		control.setActionCommand("start");
+		control.addActionListener(this);
+		this.getContentPane().add(control, BorderLayout.WEST);
+		
+		this.getContentPane().add(decorator.getButtons(), BorderLayout.EAST);
+
+		text = new JLabel("Ready to record");
+		this.getContentPane().add(text, BorderLayout.SOUTH);
+
+		this.setAlwaysOnTop(true);
+		this.pack();
+		this.setVisible(true);
 	}
 
 	public void shutdown() {

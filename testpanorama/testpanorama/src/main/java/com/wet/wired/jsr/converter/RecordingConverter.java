@@ -47,13 +47,16 @@ import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.DataSource;
 import javax.media.protocol.FileTypeDescriptor;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RecordingConverter implements ControllerListener, DataSinkListener {
 
    private static boolean finished = false;
    private Object waitSync = new Object();
    private boolean stateTransitionOK = true;
 
-   public static void main(String[] args) {
+   public void init(String[] args) {
 
       if ((args.length != 1) || !args[0].endsWith("cap")) {
          System.out
@@ -64,10 +67,8 @@ public class RecordingConverter implements ControllerListener, DataSinkListener 
       String movieFile = new String(args[0]);
       movieFile = movieFile.replace("cap", "mov");
 
-      RecordingConverter recordingConverter;
       try {
-         recordingConverter = new RecordingConverter();
-         recordingConverter.process(args[0], movieFile);
+         process(args[0], movieFile);
       } catch (Exception e) {
          e.printStackTrace();
       }
