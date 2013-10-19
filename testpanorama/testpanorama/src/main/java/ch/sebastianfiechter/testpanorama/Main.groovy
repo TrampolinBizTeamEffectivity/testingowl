@@ -13,7 +13,7 @@ class Main {
 	
 	static main(args) {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
-		JRecorder.main(new String[0])
+		JRecorder.main(args)
 		
 	}
 

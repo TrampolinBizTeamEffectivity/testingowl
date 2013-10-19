@@ -35,156 +35,183 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import ch.sebastianfiechter.testpanorama.JRecorderDecorator;
+
 @SuppressWarnings("serial")
+@Component
 public class JRecorder extends JFrame implements ScreenRecorderListener,
-      ActionListener {
+		ActionListener {
 
-   private ScreenRecorder recorder;
-   private File temp;
+	@Autowired
+	JRecorderDecorator decorator;
+	
+	private ScreenRecorder recorder;
+	private File temp;
 
-   private JButton control;
-   private JButton bug;
-   private JButton musthave;
-   private JButton wish;
-   private JLabel text;
+	private JButton control;
+	private JLabel text;
 
-   private boolean shuttingDown = false;
-   private int frameCount = 0;
+	private boolean shuttingDown = false;
+	private int frameCount = 0;
 
-   public JRecorder() {
+	
+	@PostConstruct
+	public void postConstruct() {
 
-      this.addWindowListener(new WindowAdapter() {
-         public void windowClosing(WindowEvent e) {
-            shutdown();
-         }
-      });
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				shutdown();
+			}
+		});
 
-      control = new JButton("Start Recording");
-      control.setActionCommand("start");
-      control.addActionListener(this);
-      this.getContentPane().add(control, BorderLayout.WEST);
-      
-      
-      text = new JLabel("Ready to record");
-      this.getContentPane().add(text, BorderLayout.SOUTH);
+		control = new JButton("Start Recording");
+		control.setActionCommand("start");
+		control.addActionListener(this);
+		this.getContentPane().add(control, BorderLayout.WEST);
+		
+		this.getContentPane().add(decorator.getButtons(), BorderLayout.EAST);
 
-      this.pack();
-      this.setVisible(true);
-   }
+		text = new JLabel("Ready to record");
+		this.getContentPane().add(text, BorderLayout.SOUTH);
 
-   public void startRecording(String fileName) {
+		this.setAlwaysOnTop(true);
+		this.pack();
+		this.setVisible(true);
+	}
 
-      //setState(Frame.ICONIFIED);
-      try {
-         Thread.sleep(500);
-      } catch (InterruptedException e1) {
-      }
+	public boolean startRecording(String fileName) {
 
-      if (recorder != null) {
-         return;
-      }
+		// setState(Frame.ICONIFIED);
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+		}
 
-      try {
-         FileOutputStream oStream = new FileOutputStream(fileName);
-         temp = new File(fileName);
-         recorder = new DesktopScreenRecorder(oStream, this);
-         recorder.startRecording();
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
+		if (recorder != null) {
+			return true;
+		}
+		
+		if (!decorator.fetchTopic(this)) {
+			return false;
+		}
 
-   public void actionPerformed(ActionEvent ev) {
-      if (ev.getActionCommand().equals("start") && recorder == null) {
-         try {
-            temp = File.createTempFile("temp", "rec");
+		try {
+			FileOutputStream oStream = new FileOutputStream(fileName);
+			temp = new File(fileName);
+			recorder = new DesktopScreenRecorder(oStream, this);
+			recorder.startRecording();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return true;
+	}
 
-            startRecording(temp.getAbsolutePath());
-            control.setActionCommand("stop");
-            control.setText("Stop Recording");
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      } else if (ev.getActionCommand().equals("stop") && recorder != null) {
-         text.setText("Stopping");
-         recorder.stopRecording();
-      }
-   }
+	public void actionPerformed(ActionEvent ev) {
+		if (ev.getActionCommand().equals("start") && recorder == null) {
+			try {
+				temp = File.createTempFile("temp", "rec");
 
-   public void frameRecorded(boolean fullFrame) {
-      frameCount++;
-      if (text != null) {
-         text.setText("Frame: " + frameCount + " sec: " + (frameCount/(1000/50)));
-      }
-   }
+				if (startRecording(temp.getAbsolutePath())) {
+					control.setActionCommand("stop");
+					control.setText("Stop Recording");
+					decorator.recordStarted();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (ev.getActionCommand().equals("stop") && recorder != null) {
+			text.setText("Stopping");
+			recorder.stopRecording();
+		}
+	}
 
-   public void recordingStopped() {
+	public void frameRecorded(boolean fullFrame, long frameTime) {
+		frameCount++;
+		if (text != null) {
+			String seconds = "" + frameTime / 1000;
+			String milliseconds = String.format("%04d", frameTime % 1000);
+			text.setText("Frame: " + frameCount + " Time: " + seconds + "."
+					+ milliseconds);
+		}
+	}
 
-      if (!shuttingDown) {
+	public void recordingStopped() {
 
-         UIManager.put("FileChooser.readOnly", true);
-         JFileChooser fileChooser = new JFileChooser();
-         FileExtensionFilter filter = new FileExtensionFilter();
+		if (!shuttingDown) {
+			
+			decorator.recordStopped();
 
-         filter = new FileExtensionFilter();
-         filter.addExtension("cap");
-         filter.setDescription("Screen Capture File");
+			UIManager.put("FileChooser.readOnly", true);
+			JFileChooser fileChooser = new JFileChooser();
+			FileExtensionFilter filter = new FileExtensionFilter();
 
-         fileChooser.setFileFilter(filter);
-         fileChooser.showSaveDialog(this);
+			filter = new FileExtensionFilter();
+			filter.addExtension("cap");
+			filter.setDescription("Screen Capture File");
 
-         File target = fileChooser.getSelectedFile();
+			fileChooser.setFileFilter(filter);
+			fileChooser.showSaveDialog(this);
 
-         if (target != null) {
+			File target = fileChooser.getSelectedFile();
 
-            if (!target.getName().endsWith(".cap"))
-               target = new File(target + ".cap");
+			if (target != null) {
 
-            FileHelper.copy(temp, target);
-         }
+				if (!target.getName().endsWith(".cap"))
+					target = new File(target + ".cap");
+				
+				FileHelper.copy(temp, target);
+				
+				decorator.saveFile(target);
+			}
 
-         FileHelper.delete(temp);
-         recorder = null;
-         frameCount = 0;
+			FileHelper.delete(temp);
+			recorder = null;
+			frameCount = 0;
 
-         control.setActionCommand("start");
-         control.setText("Start Recording");
+			control.setActionCommand("start");
+			control.setText("Start Recording");
 
-         text.setText("Ready to record");
-      } else
-         FileHelper.delete(temp);
-   }
+			text.setText("Ready to record");
+		} else
+			FileHelper.delete(temp);
+	}
 
-   public static void main(String[] args) {
+	public static void main(String[] args) {
 
-      if (args.length >= 1)
-         if (args[0].equals("-white_cursor"))
-            DesktopScreenRecorder.useWhiteCursor = true;
-         else {
-            System.out
-                  .println("Usage: java -jar screen_recorder.jar [OPTION]...");
-            System.out.println("Start the screen recorder.");
-            System.out.println("Options:   ");
-            System.out.println("   -white_cursor   record with white cursor");
-            System.exit(0);
-         }
-      @SuppressWarnings("unused")
-      JRecorder jRecorder = new JRecorder();
-   }
+		if (args.length >= 1)
+			if (args[0].equals("-white_cursor"))
+				DesktopScreenRecorder.useWhiteCursor = true;
+			else {
+				System.out
+						.println("Usage: java -jar screen_recorder.jar [OPTION]...");
+				System.out.println("Start the screen recorder.");
+				System.out.println("Options:   ");
+				System.out
+						.println("   -white_cursor   record with white cursor");
+				System.exit(0);
+			}
+		@SuppressWarnings("unused")
+		JRecorder jRecorder = new JRecorder();
+	}
 
-   public void shutdown() {
+	public void shutdown() {
 
-      shuttingDown = true;
+		shuttingDown = true;
 
-      if (recorder != null)
-         recorder.stopRecording();
+		if (recorder != null)
+			recorder.stopRecording();
 
-      dispose();
-   }
+		dispose();
+	}
 }

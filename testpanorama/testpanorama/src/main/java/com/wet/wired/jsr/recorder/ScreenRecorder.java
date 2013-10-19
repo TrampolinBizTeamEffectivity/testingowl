@@ -188,7 +188,7 @@ public abstract class ScreenRecorder implements Runnable {
       // System.out.println("  capture time:"+(t2-t1));
       // System.out.println("  data grab time:"+(t3-t2));
 
-      listener.frameRecorded(false);
+      listener.frameRecorded(false, frameTime);
    }
 
    public void startRecording() {
