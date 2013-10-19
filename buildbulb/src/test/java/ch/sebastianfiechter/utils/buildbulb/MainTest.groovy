@@ -23,7 +23,7 @@ class MainTest {
 	@Test
 	public void testTimerTask() {
 		
-		main.startPolling();
+		main.startUp();
 		sleep 5000
 		main.stopPolling()
 	}
