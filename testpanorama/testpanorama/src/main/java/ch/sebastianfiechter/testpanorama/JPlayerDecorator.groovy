@@ -1,5 +1,6 @@
 package ch.sebastianfiechter.testpanorama
 
+import ch.sebastianfiechter.testpanorama.Issues.Issue
 import com.wet.wired.jsr.player.JPlayer
 import com.wet.wired.jsr.recorder.JRecorder
 import java.awt.GridLayout;
@@ -26,14 +27,29 @@ class JPlayerDecorator {
 	@Autowired
 	Issues issues
 	
+	@Autowired
+	IssuesFrame issuesFrame
+	
 	def openIssues(String fileNameWithDotCap) {
 		def fileNameWithoutEnding = fileNameWithDotCap[0..-5]
-		def issuesList = issues.readFromExcelCsv(fileNameWithoutEnding);
+		issuesFrame.issues = issues.readFromExcelCsv(fileNameWithoutEnding);
 		
-		
-		
+		issuesFrame.show()
 	}
 	
+	def issueSelected(Issue issue) {
+		println issue.id
+	}
+	
+	def closeFile() {
+		issuesFrame.dispose()
+	}
+	
+	def dispose() {
+		issuesFrame.dispose()
+	}
+	
+
 
 	
 }

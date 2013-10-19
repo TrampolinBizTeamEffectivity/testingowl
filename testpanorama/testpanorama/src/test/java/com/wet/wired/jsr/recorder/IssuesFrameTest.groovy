@@ -1,7 +1,10 @@
 package com.wet.wired.jsr.recorder;
 
+import ch.sebastianfiechter.testpanorama.Issues.IssueType
 import static org.junit.Assert.*;
 
+import ch.sebastianfiechter.testpanorama.Issues
+import ch.sebastianfiechter.testpanorama.IssuesFrame
 import java.awt.event.ActionEvent
 import org.junit.Test;
 import org.junit.runner.RunWith
@@ -11,15 +14,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class JRecorderTest {
+class IssuesFrameTest {
 
 	@Autowired
-	JRecorder recorder
+	IssuesFrame issuesFrame
 	
 	@Test
-	public void testStartRecorder() {
+	public void testSelection() {
 		
-		recorder.init(new String[0])
+		issuesFrame.issues = [
+			['id':"1", 'type':IssueType.Bug, 'frameStart':0, 'frameEnd':'10', 'message':'message'], 
+			['id':"2", 'type':IssueType.Musthave,'frameStart':200, 'frameEnd':'210', 'message':'message to musthave']
+		]
+		
+		issuesFrame.show()
 		
 		sleep 50000
 		

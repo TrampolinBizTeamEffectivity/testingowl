@@ -1,0 +1,69 @@
+package ch.sebastianfiechter.testpanorama
+
+import org.springframework.beans.factory.annotation.Autowired;
+import groovy.swing.SwingBuilder
+import java.awt.BorderLayout
+import javax.swing.BorderFactory
+import javax.swing.event.ListSelectionEvent
+import javax.swing.event.ListSelectionListener
+import javax.swing.ListSelectionModel
+import org.springframework.stereotype.Component;
+import javax.swing.*
+
+@Component
+class IssuesFrame {
+
+	@Autowired
+	JPlayerDecorator jPlayerDecorator
+
+	def frame
+	def swing
+	def table
+
+	def issues
+
+	void show() {
+
+		assert issues
+
+		swing = new SwingBuilder()
+
+		frame = swing.frame(title:'Issues', location:[0, 200],
+		size:[700, 150], alwaysOnTop: true,
+		defaultCloseOperation:WindowConstants.DO_NOTHING_ON_CLOSE ) {
+			panel {
+				borderLayout()
+				scrollPane(constraints:CENTER) {
+					table = table(rowSelectionAllowed: true, selectionMode: ListSelectionModel.SINGLE_SELECTION) {
+
+						tableModel(list:issues) {
+							closureColumn(header:'ID', read:{row -> return row.id})
+							closureColumn(header:'IssueType', read:{row -> return row.type})
+							closureColumn(header:'Start Frame', read:{row -> return row.frameStart})
+							closureColumn(header:'End Frame', read:{row -> return row.frameEnd})
+							closureColumn(header:'Message', read:{row -> return row.message})
+						}
+
+						current.selectionModel.addListSelectionListener(
+							new ListSelectionListener() {
+								public void valueChanged(ListSelectionEvent event) {
+									if (!event.valueIsAdjusting) {
+										jPlayerDecorator.issueSelected(issues[table.selectedRow])
+									}
+								}
+							}
+						)
+					}
+				}
+			}
+		}
+		frame.show()
+	}
+	
+	def dispose() {
+		if (frame != null) {
+			frame.dispose()
+		}
+	}
+
+}

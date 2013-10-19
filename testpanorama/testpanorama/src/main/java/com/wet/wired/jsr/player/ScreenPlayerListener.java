@@ -36,6 +36,6 @@ public interface ScreenPlayerListener {
    
    public void playerStopped();
 
-   public void newFrame();
+   public void newFrame(long frameTime);
 
 }

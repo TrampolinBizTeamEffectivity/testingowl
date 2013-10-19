@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -62,12 +63,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	private ScreenPlayer screenPlayer;
 
 	private ImageIcon icon;
+	private JScrollPane scrollPane;
 	private JButton open;
 	private JButton reset;
 	private JButton play;
 	private JButton fastForward;
 	private JButton pause;
-	private JButton stop;
+	private JButton close;
 
 	private JLabel text;
 	private JLabel frameLabel;
@@ -108,8 +110,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			fastForward();
 		} else if (ev.getActionCommand().equals("pause")) {
 			pause();
-		} else if (ev.getActionCommand().equals("stop")) {
-			stop();
+		} else if (ev.getActionCommand().equals("close")) {
+			close();
 		}
 	}
 
@@ -130,15 +132,15 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		pause.setEnabled(false);
 		pause.setBackground(null);
 
-		stop.setEnabled(true);
-		stop.setBackground(null);
+		close.setEnabled(true);
+		close.setBackground(null);
 
-		text.setText("Finished playing " + target);
+		text.setText("Paused playing " + target);
 	}
 
 	public void playerStopped() {
 
-		stop();
+		text.setText("Stopped playing " + target);
 	}
 
 	public void showNewImage(Image image) {
@@ -146,12 +148,14 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			icon = new ImageIcon(image);
 			JLabel label = new JLabel(icon);
 
-			JScrollPane scrollPane = new JScrollPane(label);
+			scrollPane = new JScrollPane(label);
 			scrollPane.setSize(image.getWidth(this), image.getHeight(this));
+
 
 			this.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
 			pack();
+			this.setSize(this.getWidth(), 400);
 			setVisible(true);
 		} else {
 			icon.setImage(image);
@@ -160,9 +164,10 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		repaint(0);
 	}
 
-	public void newFrame() {
+	public void newFrame(long frameTime) {
 		frameCount++;
-		long time = System.currentTimeMillis() - startTime;
+		//long time = System.currentTimeMillis() - startTime;
+		long time = frameTime - startTime;
 		String seconds = "" + time / 1000;
 		String milliseconds = String.format("%04d", time % 1000);
 		frameLabel.setText("Frame: " + frameCount + " Time: " + seconds + "."
@@ -175,6 +180,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		if (args.length == 1) {
 			target = new File(args[0]).getAbsolutePath();
+			decorator.openIssues(target);
 			open();
 		}
 	}
@@ -188,8 +194,10 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 
-				if (screenPlayer != null)
-					screenPlayer.stop();
+				close();
+				
+
+				decorator.dispose();
 				dispose();
 			}
 		});
@@ -218,17 +226,17 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		pause.setEnabled(false);
 		pause.addActionListener(this);
 
-		stop = new JButton("Stop");
-		stop.setActionCommand("stop");
-		stop.setEnabled(false);
-		stop.addActionListener(this);
+		close = new JButton("Close File");
+		close.setActionCommand("close");
+		close.setEnabled(false);
+		close.addActionListener(this);
 
 		panel.add(open);
 		panel.add(reset);
 		panel.add(play);
 		panel.add(fastForward);
 		panel.add(pause);
-		panel.add(stop);
+		panel.add(close);
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
@@ -277,12 +285,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		fastForward.setEnabled(true);
 		fastForward.setBackground(null);
 
-		pause.setEnabled(true);
+		pause.setEnabled(false);
 		pause.setBackground(null);
 
-		stop.setEnabled(true);
-		stop.setBackground(null);
+		close.setEnabled(true);
+		close.setBackground(null);
 
+		
 		text.setText("Ready to play " + target);
 
 		return true;
@@ -290,6 +299,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void reset() {
 
+		screenPlayer.reset();
+		
 		open.setEnabled(false);
 		open.setBackground(null);
 
@@ -302,18 +313,17 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		fastForward.setEnabled(true);
 		fastForward.setBackground(null);
 
-		pause.setEnabled(true);
+		pause.setEnabled(false);
 		pause.setBackground(null);
 
-		stop.setEnabled(true);
-		stop.setBackground(null);
+		close.setEnabled(true);
+		close.setBackground(null);
 
 		frameCount = 0;
-		startTime = System.currentTimeMillis();
-		;
-
-		screenPlayer.reset();
+			
+		frameLabel.setText("Frame: " + frameCount + " Time: 0.0");
 		text.setText("Ready to play " + target);
+		
 	}
 
 	public void play() {
@@ -333,11 +343,11 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		pause.setEnabled(true);
 		pause.setBackground(null);
 
-		stop.setEnabled(true);
-		stop.setBackground(null);
+		close.setEnabled(true);
+		close.setBackground(null);
 
 		screenPlayer.play();
-		startTime = System.currentTimeMillis();
+		//startTime = System.currentTimeMillis();
 
 		text.setText("Playing " + target);
 	}
@@ -359,8 +369,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		pause.setEnabled(true);
 		pause.setBackground(null);
 
-		stop.setEnabled(true);
-		stop.setBackground(null);
+		close.setEnabled(true);
+		close.setBackground(null);
 
 		screenPlayer.fastforward();
 
@@ -384,15 +394,17 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		pause.setEnabled(false);
 		pause.setBackground(activeButtonColor);
 
-		stop.setEnabled(true);
-		stop.setBackground(null);
+		close.setEnabled(true);
+		close.setBackground(null);
 
 		screenPlayer.pause();
 		text.setText("Paused " + target);
 	}
 
-	public void stop() {
+	public void close() {
 
+		decorator.closeFile();
+		
 		open.setEnabled(true);
 		open.setBackground(null);
 
@@ -408,10 +420,12 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		pause.setEnabled(false);
 		pause.setBackground(null);
 
-		stop.setEnabled(false);
-		stop.setBackground(null);
+		close.setEnabled(false);
+		close.setBackground(null);
 
-		screenPlayer.stop();
+		if (screenPlayer != null) {
+			screenPlayer.stop();
+		}
 		text.setText("No recording selected");
 	}
 }

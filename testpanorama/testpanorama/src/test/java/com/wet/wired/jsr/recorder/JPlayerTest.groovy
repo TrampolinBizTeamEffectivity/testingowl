@@ -2,6 +2,7 @@ package com.wet.wired.jsr.recorder;
 
 import static org.junit.Assert.*;
 
+import com.wet.wired.jsr.player.JPlayer
 import java.awt.event.ActionEvent
 import org.junit.Test;
 import org.junit.runner.RunWith
@@ -11,17 +12,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class JRecorderTest {
+class JPlayerTest {
 
 	@Autowired
-	JRecorder recorder
+	JPlayer player
 	
 	@Test
-	public void testStartRecorder() {
+	public void testStartPlayer() {
 		
-		recorder.init(new String[0])
+		player.init(new String[0])
 		
-		sleep 50000
+		sleep 1000000
 		
 		//fail("Not yet implemented");
 	}

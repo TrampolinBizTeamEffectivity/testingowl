@@ -35,172 +35,206 @@ import java.io.IOException;
 
 public class ScreenPlayer implements Runnable {
 
-   private ScreenPlayerListener listener;
+	private Thread thread;
 
-   private MemoryImageSource mis = null;
-   private Rectangle area;
+	private ScreenPlayerListener listener;
 
-   private FrameDecompressor decompressor;
+	private MemoryImageSource mis = null;
+	private Rectangle area;
 
-   private long startTime;
-   private long frameTime;
-   private long lastFrameTime;
+	private FrameDecompressor decompressor;
+	private int frameSize;
 
-   private boolean running;
-   private boolean paused;
-   private boolean fastForward;
+	private long startTime;
+	private long frameTime;
+	private long lastFrameTime;
 
-   private boolean resetReq;
+	private boolean running;
+	private boolean paused;
+	private boolean fastForward;
 
-   private FileInputStream iStream;
-   private String videoFile;
-   private int width;
-   private int height;
+	private boolean resetReq;
 
-   public ScreenPlayer(String videoFile, ScreenPlayerListener listener) {
+	private FileInputStream iStream;
+	private String videoFile;
+	private int width;
+	private int height;
 
-      this.listener = listener;
-      this.videoFile = videoFile;
+	public ScreenPlayer(String videoFile, ScreenPlayerListener listener) {
 
-      initialize();
-   }
+		this.listener = listener;
+		this.videoFile = videoFile;
 
-   private void initialize() {
+		initialize();
+	}
 
-      startTime = System.currentTimeMillis();
-      frameTime = startTime;
-      lastFrameTime = startTime;
-      paused = true;
+	private void initialize() {
 
-      try {
+		startTime = System.currentTimeMillis();
+		frameTime = startTime;
+		lastFrameTime = startTime;
+		paused = true;
 
-         iStream = new FileInputStream(videoFile);
+		try {
 
-         width = iStream.read();
-         width = width << 8;
-         width += iStream.read();
+			iStream = new FileInputStream(videoFile);
 
-         height = iStream.read();
-         height = height << 8;
-         height += iStream.read();
+			width = iStream.read();
+			width = width << 8;
+			width += iStream.read();
 
-         area = new Rectangle(width, height);
-         decompressor = new FrameDecompressor(iStream, width * height);
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
+			height = iStream.read();
+			height = height << 8;
+			height += iStream.read();
 
-   public void reset_req() {
+			area = new Rectangle(width, height);
+			decompressor = new FrameDecompressor(iStream, width * height);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-      paused = true;
-      fastForward = false;
-      resetReq = true;
-   }
+	public void reset() {
 
-   public void reset() {
+		paused = false;
+		running = false;
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		clearImage();
 
-      resetReq = false;
-      initialize();
-   }
+		resetReq = false;
+		initialize();
 
-   public void play() {
+	}
 
-      fastForward = false;
-      paused = false;
+	public void play() {
 
-      if (running == false) {
-         new Thread(this, "Screen Player").start();
-      }
-   }
+		fastForward = false;
+		paused = false;
 
-   public void fastforward() {
-      fastForward = true;
-      paused = false;
-   }
+		if (running == false) {
+			thread = new Thread(this, "Screen Player");
+			thread.start();
+		}
+	}
 
-   public void pause() {
-      paused = true;
-   }
+	public void fastforward() {
+		fastForward = true;
+		paused = false;
+		
+		if (running == false) {
+			thread = new Thread(this, "Screen Player");
+			thread.start();
+		}		
+	}
 
-   public void stop() {
-      paused = false;
-      running = false;
-   }
+	public void pause() {
+		paused = true;
+	}
 
-   public synchronized void run() {
+	public void stop() {
+		
+		paused = false;
+		running = false;
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		clearImage();
+		
+		listener.playerStopped();
+	}
+	
+	private void clearImage() {
+		 mis = new MemoryImageSource(area.width, area.height, new int[frameSize],
+		 0, area.width);
+		 mis.setAnimated(true);
+		 listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
+	}
 
-      running = true;
+	public synchronized void run() {
 
-      while (running) {
+		running = true;
 
-         while (paused && !resetReq) {
+		while (running) {
 
-            try {
-               Thread.sleep(50);
-            } catch (Exception e) {
-            }
-            startTime += 50;
-         }
+			while (paused && !resetReq) {
 
-         try {
-            readFrame();
-            listener.newFrame();
-         } catch (IOException ioe) {
-            listener.showNewImage(null);
-            break;
-         }
+				try {
+					Thread.sleep(50);
+				} catch (Exception e) {
+				}
+				//???
+				//startTime += 50;
+			}
 
-         if (fastForward == true) {
-            startTime -= (frameTime - lastFrameTime);
-         } else {
-            while ((System.currentTimeMillis() - startTime < frameTime)
-                  && !paused) {
-               try {
-                  Thread.sleep(100);
-               } catch (Exception e) {
-               }
-            }
+			try {
+				readFrame();
+				listener.newFrame(frameTime);
+			} catch (IOException ioe) {
+				listener.showNewImage(null);
+				break;
+			}
 
-            // System.out.println(
-            // "FrameTime:"+frameTime+">"+(System.currentTimeMillis()-startTime));
-         }
+			if (fastForward == true) {
+				startTime -= (frameTime - lastFrameTime);
+			} else {
+				while ((System.currentTimeMillis() - startTime < frameTime)
+						&& !paused) {
+					try {
+						Thread.sleep(100);
+					} catch (Exception e) {
+					}
+				}
 
-         lastFrameTime = frameTime;
-      }
+				// System.out.println(
+				// "FrameTime:"+frameTime+">"+(System.currentTimeMillis()-startTime));
+			}
 
-      listener.playerStopped();
-   }
+			lastFrameTime = frameTime;
+		}
 
-   private void readFrame() throws IOException {
+		// listener.playerStopped();
+	}
 
-      if (resetReq) {
-         reset();
-         return;
-      }
+	private void readFrame() throws IOException {
 
-      FrameDecompressor.FramePacket frame = decompressor.unpack();
-      frameTime = frame.getTimeStamp();
+		if (resetReq) {
+			reset();
+			return;
+		}
 
-      int result = frame.getResult();
-      if (result == 0) {
-         return;
-      } else if (result == -1) {
-         paused = true;
-         listener.playerPaused();
-         return;
-      }
+		FrameDecompressor.FramePacket frame = decompressor.unpack();
+		frameSize = frame.getData().length;
+		frameTime = frame.getTimeStamp();
 
-      if (mis == null) {
-         mis = new MemoryImageSource(area.width, area.height, frame.getData(),
-               0, area.width);
-         mis.setAnimated(true);
-         listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
-         return;
-      } else {
-         mis.newPixels(frame.getData(), ColorModel.getRGBdefault(), 0,
-               area.width);
-         return;
-      }
-   }
+		int result = frame.getResult();
+		if (result == 0) {
+			return;
+		} else if (result == -1) {
+			paused = true;
+			listener.playerPaused();
+			return;
+		}
+
+		if (mis == null) {
+			mis = new MemoryImageSource(area.width, area.height,
+					frame.getData(), 0, area.width);
+			mis.setAnimated(true);
+			listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
+			return;
+		} else {
+			mis.newPixels(frame.getData(), ColorModel.getRGBdefault(), 0,
+					area.width);
+			return;
+		}
+	}
 }
