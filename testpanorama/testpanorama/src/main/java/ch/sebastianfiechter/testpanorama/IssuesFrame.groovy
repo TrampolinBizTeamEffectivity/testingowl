@@ -37,11 +37,11 @@ class IssuesFrame {
 					table = table(rowSelectionAllowed: true, selectionMode: ListSelectionModel.SINGLE_SELECTION) {
 
 						tableModel(list:issues) {
-							closureColumn(header:'ID', read:{row -> return row.id})
-							closureColumn(header:'IssueType', read:{row -> return row.type})
-							closureColumn(header:'Start Frame', read:{row -> return row.frameStart})
-							closureColumn(header:'End Frame', read:{row -> return row.frameEnd})
-							closureColumn(header:'Message', read:{row -> return row.message})
+							closureColumn(header:'ID', preferredWidth:40, read:{row -> return row.id})
+							closureColumn(header:'IssueType', preferredWidth:60, read:{row -> return row.type})
+							closureColumn(header:'Start Frame', preferredWidth:40, read:{row -> return row.frameStart})
+							closureColumn(header:'End Frame', preferredWidth:40, read:{row -> return row.frameEnd})
+							closureColumn(header:'Message', preferredWidth:700-180, read:{row -> return row.message})
 						}
 
 						current.selectionModel.addListSelectionListener(
