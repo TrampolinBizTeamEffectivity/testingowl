@@ -38,7 +38,8 @@ class JPlayerDecorator {
 	}
 	
 	def issueSelected(Issue issue) {
-		println issue.id
+		log.info "go to ${issue.frameStart}"
+		jPlayer.goToFrame(issue.frameStart)
 	}
 	
 	def closeFile() {

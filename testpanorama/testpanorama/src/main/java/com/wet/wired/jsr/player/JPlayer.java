@@ -75,7 +75,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	private JLabel frameLabel;
 
 	private String target;
-	private int frameCount;
 	private long startTime;
 
 	private Color activeButtonColor = new Color(248, 229, 179);
@@ -164,13 +163,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		repaint(0);
 	}
 
-	public void newFrame(long frameTime) {
-		frameCount++;
+	public void newFrame(long frameNumber, long frameTime) {
+		
 		//long time = System.currentTimeMillis() - startTime;
 		long time = frameTime - startTime;
 		String seconds = "" + time / 1000;
 		String milliseconds = String.format("%04d", time % 1000);
-		frameLabel.setText("Frame: " + frameCount + " Time: " + seconds + "."
+		frameLabel.setText("Frame: " + frameNumber + " Time: " + seconds + "."
 				+ milliseconds);
 	}
 
@@ -196,7 +195,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 				close();
 				
-
 				decorator.dispose();
 				dispose();
 			}
@@ -266,7 +264,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		if (target != null) {
 			try {
 				screenPlayer = new ScreenPlayer(target, this);
-				frameCount = 0;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -291,6 +288,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
+		screenPlayer.showFirstFrame();
 		
 		text.setText("Ready to play " + target);
 
@@ -319,9 +317,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
-		frameCount = 0;
 			
-		frameLabel.setText("Frame: " + frameCount + " Time: 0.0");
+		frameLabel.setText("Frame: " + 0 + " Time: 0.0");
 		text.setText("Ready to play " + target);
 		
 	}
@@ -347,9 +344,14 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		screenPlayer.play();
-		//startTime = System.currentTimeMillis();
 
 		text.setText("Playing " + target);
+	}
+	
+	public void goToFrame(int frame) {
+		reset();
+		screenPlayer.goToFrame(frame);
+		play();
 	}
 
 	public void fastForward() {

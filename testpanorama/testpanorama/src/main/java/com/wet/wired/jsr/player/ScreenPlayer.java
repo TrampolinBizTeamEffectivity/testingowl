@@ -33,6 +33,8 @@ import java.awt.image.MemoryImageSource;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import com.wet.wired.jsr.player.FrameDecompressor.FramePacket;
+
 public class ScreenPlayer implements Runnable {
 
 	private Thread thread;
@@ -48,6 +50,8 @@ public class ScreenPlayer implements Runnable {
 	private long startTime;
 	private long frameTime;
 	private long lastFrameTime;
+	
+	private int frameNr;
 
 	private boolean running;
 	private boolean paused;
@@ -71,9 +75,8 @@ public class ScreenPlayer implements Runnable {
 	private void initialize() {
 
 		startTime = System.currentTimeMillis();
-		frameTime = startTime;
-		lastFrameTime = startTime;
 		paused = true;
+		frameNr = 0;
 
 		try {
 
@@ -98,13 +101,15 @@ public class ScreenPlayer implements Runnable {
 
 		paused = false;
 		running = false;
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (thread != null && thread.isAlive()) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		
+
 		clearImage();
 
 		resetReq = false;
@@ -126,11 +131,11 @@ public class ScreenPlayer implements Runnable {
 	public void fastforward() {
 		fastForward = true;
 		paused = false;
-		
+
 		if (running == false) {
 			thread = new Thread(this, "Screen Player");
 			thread.start();
-		}		
+		}
 	}
 
 	public void pause() {
@@ -138,26 +143,60 @@ public class ScreenPlayer implements Runnable {
 	}
 
 	public void stop() {
-		
+
 		paused = false;
 		running = false;
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (thread != null && thread.isAlive()) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		
+
 		clearImage();
-		
+
 		listener.playerStopped();
 	}
-	
+
+	public void goToFrame(int toFrame) {
+
+		FramePacket frame = null;
+		
+		for (int i = 1; i <= toFrame; i++) {
+			try {
+				frame = decompressor.unpack();
+				frameNr++;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		if (frame != null) {
+			startTime = System.currentTimeMillis()-frame.getTimeStamp();
+		} else {
+			startTime = System.currentTimeMillis();
+		}
+	}
+
 	private void clearImage() {
-		 mis = new MemoryImageSource(area.width, area.height, new int[frameSize],
-		 0, area.width);
-		 mis.setAnimated(true);
-		 listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
+		mis = new MemoryImageSource(area.width, area.height,
+				new int[frameSize], 0, area.width);
+		mis.setAnimated(true);
+		listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
+	}
+
+	public void showFirstFrame() {
+		try {
+			readFrame();
+			listener.newFrame(frameNr, frameTime);
+		} catch (IOException ioe) {
+			listener.showNewImage(null);
+		}
+
+		lastFrameTime = frameTime;
 	}
 
 	public synchronized void run() {
@@ -172,13 +211,12 @@ public class ScreenPlayer implements Runnable {
 					Thread.sleep(50);
 				} catch (Exception e) {
 				}
-				//???
-				//startTime += 50;
+				startTime += 50;
 			}
 
 			try {
 				readFrame();
-				listener.newFrame(frameTime);
+				listener.newFrame(frameNr, frameTime);
 			} catch (IOException ioe) {
 				listener.showNewImage(null);
 				break;
@@ -189,6 +227,7 @@ public class ScreenPlayer implements Runnable {
 			} else {
 				while ((System.currentTimeMillis() - startTime < frameTime)
 						&& !paused) {
+				
 					try {
 						Thread.sleep(100);
 					} catch (Exception e) {
@@ -213,6 +252,7 @@ public class ScreenPlayer implements Runnable {
 		}
 
 		FrameDecompressor.FramePacket frame = decompressor.unpack();
+		frameNr++;
 		frameSize = frame.getData().length;
 		frameTime = frame.getTimeStamp();
 
