@@ -52,6 +52,8 @@ public class ScreenPlayer implements Runnable {
 	private long lastFrameTime;
 	
 	private int frameNr;
+	
+	private int totalFrames;
 
 	private boolean running;
 	private boolean paused;
@@ -69,6 +71,8 @@ public class ScreenPlayer implements Runnable {
 		this.listener = listener;
 		this.videoFile = videoFile;
 
+		initialize();
+		countTotalFrames();
 		initialize();
 	}
 
@@ -95,6 +99,8 @@ public class ScreenPlayer implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 	}
 
 	public void reset() {
@@ -180,6 +186,30 @@ public class ScreenPlayer implements Runnable {
 			startTime = System.currentTimeMillis();
 		}
 	}
+	
+	private void countTotalFrames() {
+		
+		totalFrames = -1;
+		
+		int result = -1;
+		do {
+			FrameDecompressor.FramePacket frame;
+			try {
+				frame = decompressor.unpack();
+				result = frame.getResult();
+				totalFrames++;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} while (result != -1);
+				
+	}
+	
+	public int getTotalFrames() {
+		return totalFrames;
+	}
 
 	private void clearImage() {
 		mis = new MemoryImageSource(area.width, area.height,
@@ -218,6 +248,7 @@ public class ScreenPlayer implements Runnable {
 				readFrame();
 				listener.newFrame(frameNr, frameTime);
 			} catch (IOException ioe) {
+				ioe.printStackTrace();
 				listener.showNewImage(null);
 				break;
 			}
@@ -252,18 +283,20 @@ public class ScreenPlayer implements Runnable {
 		}
 
 		FrameDecompressor.FramePacket frame = decompressor.unpack();
-		frameNr++;
-		frameSize = frame.getData().length;
-		frameTime = frame.getTimeStamp();
-
+		
 		int result = frame.getResult();
 		if (result == 0) {
 			return;
 		} else if (result == -1) {
-			paused = true;
-			listener.playerPaused();
+			//paused = true;
+			running = false;
+			listener.playerStopped();
 			return;
 		}
+		
+		frameNr++;
+		frameSize = frame.getData().length;
+		frameTime = frame.getTimeStamp();
 
 		if (mis == null) {
 			mis = new MemoryImageSource(area.width, area.height,

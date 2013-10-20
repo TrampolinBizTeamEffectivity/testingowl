@@ -98,8 +98,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 			if (fileChooser.getSelectedFile() != null) {
 				target = fileChooser.getSelectedFile().getAbsolutePath();
-				decorator.openIssues(target);
 				open();
+				decorator.openIssues(target);
 			}
 		} else if (ev.getActionCommand().equals("play")) {
 			play();
@@ -139,6 +139,24 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void playerStopped() {
 
+		open.setEnabled(false);
+		open.setBackground(null);
+
+		reset.setEnabled(true);
+		reset.setBackground(null);
+
+		play.setEnabled(false);
+		play.setBackground(null);
+
+		fastForward.setEnabled(false);
+		fastForward.setBackground(null);
+
+		pause.setEnabled(false);
+		pause.setBackground(activeButtonColor);
+
+		close.setEnabled(true);
+		close.setBackground(null);
+		
 		text.setText("Stopped playing " + target);
 	}
 
@@ -169,7 +187,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		long time = frameTime - startTime;
 		String seconds = "" + time / 1000;
 		String milliseconds = String.format("%04d", time % 1000);
-		frameLabel.setText("Frame: " + frameNumber + " Time: " + seconds + "."
+		frameLabel.setText("Frame: " + frameNumber + "/" + screenPlayer.getTotalFrames() + " Time: " + seconds + "."
 				+ milliseconds);
 	}
 
@@ -269,7 +287,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				return false;
 			}
 		}
-
+		
 		open.setEnabled(false);
 		open.setBackground(null);
 
@@ -287,7 +305,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(true);
 		close.setBackground(null);
-
+		
 		screenPlayer.showFirstFrame();
 		
 		text.setText("Ready to play " + target);
@@ -318,7 +336,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 			
-		frameLabel.setText("Frame: " + 0 + " Time: 0.0");
+		frameLabel.setText("Frame: 0/"+screenPlayer.getTotalFrames()+" Time: 0.0");
 		text.setText("Ready to play " + target);
 		
 	}
@@ -352,6 +370,10 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		reset();
 		screenPlayer.goToFrame(frame);
 		play();
+	}
+	
+	public int getTotalFrames() {
+		return screenPlayer.getTotalFrames();
 	}
 
 	public void fastForward() {
