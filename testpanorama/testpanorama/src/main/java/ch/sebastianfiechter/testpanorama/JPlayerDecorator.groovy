@@ -30,6 +30,9 @@ class JPlayerDecorator {
 	@Autowired
 	IssuesFrame issuesFrame
 	
+	@Autowired
+	FramesSlider slider
+	
 	def openIssues(String fileNameWithDotCap) {
 		def fileNameWithoutEnding = fileNameWithDotCap[0..-5]
 		issuesFrame.issues = issues.readFromExcelCsv(fileNameWithoutEnding);
@@ -40,6 +43,10 @@ class JPlayerDecorator {
 	def issueSelected(Issue issue) {
 		log.info "go to ${issue.frameStart}"
 		jPlayer.goToFrame(issue.frameStart)
+	}
+	
+	def sliderChoosen(int frameStart) {
+		jPlayer.goToFrame(frameStart)
 	}
 	
 	def closeFile() {

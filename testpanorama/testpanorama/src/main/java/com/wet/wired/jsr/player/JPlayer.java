@@ -166,7 +166,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			JLabel label = new JLabel(icon);
 
 			scrollPane = new JScrollPane(label);
-			scrollPane.setSize(image.getWidth(this), image.getHeight(this));
+			scrollPane.setSize(image.getWidth(this)-50, image.getHeight(this));
 
 
 			this.getContentPane().add(scrollPane, BorderLayout.CENTER);
@@ -189,6 +189,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		String milliseconds = String.format("%04d", time % 1000);
 		frameLabel.setText("Frame: " + frameNumber + "/" + screenPlayer.getTotalFrames() + " Time: " + seconds + "."
 				+ milliseconds);
+		
+		decorator.getSlider().setValueProgrammatically((int)frameNumber);
 	}
 
 	public void init(String[] args) {
@@ -205,7 +207,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	public void showFrame() {
 
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 6));
+		panel.setLayout(new GridLayout(1, 7));
 		setTitle("Screen Player");
 
 		addWindowListener(new WindowAdapter() {
@@ -247,12 +249,15 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(false);
 		close.addActionListener(this);
 
+		decorator.getSlider().setEnabled(false);
+		
 		panel.add(open);
 		panel.add(reset);
 		panel.add(play);
 		panel.add(fastForward);
 		panel.add(pause);
 		panel.add(close);
+		panel.add(decorator.getSlider());
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
@@ -274,6 +279,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		this.getContentPane().add(panel, BorderLayout.SOUTH);
 
 		this.pack();
+		this.setSize(700, this.getHeight());
 		this.setVisible(true);
 	}
 
@@ -306,7 +312,12 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 		
+		decorator.getSlider().setMin(1);
+		decorator.getSlider().setMax(screenPlayer.getTotalFrames());
+		decorator.getSlider().setEnabled(true);
+		
 		screenPlayer.showFirstFrame();
+		decorator.getSlider().setValueProgrammatically(1);
 		
 		text.setText("Ready to play " + target);
 
@@ -335,6 +346,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
+		decorator.getSlider().setEnabled(true);
 			
 		frameLabel.setText("Frame: 0/"+screenPlayer.getTotalFrames()+" Time: 0.0");
 		text.setText("Ready to play " + target);
@@ -360,6 +372,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(true);
 		close.setBackground(null);
+		
+		decorator.getSlider().setEnabled(true);
 
 		screenPlayer.play();
 
@@ -395,6 +409,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(true);
 		close.setBackground(null);
+		
+		decorator.getSlider().setEnabled(true);
 
 		screenPlayer.fastforward();
 
@@ -420,6 +436,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(true);
 		close.setBackground(null);
+		
+		decorator.getSlider().setEnabled(true);
 
 		screenPlayer.pause();
 		text.setText("Paused " + target);
@@ -446,6 +464,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(false);
 		close.setBackground(null);
+		
+		decorator.getSlider().setEnabled(false);
 
 		if (screenPlayer != null) {
 			screenPlayer.stop();
