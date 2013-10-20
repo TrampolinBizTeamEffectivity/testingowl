@@ -80,7 +80,7 @@ public class FrameDecompressor {
       frame.nextFrame();
 
       // try{
-      int i = frame.iStream.read();
+      int i = frame.iStream.read(); 
       int time = i;
       time = time << 8;
       i = frame.iStream.read();
@@ -92,10 +92,10 @@ public class FrameDecompressor {
       i = frame.iStream.read();
       time += i;
 
-      frame.frameTimeStamp = (long) time;
+      frame.frameTimeStamp = (long) time; //time = 4 bytes
       // System.out.println("ft:"+frameTime);
 
-      byte type = (byte) frame.iStream.read();
+      byte type = (byte) frame.iStream.read(); //type = 1 byte
       // System.out.println("Packed Code:"+type);
 
       if (type <= 0) {
@@ -119,8 +119,8 @@ public class FrameDecompressor {
 
          // System.out.println("Zipped Frame size:"+zSize);
 
-         byte[] zData = new byte[zSize];
-         int readCursor = 0;
+         byte[] zData = new byte[zSize]; //to get zSize 4 Bytes
+         int readCursor = 0; //zData bytes
          int sizeRead = 0;
 
          while (sizeRead > -1) {

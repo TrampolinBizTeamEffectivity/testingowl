@@ -30,6 +30,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.ColorModel;
 import java.awt.image.MemoryImageSource;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -188,7 +189,7 @@ public class ScreenPlayer implements Runnable {
 	}
 	
 	private void countTotalFrames() {
-		
+		//we have to iterate, because, the file is Zipped
 		totalFrames = -1;
 		
 		int result = -1;
@@ -196,6 +197,7 @@ public class ScreenPlayer implements Runnable {
 			FrameDecompressor.FramePacket frame;
 			try {
 				frame = decompressor.unpack();
+				 
 				result = frame.getResult();
 				totalFrames++;
 			} catch (IOException e) {

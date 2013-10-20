@@ -50,6 +50,20 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+
+
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
@@ -120,7 +134,7 @@
 									implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
 									<resource>mouse_cursors</resource>
 									<file>mouse_cursors</file>
-								</transformer>								
+								</transformer>
 							</transformers>
 						</configuration>
 					</execution>
