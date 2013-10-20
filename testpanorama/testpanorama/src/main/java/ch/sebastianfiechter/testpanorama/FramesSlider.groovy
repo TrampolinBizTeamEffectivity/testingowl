@@ -42,9 +42,10 @@ class FramesSlider extends JSlider implements ChangeListener {
 
 	@Override
 	public void stateChanged(ChangeEvent event) {
-		JSlider theJSlider = (JSlider) event.source;
-		if (!avoidEvent && !theJSlider.getValueIsAdjusting()) {
-			decorator.sliderChoosen(theJSlider.getValue());
+		if (!avoidEvent && valueIsAdjusting) {
+			decorator.pause()
+		} else if (!avoidEvent && !valueIsAdjusting) {
+			decorator.sliderFrameSet(value)
 		}
 	}
 

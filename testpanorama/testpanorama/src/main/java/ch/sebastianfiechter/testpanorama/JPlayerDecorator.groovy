@@ -45,7 +45,10 @@ class JPlayerDecorator {
 		jPlayer.goToFrame(issue.frameStart)
 	}
 	
-	def sliderChoosen(int frameStart) {
+	def pause() {
+		jPlayer.pause()
+	}
+	def sliderFrameSet(int frameStart) {
 		jPlayer.goToFrame(frameStart)
 	}
 	
