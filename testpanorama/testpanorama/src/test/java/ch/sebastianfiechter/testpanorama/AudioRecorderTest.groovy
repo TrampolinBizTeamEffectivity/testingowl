@@ -25,7 +25,13 @@ class AudioRecorderTest {
 	
 	@Test
 	public void test10SecondsRecording() {
-		AudioIO.getMixersSupportingRecording()
+		audioRecorder.mixerName = "Plantroni"
+		audioRecorder.startRecording()
+		
+		sleep 10000
+		
+		audioRecorder.stopRecording()
+		audioRecorder.writeToWavFile("test")
 		
 	}
 

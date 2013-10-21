@@ -8,6 +8,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
+import java.util.regex.*
 
 import org.springframework.stereotype.Component;
 
@@ -32,10 +33,10 @@ class AudioIO {
 		return mixerNames
 	} 
 	
-	static getMixer(def mixerName) {
+	static getRecordingMixer(def mixerNameOrPartOfIt) {
 		for (def it : AudioSystem.getMixerInfo()) {
 			Mixer m = AudioSystem.getMixer(it)
-			if (it.name == mixerName) {
+			if (it.name =~ Pattern.quote(mixerNameOrPartOfIt) && m.isLineSupported(targetDataLine)) {
 				return m
 			}
 		}
@@ -44,7 +45,7 @@ class AudioIO {
 	}
 	
 	static isMixerSupportingAudioFormat(String mixerName) {
-		return getMixer(mixerName).isLineSupported(
+		return getRecordingMixer(mixerName).isLineSupported(
 			new DataLine.Info(TargetDataLine.class, audioFormat));
 		
 	}

@@ -57,7 +57,7 @@ class AudioRecorder {
 	}
 
 	def prepareRecording() {
-		Mixer mixer = audioIO.getMixer(mixerName);
+		Mixer mixer = audioIO.getRecordingMixer(mixerName);
 
 		DataLine.Info lineInfo = new DataLine.Info(
 				TargetDataLine.class, audioIO.audioFormat);

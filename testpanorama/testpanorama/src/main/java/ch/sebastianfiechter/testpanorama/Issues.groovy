@@ -23,21 +23,12 @@ class Issues {
 		issues << new Issue(id:++issuesIdCounter, type:IssueType.Topic,
 		frameStart:0, frameEnd:0, message:topic)
 	}
-
-	def addBug(int frameStart, int frameEnd, String message) {
-		issues << new Issue(id:++issuesIdCounter, type:IssueType.Bug,
-		frameStart:frameStart, frameEnd:frameEnd, message:message)
+	
+	def addIssue(def issueType, int frameStart, int frameEnd, String message) {
+		issues << new Issue(id:++issuesIdCounter, type:issueType,
+			frameStart:frameStart, frameEnd:frameEnd, message:message)
 	}
 
-	def addMusthave(int frameStart, int frameEnd, String message) {
-		issues << new Issue(id:++issuesIdCounter, type:IssueType.Musthave,
-		frameStart:frameStart, frameEnd:frameEnd, message:message)
-	}
-
-	def addWish(int frameStart, int frameEnd, String message) {
-		issues << new Issue(id:++issuesIdCounter, type:IssueType.Wish,
-		frameStart:frameStart, frameEnd:frameEnd, message:message)
-	}
 
 	def writeToExcelCsv(String filenameWithoutDotCsv) {
 

@@ -14,6 +14,7 @@ import java.awt.Color
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import groovy.util.logging.*
+import ch.sebastianfiechter.testpanorama.Issues.IssueType
 
 @Slf4j
 @Component
@@ -76,38 +77,38 @@ class JRecorderDecorator implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 
+		def frame = jRecorder.@frameCount
+		def question
+		def title
+		def type
+		
 		switch (event.actionCommand) {
 			case "bug":
-				def frame = jRecorder.@frameCount
-				def value = JOptionPane.showInputDialog(jRecorder, "What's the Bug?",
-				"Bug", JOptionPane.QUESTION_MESSAGE);
-
-				if (value != null) {
-					issues.addBug(frame, jRecorder.@frameCount, value)
-				}
+				title = "Bug"
+				question = "What's the Bug?"
+				type = IssueType.Bug
 				break
 			case "musthave":
-				def frame = jRecorder.@frameCount
-				def value = JOptionPane.showInputDialog(jRecorder, "What do you must have?",
-				"Must have", JOptionPane.QUESTION_MESSAGE);
-
-				if (value != null) {
-					issues.addMusthave(frame, jRecorder.@frameCount, value)
-				}
+				title = "Must have"
+				question = "What do you must have?"
+				type = IssueType.Musthave
 				break
 			case "wish":
-				def frame = jRecorder.@frameCount
-				def value = JOptionPane.showInputDialog(jRecorder, "What do you wish?",
-				"Wish", JOptionPane.QUESTION_MESSAGE);
-
-				if (value != null) {
-					issues.addWish(frame, jRecorder.@frameCount, value)
-				}
+				title = "Wish"
+				question = "What do you wish?"
+				type = IssueType.Wish
 				break
 			default:
 				log.error "Uups, Unknown ActionEvent fired"
 				throw new Exception("Uups, Unknown ActionEvent fired");
 		}
+		
+		def value = JOptionPane.showInputDialog(jRecorder, question,
+			title, JOptionPane.QUESTION_MESSAGE);
+
+			if (value != null) {
+				issues.addIssue(type, frame, jRecorder.@frameCount, value)
+			}
 	}
 	
 	public void recordStopped() {
