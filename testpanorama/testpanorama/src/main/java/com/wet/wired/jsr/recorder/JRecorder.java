@@ -85,6 +85,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		try {
 			FileOutputStream oStream = new FileOutputStream(fileName);
 			temp = new File(fileName);
+			temp.deleteOnExit();
 			recorder = new DesktopScreenRecorder(oStream, this);
 			recorder.startRecording();
 		} catch (Exception e) {

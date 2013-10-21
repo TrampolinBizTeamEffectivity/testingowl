@@ -45,19 +45,21 @@ class JPlayerDecorator {
 		jPlayer.goToFrame(issue.frameStart)
 	}
 	
-	def pause() {
+		
+	def closingFile() {
+		issuesFrame.dispose()
+	}
+	
+	def disposing() {
+		issuesFrame.dispose()
+	}
+	
+	def sliderIsValueAdjusting() {
 		jPlayer.pause()
 	}
-	def sliderFrameSet(int frameStart) {
+	
+	def sliderSetsFrame(int frameStart) {
 		jPlayer.goToFrame(frameStart)
-	}
-	
-	def closeFile() {
-		issuesFrame.dispose()
-	}
-	
-	def dispose() {
-		issuesFrame.dispose()
 	}
 	
 

@@ -1,9 +1,11 @@
-package com.wet.wired.jsr.recorder;
+package ch.sebastianfiechter.testpanorama;
 
+import ch.sebastianfiechter.testpanorama.Issues.IssueType
 import static org.junit.Assert.*;
 
-import ch.sebastianfiechter.testpanorama.AudioCapture01
-import com.wet.wired.jsr.player.JPlayer
+import ch.sebastianfiechter.testpanorama.*
+import ch.sebastianfiechter.testpanorama.Issues
+import ch.sebastianfiechter.testpanorama.IssuesFrame
 import java.awt.event.ActionEvent
 import org.junit.Test;
 import org.junit.runner.RunWith
@@ -13,15 +15,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class AudioCapture01Test {
+class AudioRecorderTest {
 
 	@Autowired
-	AudioCapture01 audio
+	AudioRecorder audioRecorder
+	
+	@Autowired
+	AudioIO audioIO
 	
 	@Test
-	public void testAudio() {
-		audio.startup();
-		sleep 100000;
+	public void test10SecondsRecording() {
+		AudioIO.getMixersSupportingRecording()
 		
 	}
 

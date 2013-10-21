@@ -291,6 +291,8 @@ public class SimpleAudioRecorder extends Thread {
 		// true,false
 		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed,
 				bigEndian);
+		
+		
 
 	}
 }

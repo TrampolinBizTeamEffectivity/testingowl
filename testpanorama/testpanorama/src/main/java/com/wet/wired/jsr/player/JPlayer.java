@@ -225,7 +225,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 				close();
 
-				decorator.dispose();
+				decorator.disposing();
 				dispose();
 			}
 		});
@@ -460,7 +460,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			screenPlayer.stop();
 		}
 
-		decorator.closeFile();
+		decorator.closingFile();
 
 		open.setEnabled(true);
 		open.setBackground(null);
