@@ -51,6 +51,7 @@ import javax.swing.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ch.sebastianfiechter.testpanorama.FramesSlider;
 import ch.sebastianfiechter.testpanorama.JPlayerDecorator;
 
 @SuppressWarnings("serial")
@@ -60,6 +61,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	@Autowired
 	JPlayerDecorator decorator;
+	
+	@Autowired
+	FramesSlider slider;
 
 	private ScreenPlayer screenPlayer;
 
@@ -200,7 +204,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				+ screenPlayer.getTotalFrames() + " Time: " + seconds + "."
 				+ milliseconds);
 
-		decorator.getSlider().setValueProgrammatically((int) frameNumber);
+		slider.setValueProgrammatically((int) frameNumber);
 	}
 
 	public void init(String[] args) {
@@ -259,7 +263,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(false);
 		close.addActionListener(this);
 
-		decorator.getSlider().setEnabled(false);
+		slider.setEnabled(false);
 
 		panel.add(open);
 		panel.add(reset);
@@ -267,7 +271,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		panel.add(fastForward);
 		panel.add(pause);
 		panel.add(close);
-		panel.add(decorator.getSlider());
+		panel.add(slider);
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
@@ -322,12 +326,12 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
-		decorator.getSlider().setMin(1);
-		decorator.getSlider().setMax(screenPlayer.getTotalFrames());
-		decorator.getSlider().setEnabled(true);
+		slider.setMin(1);
+		slider.setMax(screenPlayer.getTotalFrames());
+		slider.setEnabled(true);
 
 		screenPlayer.showFirstFrame();
-		decorator.getSlider().setValueProgrammatically(1);
+		slider.setValueProgrammatically(1);
 
 		text.setText("Ready to play " + target);
 
@@ -356,7 +360,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
-		decorator.getSlider().setEnabled(true);
+		slider.setEnabled(true);
 
 		frameLabel.setText("Frame: 0/" + screenPlayer.getTotalFrames()
 				+ " Time: 0.0");
@@ -384,7 +388,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
-		decorator.getSlider().setEnabled(true);
+		slider.setEnabled(true);
 
 		screenPlayer.play();
 
@@ -421,7 +425,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
-		decorator.getSlider().setEnabled(true);
+		slider.setEnabled(true);
 
 		screenPlayer.fastforward();
 
@@ -448,7 +452,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 
-		decorator.getSlider().setEnabled(true);
+		slider.setEnabled(true);
 
 		screenPlayer.pause();
 		text.setText("Paused " + target);
@@ -480,7 +484,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(false);
 		close.setBackground(null);
 
-		decorator.getSlider().setEnabled(false);
+		slider.setEnabled(false);
 
 		text.setText("No recording selected");
 	}

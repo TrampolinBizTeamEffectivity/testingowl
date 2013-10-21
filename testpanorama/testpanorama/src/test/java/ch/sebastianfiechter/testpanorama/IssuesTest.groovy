@@ -21,7 +21,7 @@ class IssuesTest {
 	public void testReadFromExcelCsv() {
 		
 
-		List readIssues = Issues.readFromExcelCsv(/\\a99a-cfs-user\a99a-cfs-user$\rbqq\Eigene Dateien\test/)
+		List readIssues = Issues.readFromExcelCsv("src/test/resources/testissues")
 		
 		assert 4 == readIssues.size()
 		

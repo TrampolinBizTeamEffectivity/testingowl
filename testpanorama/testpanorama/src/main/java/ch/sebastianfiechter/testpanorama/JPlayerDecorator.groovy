@@ -29,10 +29,7 @@ class JPlayerDecorator {
 	
 	@Autowired
 	IssuesFrame issuesFrame
-	
-	@Autowired
-	FramesSlider slider
-	
+		
 	def openIssues(String fileNameWithDotCap) {
 		def fileNameWithoutEnding = fileNameWithDotCap[0..-5]
 		issuesFrame.issues = issues.readFromExcelCsv(fileNameWithoutEnding);

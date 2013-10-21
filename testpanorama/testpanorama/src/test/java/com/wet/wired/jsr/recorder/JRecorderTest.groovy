@@ -21,7 +21,6 @@ class JRecorderTest {
 		
 		recorder.init(new String[0])
 		
-		sleep 50000
 		
 		//fail("Not yet implemented");
 	}

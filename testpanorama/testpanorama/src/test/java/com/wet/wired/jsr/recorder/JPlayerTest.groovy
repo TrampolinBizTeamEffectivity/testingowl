@@ -22,8 +22,6 @@ class JPlayerTest {
 		
 		player.init(new String[0])
 		
-		sleep 1000000
-		
 		//fail("Not yet implemented");
 	}
 

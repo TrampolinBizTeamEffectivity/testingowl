@@ -15,33 +15,48 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class AudioRecorderTest {
+class AudioPlayerTest {
 
 	@Autowired
-	AudioRecorder audioRecorder
+	AudioPlayer audioPlayer
 	
-	@Autowired
-	AudioIO audioIO
 	
 	@Test
-	public void test10SecondsRecording() {
-		audioRecorder.mixerName = audioIO.getNamesOfMixersSupportingRecording()[0]
-		audioRecorder.startRecording()
+	public void test10SecondsPlaying() {
+		audioPlayer.readFromWav("src/test/resources/testcountto10")
+		audioPlayer.playFromTime(0.0 as long)
 		
-		println "0"
-		for (def i=0; i<10;i++) { 
-			sleep 1000
-			println "${i+1} passed"
-		}
+		sleep 10000
 		
-		audioRecorder.stopRecording()
+		audioPlayer.stopPlaying()
 		
-		new File("src/test/resources/testRec.cap.wav").deleteOnExit();
+	}
+	
+	@Test
+	public void testPlayFromTime() {
+		audioPlayer.readFromWav("src/test/resources/testcountto10")
+		audioPlayer.playFromTime(2.0 as long)
 		
-		audioRecorder.writeToWavFile("src/test/resources/testRec")
+		sleep 10000
 		
-		
+		audioPlayer.stopPlaying()
 		
 	}
 
+	@Test
+	public void testAdjustPlayTimes() {
+		audioPlayer.readFromWav("src/test/resources/testcountto10")
+		audioPlayer.playFromTime(2.0 as long)
+		
+		sleep 2000
+		
+		audioPlayer.playFromTime(1.0 as long)
+		
+		sleep 2000
+		
+		audioPlayer.stopPlaying()
+		
+	}
+
+	
 }

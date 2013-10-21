@@ -28,9 +28,7 @@ class IssuesFrameTest {
 		]
 		
 		issuesFrame.show()
-		
-		sleep 50000
-		
+				
 		//fail("Not yet implemented");
 	}
 

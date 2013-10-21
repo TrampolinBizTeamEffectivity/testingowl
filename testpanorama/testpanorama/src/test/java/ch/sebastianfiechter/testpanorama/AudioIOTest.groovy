@@ -24,10 +24,10 @@ class AudioIOTest {
 	
 	@Test
 	public void testAll() {
-		println AudioIO.getNamesOfMixersSupportingRecording()
-		println AudioIO.getRecordingMixer("Kopfhörermikrofon (2- Plantroni")
-		println AudioIO.getRecordingMixer("Plantroni")
-		println AudioIO.isMixerSupportingAudioFormat("Plantroni")
+		assert null != AudioIO.getNamesOfMixersSupportingRecording()
+		assert AudioIO.getRecordingMixer(AudioIO.getNamesOfMixersSupportingRecording()[0])
+		assert null != AudioIO.getRecordingMixer(AudioIO.getNamesOfMixersSupportingRecording()[0][0..2])
+		assert true == AudioIO.isMixerSupportingAudioFormat(AudioIO.getNamesOfMixersSupportingRecording()[0][0..2])
 		
 	}
 
