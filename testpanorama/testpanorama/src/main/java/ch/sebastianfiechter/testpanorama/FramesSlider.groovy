@@ -7,6 +7,8 @@ import javax.swing.event.ChangeListener
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.wet.wired.jsr.player.JPlayer;
+
 import javax.annotation.PostConstruct;
 import javax.swing.*
 
@@ -14,7 +16,7 @@ import javax.swing.*
 class FramesSlider extends JSlider implements ChangeListener {
 
 	@Autowired
-	JPlayerDecorator decorator;
+	JPlayer jPlayer
 	
 	def avoidEvent = true
 	
@@ -43,9 +45,10 @@ class FramesSlider extends JSlider implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent event) {
 		if (!avoidEvent && valueIsAdjusting) {
-			decorator.sliderIsValueAdjusting()
+			jPlayer.pause()
+			jPlayer.setSliderLabel(value)
 		} else if (!avoidEvent && !valueIsAdjusting) {
-			decorator.sliderSetsFrame(value)
+			jPlayer.goToFrame(value)
 		}
 	}
 

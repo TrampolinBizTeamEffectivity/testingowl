@@ -51,13 +51,6 @@ class JPlayerDecorator {
 		issuesFrame.dispose()
 	}
 	
-	def sliderIsValueAdjusting() {
-		jPlayer.pause()
-	}
-	
-	def sliderSetsFrame(int frameStart) {
-		jPlayer.goToFrame(frameStart)
-	}
 	
 
 

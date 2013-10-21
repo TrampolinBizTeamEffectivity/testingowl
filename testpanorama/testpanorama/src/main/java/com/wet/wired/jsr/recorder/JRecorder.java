@@ -191,6 +191,8 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 				shutdown();
 			}
 		});
+		
+		setTitle("TestLookOut Recorder");
 
 		control = new JButton("Start Recording");
 		control.setActionCommand("start");

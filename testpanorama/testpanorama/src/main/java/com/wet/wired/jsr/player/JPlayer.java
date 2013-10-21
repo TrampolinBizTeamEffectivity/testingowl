@@ -28,6 +28,7 @@ package com.wet.wired.jsr.player;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -64,6 +65,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	
 	@Autowired
 	FramesSlider slider;
+	private JLabel sliderLabel;
 
 	private ScreenPlayer screenPlayer;
 
@@ -172,13 +174,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 			scrollPane = new JScrollPane(label);
 			scrollPane
-					.setSize(image.getWidth(this) - 50, image.getHeight(this));
+					.setSize(image.getWidth(this), image.getHeight(this));
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					getContentPane().add(scrollPane, BorderLayout.CENTER);
 					pack();
-					setSize(getWidth(), 400);
+					setSize(getWidth()-100, 400);
 					setVisible(true);
 					repaint(0);
 				}
@@ -205,6 +207,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				+ milliseconds);
 
 		slider.setValueProgrammatically((int) frameNumber);
+		setSliderLabel((int) frameNumber);
 	}
 
 	public void init(String[] args) {
@@ -221,8 +224,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	public void showFrame() {
 
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 7));
-		setTitle("Screen Player");
+		panel.setLayout(new GridLayout(1, 8));
+		setTitle("TestLookOut Player");
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -264,14 +267,24 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.addActionListener(this);
 
 		slider.setEnabled(false);
+		
+		sliderLabel = new JLabel("0");
+		sliderLabel.setBackground(Color.yellow);
+		sliderLabel.setPreferredSize(new Dimension(20, sliderLabel.getHeight()));
 
+		JPanel sliderPanel = new JPanel();
+		sliderPanel.setPreferredSize(close.getSize()); //use default size of button
+		//sliderPanel.setLayout(new GridLayout(1, 2));
+		sliderPanel.add(slider);
+		sliderPanel.add(sliderLabel);
+		
 		panel.add(open);
 		panel.add(reset);
 		panel.add(play);
 		panel.add(fastForward);
 		panel.add(pause);
 		panel.add(close);
-		panel.add(slider);
+		panel.add(sliderPanel);
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
@@ -282,10 +295,10 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		frameLabel = new JLabel("Frame: 0 Time: 0");
 		frameLabel.setBackground(Color.black);
-		frameLabel.setForeground(Color.red);
+		frameLabel.setForeground(Color.white);
 		text = new JLabel("No recording selected");
 		text.setBackground(Color.black);
-		text.setForeground(Color.red);
+		text.setForeground(Color.white);
 
 		panel.add(text);
 		panel.add(frameLabel);
@@ -487,5 +500,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		slider.setEnabled(false);
 
 		text.setText("No recording selected");
+	}
+	
+	public void setSliderLabel(int value) {
+		sliderLabel.setText(""+value);
 	}
 }
