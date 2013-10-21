@@ -136,9 +136,10 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 			filter = new FileExtensionFilter();
 			filter.addExtension("cap");
-			filter.setDescription("Screen Capture File");
+			filter.setDescription("TestLookOut File");
 
 			fileChooser.setFileFilter(filter);
+			fileChooser.setSelectedFile(decorator.prepareSuggestedFileName());
 			fileChooser.showSaveDialog(this);
 
 			File target = fileChooser.getSelectedFile();
@@ -151,6 +152,8 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 				FileHelper.copy(temp, target);
 				
 				decorator.saveFile(target);
+			} else {
+				decorator.cancelSave();
 			}
 
 			FileHelper.delete(temp);
@@ -207,6 +210,8 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		this.setAlwaysOnTop(true);
 		this.pack();
 		this.setVisible(true);
+		
+		decorator.startup();
 	}
 
 	public void shutdown() {

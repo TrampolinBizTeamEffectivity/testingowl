@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 class AudioIO {
 	
-	static targetDataLine = new Line.Info(TargetDataLine.class)
+//	static targetDataLine = new Line.Info(TargetDataLine.class)
 	
 	static AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 1, true, true)
 	
@@ -24,10 +24,9 @@ class AudioIO {
 		
 		AudioSystem.getMixerInfo().each {
 			Mixer m = AudioSystem.getMixer(it)
-			if (m.isLineSupported(targetDataLine)) {
+			if (isMixerSupportingAudioFormat(m)) {
 				mixerNames << it.name
-			}
-			
+			}			
 		}
 	
 		return mixerNames
@@ -36,7 +35,7 @@ class AudioIO {
 	static getRecordingMixer(def mixerNameOrPartOfIt) {
 		for (def it : AudioSystem.getMixerInfo()) {
 			Mixer m = AudioSystem.getMixer(it)
-			if (it.name =~ Pattern.quote(mixerNameOrPartOfIt) && m.isLineSupported(targetDataLine)) {
+			if (it.name =~ Pattern.quote(mixerNameOrPartOfIt) && isMixerSupportingAudioFormat(m)) {
 				return m
 			}
 		}
@@ -44,8 +43,8 @@ class AudioIO {
 		return null
 	}
 	
-	static isMixerSupportingAudioFormat(String mixerName) {
-		return getRecordingMixer(mixerName).isLineSupported(
+	static isMixerSupportingAudioFormat(Mixer mixer) {
+		return mixer.isLineSupported(
 			new DataLine.Info(TargetDataLine.class, audioFormat));
 		
 	}

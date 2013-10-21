@@ -28,9 +28,13 @@ package com.wet.wired.jsr.player;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -266,17 +270,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(false);
 		close.addActionListener(this);
 
-		slider.setEnabled(false);
-		
-		sliderLabel = new JLabel("0");
-		sliderLabel.setBackground(Color.yellow);
-		sliderLabel.setPreferredSize(new Dimension(20, sliderLabel.getHeight()));
 
-		JPanel sliderPanel = new JPanel();
-		sliderPanel.setPreferredSize(close.getSize()); //use default size of button
-		//sliderPanel.setLayout(new GridLayout(1, 2));
-		sliderPanel.add(slider);
-		sliderPanel.add(sliderLabel);
 		
 		panel.add(open);
 		panel.add(reset);
@@ -284,7 +278,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		panel.add(fastForward);
 		panel.add(pause);
 		panel.add(close);
-		panel.add(sliderPanel);
+		panel.add(createSliderLayout());
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
@@ -309,9 +303,44 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		this.setSize(700, this.getHeight());
 		this.setVisible(true);
 	}
+	
+	private JPanel createSliderLayout() {
+		slider.setEnabled(false);
+		
+		sliderLabel = new JLabel("0");
+		sliderLabel.setBackground(Color.yellow);
+		sliderLabel.setPreferredSize(new Dimension(20, sliderLabel.getHeight()));
+
+		JPanel sliderPanel = new JPanel();
+		sliderPanel.setPreferredSize(close.getSize()); //use default size of button
+		
+		GridBagLayout gbl = new GridBagLayout();
+		sliderPanel.setLayout(gbl);
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(2,2,2,2);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridheight = 1;
+		gbc.weightx = 1.0;
+		gbl.setConstraints(slider, gbc);
+		sliderPanel.add(slider);
+		
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.gridheight = 1;
+		gbc.weightx = 0.0;
+		gbl.setConstraints(sliderLabel, gbc);	
+		sliderPanel.add(sliderLabel);	
+		
+		return sliderPanel;
+	}
 
 	public boolean open() {
-
+		
+		beginShowWaitingCursor();
+			
 		if (target != null) {
 			try {
 				screenPlayer = new ScreenPlayer(target, this);
@@ -346,6 +375,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		screenPlayer.showFirstFrame();
 		slider.setValueProgrammatically(1);
 
+		endShowWaitingCursor();
+		
 		text.setText("Ready to play " + target);
 
 		return true;
@@ -409,8 +440,14 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	}
 
 	public void goToFrame(int frame) {
+		
+		beginShowWaitingCursor();
+		
 		reset();
 		screenPlayer.goToFrame(frame);
+		
+		endShowWaitingCursor();
+		
 		play();
 	}
 
@@ -504,5 +541,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	
 	public void setSliderLabel(int value) {
 		sliderLabel.setText(""+value);
+	}
+	
+	public void beginShowWaitingCursor() {
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	}
+	
+	public void endShowWaitingCursor() {
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 }

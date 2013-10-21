@@ -34,7 +34,6 @@ class AudioRecorder {
 	def startRecording() {
 
 		assert mixerName != null
-		assert true == audioIO.isMixerSupportingAudioFormat(mixerName)
 
 		tempFile = new File("tempwav");
 		tempFile.deleteOnExit();
@@ -78,12 +77,12 @@ class AudioRecorder {
 		recordingThread.join()
 	}
 
-	def writeToWavFile(String filenameWithoutDotCsv) {
+	def writeToWavFile(String filenameWithoutEnding) {
 
 		//delete existing
-		new File("${filenameWithoutDotCsv}.cap.wav").delete()
+		new File("${filenameWithoutEnding}.cap.wav").delete()
 
-		def out = new File("${filenameWithoutDotCsv}.cap.wav")
+		def out = new File("${filenameWithoutEnding}.cap.wav")
 
 		FileHelper.copy(tempFile, out);
 
