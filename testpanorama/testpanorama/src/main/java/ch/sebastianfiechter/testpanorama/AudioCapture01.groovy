@@ -3,24 +3,19 @@ package ch.sebastianfiechter.testpanorama;
 /*File AudioCapture01.java
  This program demonstrates the capture
  and subsequent playback of audio data.
-
  A GUI appears on the screen containing
  the following buttons:
  Capture
  Stop
  Playback
-
  Input data from a microphone is
  captured and saved in a
  ByteArrayOutputStream object when the
  user clicks the Capture button.
-
  Data capture stops when the user clicks
  the Stop button.
-
  Playback begins when the user clicks
  the Playback button.
-
  Tested using SDK 1.4.0 under Win2000
  **************************************/
 
@@ -37,7 +32,6 @@ import javax.sound.sampled.*;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
 public class AudioCapture01 extends JFrame {
 
 	boolean stopCapture = false;
@@ -62,42 +56,42 @@ public class AudioCapture01 extends JFrame {
 
 		// Register anonymous listeners
 		captureBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				captureBtn.setEnabled(false);
-				stopBtn.setEnabled(true);
-				playBtn.setEnabled(false);
-				// Capture input data from the
-				// microphone until the Stop
-				// button is clicked.
-				captureAudio();
-			}// end actionPerformed
-		}// end ActionListener
+					public void actionPerformed(ActionEvent e) {
+						captureBtn.setEnabled(false);
+						stopBtn.setEnabled(true);
+						playBtn.setEnabled(false);
+						// Capture input data from the
+						// microphone until the Stop
+						// button is clicked.
+						captureAudio();
+					}// end actionPerformed
+				}// end ActionListener
 				);// end addActionListener()
 		getContentPane().add(captureBtn);
 
 		stopBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				captureBtn.setEnabled(true);
-				stopBtn.setEnabled(false);
-				playBtn.setEnabled(true);
-				// Terminate the capturing of
-				// input data from the
-				// microphone.
-				stopCapture = true;
-			}// end actionPerformed
-		}// end ActionListener
-		);// end addActionListener()
+					public void actionPerformed(ActionEvent e) {
+						captureBtn.setEnabled(true);
+						stopBtn.setEnabled(false);
+						playBtn.setEnabled(true);
+						// Terminate the capturing of
+						// input data from the
+						// microphone.
+						stopCapture = true;
+					}// end actionPerformed
+				}// end ActionListener
+				);// end addActionListener()
 		getContentPane().add(stopBtn);
 
 		playBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Play back all of the data
-				// that was saved during
-				// capture.
-				playAudio();
-			}// end actionPerformed
-		}// end ActionListener
-		);// end addActionListener()
+					public void actionPerformed(ActionEvent e) {
+						// Play back all of the data
+						// that was saved during
+						// capture.
+						playAudio();
+					}// end actionPerformed
+				}// end ActionListener
+				);// end addActionListener()
 		getContentPane().add(playBtn);
 
 		getContentPane().setLayout(new FlowLayout());
@@ -117,9 +111,7 @@ public class AudioCapture01 extends JFrame {
 			audioFormat = getAudioFormat();
 			DataLine.Info dataLineInfo = new DataLine.Info(
 					TargetDataLine.class, audioFormat);
-				
-				
-				
+
 			targetDataLine = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
 			targetDataLine.open(audioFormat);
 			targetDataLine.start();
@@ -182,33 +174,53 @@ public class AudioCapture01 extends JFrame {
 	// are shown in comments following
 	// the declarations.
 	private AudioFormat getAudioFormat() {
-		
-      AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
-      float rate = 44100.0f;
-      int sampleSize = 16;
-      int channels = 2;
-      int frameSize = (sampleSize / 8) * channels
-	  float frameRate = rate;
-      boolean bigEndian = true;
 
-      return new AudioFormat(encoding, rate, sampleSize, channels, frameSize, frameRate, bigEndian);
+	/*
+	 * PCM_SIGNED 8000.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 16000.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 44100.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 8000.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 16000.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 44100.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 8000.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 16000.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian
+	 * PCM_SIGNED 44100.0 Hz, 	16 bit, mono, 2 bytes/frame, little-endian		
+	 */
 		
-		/*
-		float sampleRate = 8000.0F;
-		// 8000,11025,16000,22050,44100
-		int sampleSizeInBits = 16;
-		// 8,16
+		AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
+		float rate =44100.0f;
+		int sampleSize = 16;
 		int channels = 1;
-		// 1,2
-		boolean signed = true;
-		// true,false
+		int frameSize = 2; //(sampleSize / 8) * channels
+		float frameRate = rate;
 		boolean bigEndian = false;
-		// true,false
-		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed,
-				bigEndian);
-		*/
+
+		return new AudioFormat(encoding, rate, sampleSize, channels, frameSize,
+			frameRate, bigEndian);
+		
+//		boolean signed = true;
+//		bigEndian = true;
+//		return new AudioFormat(rate, sampleSize, channels, signed, bigEndian);
+
+		//AudioFormat(float sampleRate, int sampleSizeInBits, int channels, boolean signed, boolean bigEndian) 
+
+
+		/*
+		 float sampleRate = 8000.0F;
+		 // 8000,11025,16000,22050,44100
+		 int sampleSizeInBits = 16;
+		 // 8,16
+		 int channels = 1;
+		 // 1,2
+		 boolean signed = true;
+		 // true,false
+		 boolean bigEndian = false;
+		 // true,false
+		 return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed,
+		 bigEndian);
+		 */
 	}// end getAudioFormat
-		// ===================================//
+	// ===================================//
 
 	// Inner class to capture data from
 	// microphone
@@ -221,14 +233,14 @@ public class AudioCapture01 extends JFrame {
 			byteArrayOutputStream = new ByteArrayOutputStream();
 			stopCapture = false;
 			try {// Loop until stopCapture is set
-					// by another thread that
-					// services the Stop button.
+				// by another thread that
+				// services the Stop button.
 				while (!stopCapture) {
 					// Read data from the internal
 					// buffer of the data line.
 					int cnt = targetDataLine.read(tempBuffer, 0,
 							tempBuffer.length);
-					//log.info("read cnt: " + tempBuffer);
+					log.info("read cnt: " + tempBuffer);
 					if (cnt > 0) {
 						// Save data in output stream
 						// object.
@@ -242,7 +254,7 @@ public class AudioCapture01 extends JFrame {
 			}// end catch
 		}// end run
 	}// end inner class CaptureThread
-		// ===================================//
+	// ===================================//
 	// Inner class to play back the data
 	// that was saved.
 
@@ -256,19 +268,19 @@ public class AudioCapture01 extends JFrame {
 				// read method returns -1 for
 				// empty stream.
 				while ((cnt = audioInputStream.read(tempBuffer, 0,
-						tempBuffer.length)) != -1) {
+				tempBuffer.length)) != -1) {
 					if (cnt > 0) {
 						// Write data to the internal
 						// buffer of the data line
 						// where it will be delivered
 						// to the speaker.
-						//log.info ("writitng " + tempBuffer);
+						log.info ("writing " + tempBuffer);
 						sourceDataLine.write(tempBuffer, 0, cnt);
 					}// end if
 				}// end while
-					// Block and wait for internal
-					// buffer of the data line to
-					// empty.
+				// Block and wait for internal
+				// buffer of the data line to
+				// empty.
 				sourceDataLine.drain();
 				sourceDataLine.close();
 			} catch (Exception e) {
@@ -277,6 +289,6 @@ public class AudioCapture01 extends JFrame {
 			}// end catch
 		}// end run
 	}// end inner class PlayThread
-		// ===================================//
+	// ===================================//
 
 }// end outer class AudioCapture01.java
