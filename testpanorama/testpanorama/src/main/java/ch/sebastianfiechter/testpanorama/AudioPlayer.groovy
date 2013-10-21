@@ -101,12 +101,10 @@ class AudioPlayer {
 			}
 		
 			def goToStartPosition(double secondsAfterStart) {
-				println "secondesAfterStart: " + secondsAfterStart
 				int nBytesRead = 0;
 				double bytesPerSecond = audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits() / 8;
 				
 				int bytesToEat = (int) (secondsAfterStart*bytesPerSecond-1.0)
-				println "bytes to Eat: " + bytesToEat
 				if (bytesToEat <= 0) {
 					return
 				}

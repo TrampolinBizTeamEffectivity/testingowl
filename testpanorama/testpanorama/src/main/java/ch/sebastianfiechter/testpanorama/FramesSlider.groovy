@@ -4,6 +4,9 @@ import javax.swing.JSlider
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.swing.*
 
 @Component
-class FramesSlider extends JSlider implements ChangeListener {
+class FramesSlider extends JSlider implements ChangeListener, MouseListener {
 
 	@Autowired
 	JPlayer jPlayer
@@ -25,6 +28,7 @@ class FramesSlider extends JSlider implements ChangeListener {
 	public void init() {
 		orientation =  SwingConstants.HORIZONTAL;
 		addChangeListener(this)
+		addMouseListener(this)
 	}
 	
 	public void setMax(int max) {
@@ -45,11 +49,56 @@ class FramesSlider extends JSlider implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent event) {
 		if (!avoidEvent && valueIsAdjusting) {
-			jPlayer.pause()
-			jPlayer.setSliderLabel(value)
+			playerPause()
 		} else if (!avoidEvent && !valueIsAdjusting) {
 			jPlayer.goToFrame(value)
 		}
+	}
+
+	
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		playerPause()
+		
+	}
+	
+	def playerPause() {
+		
+		def val = value;
+		
+		Thread pauseThread = new Thread() {
+			void run() {
+				jPlayer.pause()
+				jPlayer.setFrameLabelText(val);
+			}
+		}
+		pauseThread.start()
+
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

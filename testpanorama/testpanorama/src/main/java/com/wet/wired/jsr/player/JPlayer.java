@@ -69,7 +69,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	
 	@Autowired
 	FramesSlider slider;
-	private JLabel sliderLabel;
 
 	private ScreenPlayer screenPlayer;
 
@@ -209,14 +208,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		
 		decorator.newFrame(frameNumber, (time/1000.0));
 		
-		String seconds = "" + time / 1000;
-		String milliseconds = String.format("%04d", time % 1000);
-		frameLabel.setText("Frame: " + frameNumber + "/"
-				+ screenPlayer.getTotalFrames() + " Time: " + seconds + "."
-				+ milliseconds);
+		setFrameLabelText(frameNumber, time/1000.0);
 
 		slider.setValueProgrammatically((int) frameNumber);
-		setSliderLabel((int) frameNumber);
 	}
 
 	public void init(String[] args) {
@@ -312,9 +306,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	private JPanel createSliderLayout() {
 		slider.setEnabled(false);
 		
-		sliderLabel = new JLabel("0");
-		sliderLabel.setBackground(Color.yellow);
-		sliderLabel.setPreferredSize(new Dimension(20, sliderLabel.getHeight()));
 
 		JPanel sliderPanel = new JPanel();
 		sliderPanel.setPreferredSize(close.getSize()); //use default size of button
@@ -332,12 +323,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbl.setConstraints(slider, gbc);
 		sliderPanel.add(slider);
 		
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.gridheight = 1;
-		gbc.weightx = 0.0;
-		gbl.setConstraints(sliderLabel, gbc);	
-		sliderPanel.add(sliderLabel);	
 		
 		return sliderPanel;
 	}
@@ -409,8 +394,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		slider.setEnabled(true);
 		
-		frameLabel.setText("Frame: 0/" + screenPlayer.getTotalFrames()
-				+ " Time: 0.0");
+		setFrameLabelText(0);
 		
 		screenPlayer.reset();
 		
@@ -554,9 +538,19 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		text.setText("No recording selected");
 	}
 	
-	public void setSliderLabel(int value) {
-		sliderLabel.setText(""+value);
+	public void setFrameLabelText(long frame, double seconds) {
+		frameLabel.setText("Frame: " + frame + "/"
+				+ screenPlayer.getTotalFrames() + " Time: " + seconds);
 	}
+	
+	public void setFrameLabelText(long frame) {
+		
+		double seconds = (0.0+frame)/screenPlayer.getTotalFrames()
+				*screenPlayer.getTotalTime()/1000.0;
+		
+		frameLabel.setText("Frame: " + frame + "/"
+				+ screenPlayer.getTotalFrames() + " Time: " + seconds);
+	}	
 	
 	public void beginShowWaitingCursor() {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

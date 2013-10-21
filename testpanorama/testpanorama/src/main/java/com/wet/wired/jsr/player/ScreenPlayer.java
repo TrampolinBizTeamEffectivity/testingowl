@@ -51,10 +51,11 @@ public class ScreenPlayer implements Runnable {
 	private long startTime;
 	private long frameTime;
 	private long lastFrameTime;
-	
+
 	private int frameNr;
-	
+
 	private int totalFrames;
+	private long totalTime;
 
 	private boolean running;
 	private boolean paused;
@@ -73,7 +74,7 @@ public class ScreenPlayer implements Runnable {
 		this.videoFile = videoFile;
 
 		initialize();
-		countTotalFrames();
+		countTotalFramesAndTime();
 		initialize();
 	}
 
@@ -100,8 +101,7 @@ public class ScreenPlayer implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	public void reset() {
@@ -170,7 +170,7 @@ public class ScreenPlayer implements Runnable {
 	public void goToFrame(int toFrame) {
 
 		FramePacket frame = null;
-		
+
 		for (int i = 1; i <= toFrame; i++) {
 			try {
 				frame = decompressor.unpack();
@@ -180,39 +180,45 @@ public class ScreenPlayer implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (frame != null) {
-			startTime = System.currentTimeMillis()-frame.getTimeStamp();
+			startTime = System.currentTimeMillis() - frame.getTimeStamp();
 		} else {
 			startTime = System.currentTimeMillis();
 		}
 	}
-	
-	private void countTotalFrames() {
-		//we have to iterate, because, the file is Zipped
-		totalFrames = -1;
-		
-		int result = -1;
-		do {
-			FrameDecompressor.FramePacket frame;
-			try {
-				frame = decompressor.unpack();
-				 
-				result = frame.getResult();
-				totalFrames++;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-		} while (result != -1);
-				
+	private void countTotalFramesAndTime() {
+		// we have to iterate, because, the file is Zipped
+		totalFrames = 0;
+		totalTime = 0;
+
+		int result = -1;
+		FrameDecompressor.FramePacket frame;
+		try {
+			frame = decompressor.unpack();
+
+			while ((result = frame.getResult()) != -1) {
+				totalTime = frame.getTimeStamp();
+				totalFrames++;
+
+				frame = decompressor.unpack();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-	
+
 	public int getTotalFrames() {
 		return totalFrames;
 	}
-	
+
+	public long getTotalTime() {
+		return totalTime;
+	}
+
 	public long getFrameTime() {
 		return frameTime;
 	}
@@ -264,7 +270,7 @@ public class ScreenPlayer implements Runnable {
 			} else {
 				while ((System.currentTimeMillis() - startTime < frameTime)
 						&& !paused) {
-				
+
 					try {
 						Thread.sleep(100);
 					} catch (Exception e) {
@@ -289,17 +295,17 @@ public class ScreenPlayer implements Runnable {
 		}
 
 		FrameDecompressor.FramePacket frame = decompressor.unpack();
-		
+
 		int result = frame.getResult();
 		if (result == 0) {
 			return;
 		} else if (result == -1) {
-			//paused = true;
+			// paused = true;
 			running = false;
 			listener.playerStopped();
 			return;
 		}
-		
+
 		frameNr++;
 		frameSize = frame.getData().length;
 		frameTime = frame.getTimeStamp();
