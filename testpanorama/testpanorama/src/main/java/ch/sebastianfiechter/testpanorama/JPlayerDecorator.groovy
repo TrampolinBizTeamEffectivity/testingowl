@@ -29,6 +29,9 @@ class JPlayerDecorator {
 	
 	@Autowired
 	IssuesFrame issuesFrame
+	
+	@Autowired
+	AudioPlayer audioPlayer
 		
 	def openIssues(String fileNameWithDotCap) {
 		def fileNameWithoutEnding = fileNameWithDotCap[0..-5]
@@ -49,6 +52,8 @@ class JPlayerDecorator {
 	
 	def disposing() {
 		issuesFrame.dispose()
+		
+		audioPlayer.stopPlaying()
 	}
 	
 	

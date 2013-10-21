@@ -221,6 +221,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		if (recorder != null)
 			recorder.stopRecording();
 
+		decorator.dispose();
 		dispose();
 	}
 }

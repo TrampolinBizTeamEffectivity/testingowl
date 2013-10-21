@@ -127,6 +127,6 @@ class AudioPlayer {
 	def stopPlaying() {
 		playing = false
 		if (playingThread != null && playingThread.isAlive())
-		playingThread.join();
+			playingThread.join();
 	}
 }
