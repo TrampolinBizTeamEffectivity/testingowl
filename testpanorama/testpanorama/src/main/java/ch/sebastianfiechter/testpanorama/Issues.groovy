@@ -30,12 +30,12 @@ class Issues {
 	}
 
 
-	def writeToExcelCsv(String filenameWithoutDotCsv) {
+	def writeToExcelCsv(String filenameWithoutEnding) {
 
 		//delete existing
-		new File("${filenameWithoutDotCsv}.cap.csv").delete()
+		new File("${filenameWithoutEnding}.cap.csv").delete()
 
-		def out = new File("${filenameWithoutDotCsv}.cap.csv")
+		def out = new File("${filenameWithoutEnding}.cap.csv")
 
 		//header
 		def rowHeader = [
@@ -64,11 +64,11 @@ class Issues {
 
 	}
 
-	static List readFromExcelCsv(String filenameWithoutDotCsv) {
+	static List readFromExcelCsv(String filenameWithoutEnding) {
 
 		List<Issue> readIssues = []
 
-		def file = new File("${filenameWithoutDotCsv}.cap.csv").splitEachLine(
+		def file = new File("${filenameWithoutEnding}.cap.csv").splitEachLine(
 				";", "ISO-8859-1") {fields ->
 
 					//ignore first line

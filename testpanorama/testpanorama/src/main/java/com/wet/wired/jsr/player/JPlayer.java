@@ -110,7 +110,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			if (fileChooser.getSelectedFile() != null) {
 				target = fileChooser.getSelectedFile().getAbsolutePath();
 				open();
-				decorator.openIssues(target);
+				decorator.open(target);
 			}
 		} else if (ev.getActionCommand().equals("play")) {
 			play();
@@ -202,8 +202,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void newFrame(long frameNumber, long frameTime) {
 
+		
+		
 		// long time = System.currentTimeMillis() - startTime;
 		long time = frameTime - startTime;
+		
+		decorator.newFrame(frameNumber, (time/1000.0));
+		
 		String seconds = "" + time / 1000;
 		String milliseconds = String.format("%04d", time % 1000);
 		frameLabel.setText("Frame: " + frameNumber + "/"
@@ -220,7 +225,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		if (args.length == 1) {
 			target = new File(args[0]).getAbsolutePath();
-			decorator.openIssues(target);
+			decorator.open(target);
 			open();
 		}
 	}
@@ -384,8 +389,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void reset() {
 
-		screenPlayer.reset();
-
 		open.setEnabled(false);
 		open.setBackground(null);
 
@@ -405,9 +408,14 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(true);
-
+		
 		frameLabel.setText("Frame: 0/" + screenPlayer.getTotalFrames()
 				+ " Time: 0.0");
+		
+		screenPlayer.reset();
+		
+		decorator.reset();
+		
 		text.setText("Ready to play " + target);
 
 	}
@@ -435,6 +443,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		slider.setEnabled(true);
 
 		screenPlayer.play();
+		
+		decorator.play();
 
 		text.setText("Playing " + target);
 	}
@@ -478,6 +488,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		slider.setEnabled(true);
 
 		screenPlayer.fastforward();
+		
+		decorator.fastForwart();
 
 		text.setText("Fast Forward " + target);
 	}
@@ -505,6 +517,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		slider.setEnabled(true);
 
 		screenPlayer.pause();
+		
+		decorator.pause();
+		
 		text.setText("Paused " + target);
 	}
 
@@ -514,7 +529,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			screenPlayer.stop();
 		}
 
-		decorator.closingFile();
+		decorator.close();
 
 		open.setEnabled(true);
 		open.setBackground(null);

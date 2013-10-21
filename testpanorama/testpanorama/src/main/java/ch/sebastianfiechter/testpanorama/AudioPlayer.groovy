@@ -41,18 +41,20 @@ class AudioPlayer {
 		soundFile = new File("${filenameWithoutFileEnding}.cap.wav");
 	}
 
-	def playFromTime(long seconds) {
+	def playFromTime(double seconds) {
 
+		log.info "play from time: " + seconds
+		
 		assert soundFile != null
 
-		if (playing) {
-			stopPlaying()
-		}
-
-		openLine()
-		
+		stopPlaying()
+	
 		playingThread = new Thread() {
 			public void run() {
+				
+				openLine()
+				
+				line.start();
 				
 				goToStartPosition(seconds)
 				
@@ -74,11 +76,37 @@ class AudioPlayer {
 				line.drain();
 				line.close();
 			}
+			
+			def openLine() {
+				try {
+					audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 		
-			def goToStartPosition(long secondsAfterStart) {
+				audioFormat = audioInputStream.getFormat();
+		
+				DataLine.Info info = new DataLine.Info(SourceDataLine.class,
+						audioFormat);
+		
+				line = null;
+				try {
+					line = (SourceDataLine) AudioSystem.getLine(info);
+					line.open(audioFormat);
+				} catch (LineUnavailableException e) {
+					e.printStackTrace()
+				} catch (Exception e) {
+					e.printStackTrace()
+				}
+			}
+		
+			def goToStartPosition(double secondsAfterStart) {
+				println "secondesAfterStart: " + secondsAfterStart
 				int nBytesRead = 0;
-				float bytesPerSecond = audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits() / 8;
-				int bytesToEat = (int) (secondsAfterStart*bytesPerSecond-1)
+				double bytesPerSecond = audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits() / 8;
+				
+				int bytesToEat = (int) (secondsAfterStart*bytesPerSecond-1.0)
+				println "bytes to Eat: " + bytesToEat
 				if (bytesToEat <= 0) {
 					return
 				}
@@ -96,31 +124,8 @@ class AudioPlayer {
 		
 		playing = true
 
-		line.start();
+		
 		playingThread.start()
-	}
-	
-	def openLine() {
-		try {
-			audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		audioFormat = audioInputStream.getFormat();
-
-		DataLine.Info info = new DataLine.Info(SourceDataLine.class,
-				audioFormat);
-
-		line = null;
-		try {
-			line = (SourceDataLine) AudioSystem.getLine(info);
-			line.open(audioFormat);
-		} catch (LineUnavailableException e) {
-			e.printStackTrace()
-		} catch (Exception e) {
-			e.printStackTrace()
-		}
 	}
 	
 

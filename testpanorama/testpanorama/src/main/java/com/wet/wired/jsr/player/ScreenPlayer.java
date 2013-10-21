@@ -212,6 +212,10 @@ public class ScreenPlayer implements Runnable {
 	public int getTotalFrames() {
 		return totalFrames;
 	}
+	
+	public long getFrameTime() {
+		return frameTime;
+	}
 
 	private void clearImage() {
 		mis = new MemoryImageSource(area.width, area.height,

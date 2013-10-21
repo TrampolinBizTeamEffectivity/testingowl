@@ -32,22 +32,51 @@ class JPlayerDecorator {
 	
 	@Autowired
 	AudioPlayer audioPlayer
+	
+	def listenForPlayStart = false
 		
-	def openIssues(String fileNameWithDotCap) {
+	def open(String fileNameWithDotCap) {
 		def fileNameWithoutEnding = fileNameWithDotCap[0..-5]
 		issuesFrame.issues = issues.readFromExcelCsv(fileNameWithoutEnding);
-		
 		issuesFrame.show()
+		
+		audioPlayer.readFromWav(fileNameWithoutEnding)
+	}
+	
+	def play() {
+		log.info "play()"
+		listenForPlayStart = true
+	}
+	
+	def newFrame(long frameNumber, double frameTime) {
+		if (listenForPlayStart == true) {
+			log.info "play from newFrame with time " + frameTime
+			audioPlayer.playFromTime(frameTime)
+			listenForPlayStart = false;
+		}
+		
+	}
+	
+	def pause() {
+		audioPlayer.stopPlaying();
+	}
+	
+	def reset() {
+		audioPlayer.stopPlaying();
+	}
+	
+	def fastForwart() {
+		audioPlayer.stopPlaying();
+	}
+	
+	def close() {
+		issuesFrame.dispose()
+		audioPlayer.stopPlaying();
 	}
 	
 	def issueSelected(Issue issue) {
 		log.info "go to ${issue.frameStart}"
 		jPlayer.goToFrame(issue.frameStart)
-	}
-	
-		
-	def closingFile() {
-		issuesFrame.dispose()
 	}
 	
 	def disposing() {
