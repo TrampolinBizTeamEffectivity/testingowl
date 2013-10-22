@@ -42,7 +42,7 @@ class Main {
 		]
 
 		return JOptionPane.showOptionDialog(null,
-		"Please choose your modul:", "Testpanorama Welcome!",
+		"Please choose your modul:", "TestOwl Welcome!",
 		JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
 		null, options, options[0]);
 	}

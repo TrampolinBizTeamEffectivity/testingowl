@@ -228,7 +228,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 8));
-		setTitle("TestLookOut Player");
+		setTitle("TestOwl Player");
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -284,14 +284,14 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
-		panel.setBackground(Color.black);
+		//panel.setBackground(Color.black);
 
 		frameLabel = new JLabel("Frame: 0 Time: 0");
-		frameLabel.setBackground(Color.black);
-		frameLabel.setForeground(Color.white);
+		//frameLabel.setBackground(Color.black);
+		frameLabel.setForeground(Color.black);
 		text = new JLabel("No recording selected");
-		text.setBackground(Color.black);
-		text.setForeground(Color.white);
+		//text.setBackground(Color.black);
+		text.setForeground(Color.black);
 
 		panel.add(text);
 		panel.add(frameLabel);

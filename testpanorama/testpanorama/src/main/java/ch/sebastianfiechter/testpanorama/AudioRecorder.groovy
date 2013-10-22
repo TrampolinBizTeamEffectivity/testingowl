@@ -33,7 +33,10 @@ class AudioRecorder {
 
 	def startRecording() {
 
-		assert mixerName != null
+		if (mixerName == null) {
+			log.info "No mixer defined - won't record audio."
+			return
+		}
 
 		tempFile = new File("tempwav");
 		tempFile.deleteOnExit();

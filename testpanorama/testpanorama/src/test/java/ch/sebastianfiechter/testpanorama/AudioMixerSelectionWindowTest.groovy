@@ -17,13 +17,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 class AudioMixerSelectionWindowTest {
 
 	@Autowired
-	AudioMixerSelectionWindow window
+	TopicAndMixerWindow window
 	
 
 	
 	@Test
 	public void testAll() {
-		window.getMixerName();
+		window.show();
 		
 		sleep 100000
 		

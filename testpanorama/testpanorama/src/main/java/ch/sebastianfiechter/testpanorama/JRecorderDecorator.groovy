@@ -42,7 +42,7 @@ class JRecorderDecorator implements ActionListener {
 	JRecorder jRecorder
 
 	@Autowired
-	AudioMixerSelectionWindow audioMixerWindow
+	TopicAndMixerWindow topicAndMixerWindow
 
 	@Autowired
 	AudioRecorder audioRecorder
@@ -113,41 +113,39 @@ class JRecorderDecorator implements ActionListener {
 	}
 
 	def fetchIssue(question, title, type, startFrame) {
-//		def value = JOptionPane.showInputDialog(jRecorder, question,
-//				title, JOptionPane.QUESTION_MESSAGE);
-		
+
 		JTextArea textArea = new JTextArea(4, 10);
 		//get focus on display
 		textArea.addAncestorListener(new AncestorListener() {
-			void ancestorMoved(AncestorEvent event) {
-				textArea.requestFocusInWindow();	
-			}
-			void ancestorAdded(AncestorEvent event) {
-				textArea.requestFocusInWindow();
-			}
-			void ancestorRemoved(AncestorEvent event) {
-				textArea.requestFocusInWindow();
-			}
-		});
+					void ancestorMoved(AncestorEvent event) {
+						textArea.requestFocusInWindow();
+					}
+					void ancestorAdded(AncestorEvent event) {
+						textArea.requestFocusInWindow();
+					}
+					void ancestorRemoved(AncestorEvent event) {
+						textArea.requestFocusInWindow();
+					}
+				});
 		JScrollPane scrollPane = new JScrollPane(textArea);
-		
+
 		Object[] complexMsg = [question, scrollPane];
-	
+
 		JOptionPane optionPane = new JOptionPane();
 		optionPane.setMessage(complexMsg);
 		optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
-		
+
 		JDialog dialog = optionPane.createDialog(jRecorder, title);
 		def cancel = false
 		dialog.addWindowListener(new WindowAdapter() {
-			@Override
-			void windowClosing(WindowEvent event) {
-				cancel = true
-			}
-		});
+					@Override
+					void windowClosing(WindowEvent event) {
+						cancel = true
+					}
+				});
 		dialog.setVisible(true);
-		
-	
+
+
 		if (!cancel) {
 			log.info "User value for fetch Issue: " + textArea?.text
 			def value = textArea.text.trim()
@@ -156,23 +154,22 @@ class JRecorderDecorator implements ActionListener {
 			log.info "User canceled Issue reporting."
 		}
 	}
-	
 
-	public boolean fetchTopic(JFrame parent) {
-		def top = JOptionPane.showInputDialog(parent, "What's the Topic of this session?",
-				"Topic", JOptionPane.QUESTION_MESSAGE);
 
-		if (top == null) return false
+	public boolean fetchTopicAndMixer(JFrame parent) {
 
-		issues.setTopic(top)
+		if (topicAndMixerWindow.show() == true) {
 
-		topic = top
 
-		return true
-	}
+			issues.setTopic(topicAndMixerWindow.topic)
+			topic = topicAndMixerWindow.topic
 
-	def startup() {
-		audioRecorder.mixerName = audioMixerWindow.getMixerName(jRecorder)
+			audioRecorder.mixerName = topicAndMixerWindow.mixerName
+
+			return true
+		} else {
+			return false
+		}
 	}
 
 
@@ -207,10 +204,10 @@ class JRecorderDecorator implements ActionListener {
 	def cancelSave() {
 		audioRecorder.cancelSave()
 	}
-	
+
 	def dispose() {
 		audioRecorder.stopRecording();
 		audioRecorder.cancelSave();
-		
+
 	}
 }

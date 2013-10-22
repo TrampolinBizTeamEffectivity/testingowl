@@ -28,7 +28,7 @@ class IssuesFrame {
 
 		swing = new SwingBuilder()
 
-		frame = swing.frame(title:'TestLookOut Issues', location:[0, 440],
+		frame = swing.frame(title:'TestOwl Issues', location:[0, 440],
 		size:[700, 150], alwaysOnTop: true,
 		defaultCloseOperation:WindowConstants.DO_NOTHING_ON_CLOSE ) {
 			panel {

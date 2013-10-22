@@ -78,7 +78,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			return true;
 		}
 		
-		if (!decorator.fetchTopic(this)) {
+		if (!decorator.fetchTopicAndMixer(this)) {
 			return false;
 		}
 
@@ -136,7 +136,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 			filter = new FileExtensionFilter();
 			filter.addExtension("cap");
-			filter.setDescription("TestLookOut File");
+			filter.setDescription("TestOwl File");
 
 			fileChooser.setFileFilter(filter);
 			fileChooser.setSelectedFile(decorator.prepareSuggestedFileName());
@@ -195,7 +195,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			}
 		});
 		
-		setTitle("TestLookOut Recorder");
+		setTitle("TestOwl Recorder");
 
 		control = new JButton("Start Recording");
 		control.setActionCommand("start");
@@ -211,7 +211,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		this.pack();
 		this.setVisible(true);
 		
-		decorator.startup();
 	}
 
 	public void shutdown() {

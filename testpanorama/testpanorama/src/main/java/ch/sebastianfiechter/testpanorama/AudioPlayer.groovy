@@ -24,7 +24,6 @@ import groovy.util.logging.*
 @Slf4j
 class AudioPlayer {
 
-	
 	@Autowired
 	AudioIO audioIO
 
@@ -65,6 +64,7 @@ class AudioPlayer {
 				while (playing == true && nBytesRead != -1) {
 					try {
 						nBytesRead = audioInputStream.read(abData, 0, abData.length);
+						println (audioIO.calculateRMSLevel(abData[0..200] as byte[]))
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
