@@ -28,12 +28,15 @@ package com.wet.wired.jsr.recorder;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.swing.JButton;
@@ -46,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ch.sebastianfiechter.testpanorama.JRecorderDecorator;
+import ch.sebastianfiechter.testpanorama.SoundLevel;
 
 @SuppressWarnings("serial")
 @Component
@@ -54,7 +58,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 	@Autowired
 	JRecorderDecorator decorator;
-	
+		
 	private ScreenRecorder recorder;
 	private File temp;
 
@@ -196,17 +200,33 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		});
 		
 		setTitle("TestingOwl Recorder");
+		GridBagLayout gbl = new GridBagLayout();
+		GridBagConstraints gbc = new GridBagConstraints();
+		this.getContentPane().setLayout(gbl);
 
 		control = new JButton("Start Recording");
 		control.setActionCommand("start");
 		control.addActionListener(this);
-		this.getContentPane().add(control, BorderLayout.WEST);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		this.getContentPane().add(control, gbc);
 		
-		this.getContentPane().add(decorator.getButtons(), BorderLayout.EAST);
-
+		decorator.getButtonsAndSoundLevel(this.getContentPane(), gbc);
+		
 		text = new JLabel("Ready to record");
-		this.getContentPane().add(text, BorderLayout.SOUTH);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.weightx = 1;
+		gbc.weighty = 0;
+		gbc.gridwidth = 5;
+		this.getContentPane().add(text, gbc);
 
+		getContentPane().doLayout();
+		
 		this.setAlwaysOnTop(true);
 		this.pack();
 		this.setVisible(true);
@@ -217,10 +237,14 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		shuttingDown = true;
 
-		if (recorder != null)
+		if (recorder != null) {
 			recorder.stopRecording();
+		}
 
+		
 		decorator.dispose();
 		dispose();
+		
+		System.exit(0);
 	}
 }

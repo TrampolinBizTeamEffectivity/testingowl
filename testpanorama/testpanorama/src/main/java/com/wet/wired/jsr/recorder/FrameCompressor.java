@@ -246,5 +246,6 @@ public class FrameCompressor {
 
       frame.oStream.write(bA);
       frame.oStream.flush();
+      
    }
 }

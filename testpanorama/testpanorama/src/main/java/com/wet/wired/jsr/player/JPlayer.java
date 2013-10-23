@@ -201,8 +201,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void newFrame(long frameNumber, long frameTime) {
 
-		
-		
 		// long time = System.currentTimeMillis() - startTime;
 		long time = frameTime - startTime;
 		

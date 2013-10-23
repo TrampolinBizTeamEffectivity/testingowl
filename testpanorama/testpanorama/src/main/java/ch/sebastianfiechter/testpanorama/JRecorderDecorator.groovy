@@ -2,6 +2,9 @@ package ch.sebastianfiechter.testpanorama
 
 import com.wet.wired.jsr.recorder.JRecorder
 
+import java.awt.Container
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener
@@ -47,37 +50,56 @@ class JRecorderDecorator implements ActionListener {
 	@Autowired
 	AudioRecorder audioRecorder
 
+	@Autowired
+	SoundLevel soundLevel;
+	
 	JButton bug
 	JButton musthave
 	JButton wish
 
 	String topic
 
-	public JPanel getButtons() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 3));
-
+	public void getButtonsAndSoundLevel(Container panel, GridBagConstraints gbc ) {
+		
+	
 		bug = new JButton(text: "Bug", actionCommand: "bug",
 		enabled:false, background: Color.RED);
 		bug.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;
+		panel.add(bug, gbc);
 
 		musthave = new JButton(text: "Must Have!", actionCommand: "musthave",
 		enabled:false, background: Color.ORANGE);
 		musthave.addActionListener(this);
-
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 2;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;
+		panel.add(musthave, gbc);
 
 		wish = new JButton(text: "Wish", actionCommand: "wish",
 		enabled:false, background: Color.GREEN);
 		wish.addActionListener(this);
-
-
-		panel.add(bug)
-		panel.add(musthave)
-		panel.add(wish)
-
-		panel.doLayout()
-
-		return panel
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 3;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;
+		panel.add(wish, gbc)
+		
+		soundLevel.setSize(30, wish.getSize().height as int)
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 4;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;
+		panel.add(soundLevel, gbc)
+		
 	}
 
 	@Override
@@ -206,8 +228,11 @@ class JRecorderDecorator implements ActionListener {
 	}
 
 	def dispose() {
+		
+		
 		audioRecorder.stopRecording();
 		audioRecorder.cancelSave();
+		log.info "disposed"
 
 	}
 }

@@ -22,6 +22,9 @@ class AudioRecorder {
 
 	@Autowired
 	AudioIO audioIO
+	
+	@Autowired
+	SoundLevel soundLevel;
 
 	def mixerName = null
 	Thread recordingThread;
@@ -29,9 +32,8 @@ class AudioRecorder {
 
 	TargetDataLine targetDataLine
 	AudioFileFormat.Type targetType
-	AudioInputStream audioInputStream
+	MonitoringAudioInputStream monitoringAudioInputStream
 	
-	AudioLevelMonitorThread levelMonitorThread
 
 	def startRecording() {
 
@@ -49,9 +51,7 @@ class AudioRecorder {
 		recordingThread = new Thread() {
 					void run() {
 						try {
-							levelMonitorThread = new AudioLevelMonitorThread()
-							levelMonitorThread.start()
-							AudioSystem.write(audioInputStream, targetType, tempFile);
+							AudioSystem.write(monitoringAudioInputStream, targetType, tempFile);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -73,15 +73,13 @@ class AudioRecorder {
 
 		targetType = AudioFileFormat.Type.WAVE;
 
-		audioInputStream = new AudioInputStream(targetDataLine);
+		monitoringAudioInputStream = new MonitoringAudioInputStream(targetDataLine, 
+			audioIO, soundLevel);
 	}
 
 	def stopRecording() {
-
-		if (levelMonitorThread != null && levelMonitorThread.isAlive()) {
-			levelMonitorThread.running = false
-			levelMonitorThread.join()
-		}
+		
+		monitoringAudioInputStream?.stop()
 		
 		if (targetDataLine != null && targetDataLine.active) {
 			targetDataLine.stop();
@@ -100,32 +98,18 @@ class AudioRecorder {
 
 		def out = new File("${filenameWithoutEnding}.cap.wav")
 
-		FileHelper.copy(tempFile, out);
-
-		tempFile.delete()
+		if (tempFile != null && tempFile.exists()) {
+			FileHelper.copy(tempFile, out);
+			tempFile.delete()
+		}
 
 	}
 
 	def cancelSave() {
-		if (tempFile.exists()) {
+		if (tempFile != null && tempFile.exists()) {
 			tempFile.delete()
 		}
 	}
 
-	@Slf4j
-	class AudioLevelMonitorThread extends Thread {
 
-		byte[] tempBuffer = new byte[500];
-		def running = true
-
-		public void run() {
-
-			while(running){
-				int cnt = targetDataLine.read(tempBuffer, 0, tempBuffer.length);
-				if(cnt > 0){
-					log.info ("recording level: " + audioIO.calculateRMSLevel(tempBuffer));
-				}
-			}
-		}
-	}
 }
