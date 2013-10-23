@@ -24,7 +24,7 @@ class AudioRecorder {
 	AudioIO audioIO
 
 	def mixerName = null
-	def recordingThread;
+	Thread recordingThread;
 	File tempFile;
 
 	TargetDataLine targetDataLine
@@ -73,11 +73,15 @@ class AudioRecorder {
 	}
 
 	def stopRecording() {
-
-		targetDataLine.stop();
-		targetDataLine.close();
-
-		recordingThread.join()
+		
+		if (targetDataLine != null && targetDataLine.active) {
+			targetDataLine.stop();
+			targetDataLine.close();
+		}
+		
+		if (recordingThread != null && recordingThread.isAlive()) {
+			recordingThread.join()
+		}
 	}
 
 	def writeToWavFile(String filenameWithoutEnding) {
@@ -94,6 +98,8 @@ class AudioRecorder {
 	}
 
 	def cancelSave() {
-		tempFile.delete()
+		if (tempFile.exists()) {
+			tempFile.delete()
+		}
 	}
 }
