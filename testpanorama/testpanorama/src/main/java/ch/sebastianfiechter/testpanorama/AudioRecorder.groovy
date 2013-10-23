@@ -30,6 +30,8 @@ class AudioRecorder {
 	TargetDataLine targetDataLine
 	AudioFileFormat.Type targetType
 	AudioInputStream audioInputStream
+	
+	AudioLevelMonitorThread levelMonitorThread
 
 	def startRecording() {
 
@@ -45,14 +47,16 @@ class AudioRecorder {
 
 
 		recordingThread = new Thread() {
-			void run() {
-				try {
-					AudioSystem.write(audioInputStream, targetType, tempFile);
-				} catch (IOException e) {
-					e.printStackTrace();
+					void run() {
+						try {
+							levelMonitorThread = new AudioLevelMonitorThread()
+							levelMonitorThread.start()
+							AudioSystem.write(audioInputStream, targetType, tempFile);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 				}
-			}
-		}
 
 		targetDataLine.start()
 		recordingThread.start()
@@ -73,12 +77,17 @@ class AudioRecorder {
 	}
 
 	def stopRecording() {
+
+		if (levelMonitorThread != null && levelMonitorThread.isAlive()) {
+			levelMonitorThread.running = false
+			levelMonitorThread.join()
+		}
 		
 		if (targetDataLine != null && targetDataLine.active) {
 			targetDataLine.stop();
 			targetDataLine.close();
 		}
-		
+
 		if (recordingThread != null && recordingThread.isAlive()) {
 			recordingThread.join()
 		}
@@ -100,6 +109,23 @@ class AudioRecorder {
 	def cancelSave() {
 		if (tempFile.exists()) {
 			tempFile.delete()
+		}
+	}
+
+	@Slf4j
+	class AudioLevelMonitorThread extends Thread {
+
+		byte[] tempBuffer = new byte[500];
+		def running = true
+
+		public void run() {
+
+			while(running){
+				int cnt = targetDataLine.read(tempBuffer, 0, tempBuffer.length);
+				if(cnt > 0){
+					log.info ("recording level: " + audioIO.calculateRMSLevel(tempBuffer));
+				}
+			}
 		}
 	}
 }

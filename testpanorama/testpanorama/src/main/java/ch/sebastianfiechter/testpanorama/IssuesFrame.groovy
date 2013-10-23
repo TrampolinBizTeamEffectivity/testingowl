@@ -3,6 +3,8 @@ package ch.sebastianfiechter.testpanorama
 import org.springframework.beans.factory.annotation.Autowired;
 import groovy.swing.SwingBuilder
 import java.awt.BorderLayout
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
@@ -44,26 +46,30 @@ class IssuesFrame {
 							closureColumn(header:'Message', preferredWidth:700-180, read:{row -> return row.message})
 						}
 
-						current.selectionModel.addListSelectionListener(
-							new ListSelectionListener() {
-								public void valueChanged(ListSelectionEvent event) {
-									if (!event.valueIsAdjusting) {
+//						current.selectionModel.addListSelectionListener(
+//								new ListSelectionListener() {
+//									public void valueChanged(ListSelectionEvent event) {
+//										if (!event.valueIsAdjusting) {
+//											jPlayerDecorator.issueSelected(issues[table.selectedRow])
+//										}
+//									}
+//								}
+//								)
+						current.addMouseListener(new MouseAdapter() {
+									public void mouseClicked(MouseEvent e) {
 										jPlayerDecorator.issueSelected(issues[table.selectedRow])
 									}
-								}
-							}
-						)
+								})
 					}
 				}
 			}
 		}
 		frame.show()
 	}
-	
+
 	def dispose() {
 		if (frame != null) {
 			frame.dispose()
 		}
 	}
-
 }

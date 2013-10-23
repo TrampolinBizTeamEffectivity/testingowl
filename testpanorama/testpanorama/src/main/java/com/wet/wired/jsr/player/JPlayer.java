@@ -512,6 +512,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		if (screenPlayer != null) {
 			screenPlayer.stop();
 		}
+		
+		
 
 		decorator.close();
 

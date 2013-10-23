@@ -120,6 +120,14 @@ public class ScreenPlayer implements Runnable {
 		clearImage();
 
 		resetReq = false;
+		
+		try {
+			iStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		initialize();
 
 	}
@@ -163,6 +171,12 @@ public class ScreenPlayer implements Runnable {
 		}
 
 		clearImage();
+		
+		try {
+			iStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		listener.playerStopped();
 	}

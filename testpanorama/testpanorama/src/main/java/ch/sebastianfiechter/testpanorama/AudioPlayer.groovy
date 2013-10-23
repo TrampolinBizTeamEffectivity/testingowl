@@ -64,7 +64,7 @@ class AudioPlayer {
 				while (playing == true && nBytesRead != -1) {
 					try {
 						nBytesRead = audioInputStream.read(abData, 0, abData.length);
-						println (audioIO.calculateRMSLevel(abData[0..200] as byte[]))
+						AudioPlayer.this.log.info ("level: "+audioIO.calculateRMSLevel(abData[0..200] as byte[]))
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -75,6 +75,7 @@ class AudioPlayer {
 				
 				line.drain();
 				line.close();
+				audioInputStream.close();
 			}
 			
 			def openLine() {
@@ -105,6 +106,7 @@ class AudioPlayer {
 				double bytesPerSecond = audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits() / 8;
 				
 				int bytesToEat = (int) (secondsAfterStart*bytesPerSecond-1.0)
+				AudioPlayer.this.log.info ("bytesToEat ${bytesToEat}")
 				if (bytesToEat <= 0) {
 					return
 				}
@@ -122,14 +124,14 @@ class AudioPlayer {
 		
 		playing = true
 
-		
 		playingThread.start()
 	}
 	
 
 	def stopPlaying() {
 		playing = false
-		if (playingThread != null && playingThread.isAlive())
+		if (playingThread != null && playingThread.isAlive()) {
 			playingThread.join();
+		}
 	}
 }
