@@ -228,7 +228,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 8));
-		setTitle("TestOwl Player");
+		setTitle("TestingOwl Player");
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {

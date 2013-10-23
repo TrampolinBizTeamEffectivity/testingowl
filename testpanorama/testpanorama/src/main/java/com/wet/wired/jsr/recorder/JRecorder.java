@@ -136,7 +136,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 			filter = new FileExtensionFilter();
 			filter.addExtension("cap");
-			filter.setDescription("TestOwl File");
+			filter.setDescription("TestingOwl File");
 
 			fileChooser.setFileFilter(filter);
 			fileChooser.setSelectedFile(decorator.prepareSuggestedFileName());
@@ -195,7 +195,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			}
 		});
 		
-		setTitle("TestOwl Recorder");
+		setTitle("TestingOwl Recorder");
 
 		control = new JButton("Start Recording");
 		control.setActionCommand("start");

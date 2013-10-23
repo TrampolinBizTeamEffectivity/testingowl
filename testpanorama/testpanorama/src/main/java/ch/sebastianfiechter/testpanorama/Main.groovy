@@ -11,6 +11,8 @@ import javax.swing.*
 import com.wet.wired.jsr.recorder.*
 import com.wet.wired.jsr.player.*
 import com.wet.wired.jsr.converter.*
+import ch.sebastianfiechter.testpanorama.WelcomeWindow.Module
+
 
 @Component
 class Main {
@@ -18,32 +20,22 @@ class Main {
 	static main(args) {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
 
-		switch (showChooseModule()) {
-			case JOptionPane.CLOSED_OPTION:
+		WelcomeWindow welcome = applicationContext.getBean(WelcomeWindow.class)
+		
+		switch (welcome.show()) {
+			case WelcomeWindow.Module.Cancel:
 				println "Good bye."
 				System.exit(0)
-			case 0:
+			case WelcomeWindow.Module.Recorder:
 				applicationContext.getBean(JRecorder.class).init(args)
 				break;
-			case 1:
+			case  WelcomeWindow.Module.Player:
 				applicationContext.getBean(JPlayer.class).init(args)
 				break;
-			case 2:
+			case  WelcomeWindow.Module.Converter:
 				applicationContext.getBean(RecordingConverter.class).init(args)
 				break;
 		}
 	}
 
-	private static int showChooseModule() {
-		Object[] options = [
-			"Recorder",
-			"Player",
-			//"Converter"
-		]
-
-		return JOptionPane.showOptionDialog(null,
-		"Please choose your modul:", "TestOwl Welcome!",
-		JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-		null, options, options[0]);
-	}
 }
