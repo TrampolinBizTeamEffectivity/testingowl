@@ -21,7 +21,7 @@ import javax.swing.*
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import com.jcabi.manifests.Manifests
 @Slf4j
 @Component
 class WelcomeWindow {
@@ -41,7 +41,7 @@ class WelcomeWindow {
 		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_welcome.png"))
 		def icon = new ImageIcon(img)
 		
-		JLabel label = new JLabel("TestingOwl " + this.class.package.specificationVersion, SwingConstants.CENTER)
+		JLabel label = new JLabel("TestingOwl " + fetchAppVersion(), SwingConstants.CENTER)
 		JButton recorder = new JButton("Recorder")
 		JButton player = new JButton("Player")
 		
@@ -78,5 +78,9 @@ class WelcomeWindow {
 		
 		return result
 		
+	}
+	
+	def fetchAppVersion() {
+		return Manifests.exists("App-Version")==true ? Manifests.read("App-Version"): "";
 	}
 }
