@@ -221,7 +221,6 @@ class JRecorderDecorator implements ActionListener {
 	public void saveFile(File fileNameCap) {
 		def fileNameWithoutEnding = fileNameCap.absolutePath[0..-5];
 
-		issues.writeToExcelCsv(fileNameWithoutEnding);
 		issues.writeToExcelXlsx(fileNameWithoutEnding);
 		audioRecorder.writeToWavFile(fileNameWithoutEnding)
 	}

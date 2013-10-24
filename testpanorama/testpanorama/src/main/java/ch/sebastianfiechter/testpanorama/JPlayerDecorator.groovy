@@ -37,7 +37,6 @@ class JPlayerDecorator {
 		
 	def open(String fileNameWithDotCap) {
 		def fileNameWithoutEnding = fileNameWithDotCap[0..-5]
-		//issuesFrame.issues = issues.readFromExcelCsv(fileNameWithoutEnding);
 		issuesFrame.issues = issues.readFromExcelXlsx(fileNameWithoutEnding);
 		issuesFrame.show()
 		

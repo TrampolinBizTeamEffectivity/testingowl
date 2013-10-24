@@ -49,41 +49,6 @@ class Issues {
 		frameStart:frameStart, frameEnd:frameEnd, message:message)
 	}
 
-
-	def writeToExcelCsv(String filenameWithoutEnding) {
-
-		//delete existing
-		new File("${filenameWithoutEnding}.cap.csv").delete()
-
-		def out = new File("${filenameWithoutEnding}.cap.csv")
-
-		//header
-		def rowHeader = [
-			'"ID"',
-			'"IssueType"',
-			'"Start Frame"',
-			'"End Frame"',
-			'"Message"'
-		]
-		out.append(rowHeader.join(';'), "ISO-8859-1")
-		out.append System.getProperty("line.separator")
-
-		//rows
-		issues.each {
-			//replace ; in message with , because of cell limiter
-			def row = [
-				'"'+it.id+'"',
-				'"'+it.type+'"',
-				'"'+it.frameStart+'"',
-				'"'+it.frameEnd+'"',
-				'"'+it.message.replace(";", ",").replace('"', /'/)+'"'
-			]
-			out.append(row.join(';'), "ISO-8859-1")
-			out.append "\n"
-		}
-
-	}
-
 	def writeToExcelXlsx(String filenameWithoutEnding) {
 
 		Workbook wb = new XSSFWorkbook();
@@ -133,33 +98,6 @@ class Issues {
 
 	}
 
-
-	static List readFromExcelCsv(String filenameWithoutEnding) {
-
-		List<Issue> readIssues = []
-
-		def file = new File("${filenameWithoutEnding}.cap.csv").splitEachLine(
-				";", "ISO-8859-1") {fields ->
-
-					//ignore first line
-					if ("ID" == fields[0][1..-2]) {
-						return
-					}
-
-					def issue = new Issues.Issue()
-					issue.id = fields[0][1..-2]
-					issue.type = fields[1][1..-2]
-					issue.frameStart = fields[2][1..-2] as int
-					issue.frameEnd = fields[3][1..-2] as int
-					issue.message = fields[4][1..-2]
-
-					readIssues << issue
-				}
-
-		return readIssues
-	}
-
-
 	static List readFromExcelXlsx(String filenameWithoutEnding) {
 
 		List<Issue> readIssues = []
@@ -183,35 +121,6 @@ class Issues {
 			issue.frameStart = row.getCell(2).getNumericCellValue() as int
 			issue.frameEnd = row.getCell(3).getNumericCellValue() as int
 			issue.message = row.getCell(4).getRichStringCellValue() as String
-			
-			/*
-			for (Cell cell : row) {
-				CellReference cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex());
-				System.out.print(cellRef.formatAsString());
-				System.out.print(" - ");
-
-				switch (cell.getCellType()) {
-					case Cell.CELL_TYPE_STRING:
-						System.out.println("string: " + cell.getRichStringCellValue().getString());
-						break;
-					case Cell.CELL_TYPE_NUMERIC:
-						if (DateUtil.isCellDateFormatted(cell)) {
-							System.out.println(cell.getDateCellValue());
-						} else {
-							System.out.println("numeric: " + cell.getNumericCellValue());
-						}
-						break;
-					case Cell.CELL_TYPE_BOOLEAN:
-						System.out.println(cell.getBooleanCellValue());
-						break;
-					case Cell.CELL_TYPE_FORMULA:
-						System.out.println(cell.getCellFormula());
-						break;
-					default:
-						System.out.println();
-				}
-			}
-			*/
 			
 			//ignore first line
 			if (issue.id != "ID") {
