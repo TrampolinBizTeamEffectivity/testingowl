@@ -199,6 +199,8 @@ class JRecorderDecorator implements ActionListener {
 		bug.enabled = true
 		musthave.enabled = true
 		wish.enabled = true
+		
+		issues.reset()
 
 		audioRecorder.startRecording()
 	}
@@ -220,6 +222,7 @@ class JRecorderDecorator implements ActionListener {
 		def fileNameWithoutEnding = fileNameCap.absolutePath[0..-5];
 
 		issues.writeToExcelCsv(fileNameWithoutEnding);
+		issues.writeToExcelXlsx(fileNameWithoutEnding);
 		audioRecorder.writeToWavFile(fileNameWithoutEnding)
 	}
 

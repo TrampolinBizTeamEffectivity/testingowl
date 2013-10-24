@@ -27,6 +27,7 @@
 package com.wet.wired.jsr.recorder;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -148,17 +149,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 			File target = fileChooser.getSelectedFile();
 
-			if (target != null) {
-
-				if (!target.getName().endsWith(".cap"))
-					target = new File(target + ".cap");
-				
-				FileHelper.copy(temp, target);
-				
-				decorator.saveFile(target);
-			} else {
-				decorator.cancelSave();
-			}
+			save(target);
 
 			FileHelper.delete(temp);
 			recorder = null;
@@ -170,6 +161,24 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			text.setText("Ready to record");
 		} else
 			FileHelper.delete(temp);
+	}
+	
+	public void save(File target) {
+		if (target != null) {
+			
+			this.beginWaitForBackgroundProcesses();
+
+			if (!target.getName().endsWith(".cap"))
+				target = new File(target + ".cap");
+			
+			FileHelper.copy(temp, target);
+			
+			decorator.saveFile(target);
+			
+			this.endWaitForBackgroundProcesses();
+		} else {
+			decorator.cancelSave();
+		}
 	}
 
 	public void init(String[] args) {
@@ -247,4 +256,15 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		
 		System.exit(0);
 	}
+	
+	public void beginWaitForBackgroundProcesses() {
+		control.setEnabled(false);
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		
+	}
+	
+	public void endWaitForBackgroundProcesses() {
+		control.setEnabled(true);
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}	
 }

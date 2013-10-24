@@ -37,6 +37,6 @@ class SoundLevel extends JPanel {
 		
 		g.setColor(Color.black);
 		g.clearRect(0, 0, width, height);
-		g.fillRect(0, (height-finalHeight), width, finalHeight);
+		g.fillRect(2, (height-finalHeight), (width-4), finalHeight);
 	}
 }

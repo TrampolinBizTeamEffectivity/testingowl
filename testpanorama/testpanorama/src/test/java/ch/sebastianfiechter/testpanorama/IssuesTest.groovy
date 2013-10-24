@@ -27,5 +27,12 @@ class IssuesTest {
 		
 		//fail("Not yet implemented");
 	}
+	
+	@Test
+	public void testReadFromExcelXlsx() {
+		List readIssues = Issues.readFromExcelXlsx("src/test/resources/testissues")
+		
+		assert 4 == readIssues.size()
+	}
 
 }
