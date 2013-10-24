@@ -31,7 +31,7 @@ class IssuesFrame {
 		swing = new SwingBuilder()
 
 		frame = swing.frame(title:'TestingOwl Issues', location:[0, 440],
-		size:[700, 150], alwaysOnTop: true,
+		size:[700, 150], alwaysOnTop: true, 
 		defaultCloseOperation:WindowConstants.DO_NOTHING_ON_CLOSE ) {
 			panel {
 				borderLayout()
@@ -43,7 +43,7 @@ class IssuesFrame {
 							closureColumn(header:'IssueType', preferredWidth:60, read:{row -> return row.type})
 							closureColumn(header:'Start Frame', preferredWidth:40, read:{row -> return row.frameStart})
 							closureColumn(header:'End Frame', preferredWidth:40, read:{row -> return row.frameEnd})
-							closureColumn(header:'Message', preferredWidth:700-180, read:{row -> return row.message})
+							closureColumn(header:'Message', preferredWidth:700-180, cellRenderer: new MultiLineCellRenderer(), read:{row -> return row.message})
 						}
 
 //						current.selectionModel.addListSelectionListener(
@@ -60,6 +60,9 @@ class IssuesFrame {
 										jPlayerDecorator.issueSelected(issues[table.selectedRow])
 									}
 								})
+						
+						current.setRowHeight(current.getRowHeight() * 3)
+
 					}
 				}
 			}

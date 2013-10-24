@@ -64,7 +64,7 @@ class AudioPlayer {
 				while (playing == true && nBytesRead != -1) {
 					try {
 						nBytesRead = audioInputStream.read(abData, 0, abData.length);
-						AudioPlayer.this.log.info ("level: "+audioIO.calculateRMSLevel(abData[0..200] as byte[]))
+						//AudioPlayer.this.log.info ("level: "+audioIO.calculateRMSLevel(abData[0..200] as byte[]))
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

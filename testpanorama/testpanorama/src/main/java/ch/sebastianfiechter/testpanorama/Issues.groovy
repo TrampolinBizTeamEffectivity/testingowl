@@ -36,7 +36,7 @@ class Issues {
 	
 	def reset() {
 		issues = []
-		issuesIdCounter = 0
+		issuesIdCounter = -1
 	}
 
 	def setTopic(String topic) {
@@ -128,7 +128,6 @@ class Issues {
 			}
 		}
 		
-
 		return readIssues
 	}
 

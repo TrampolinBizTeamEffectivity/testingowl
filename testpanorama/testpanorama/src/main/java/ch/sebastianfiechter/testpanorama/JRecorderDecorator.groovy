@@ -182,7 +182,7 @@ class JRecorderDecorator implements ActionListener {
 
 		if (topicAndMixerWindow.show() == true) {
 
-
+			issues.reset()
 			issues.setTopic(topicAndMixerWindow.topic)
 			topic = topicAndMixerWindow.topic
 
@@ -200,7 +200,7 @@ class JRecorderDecorator implements ActionListener {
 		musthave.enabled = true
 		wish.enabled = true
 		
-		issues.reset()
+		
 
 		audioRecorder.startRecording()
 	}

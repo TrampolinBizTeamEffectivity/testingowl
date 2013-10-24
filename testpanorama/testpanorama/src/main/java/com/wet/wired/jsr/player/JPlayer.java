@@ -149,7 +149,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void playerStopped() {
 
-		open.setEnabled(true);
+		open.setEnabled(false);
 		open.setBackground(null);
 
 		reset.setEnabled(true);
