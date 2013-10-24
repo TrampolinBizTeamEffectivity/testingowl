@@ -26,6 +26,9 @@ class AudioPlayer {
 
 	@Autowired
 	AudioIO audioIO
+	
+	@Autowired
+	SoundLevel soundLevel
 
 	def playing = false
 	File soundFile
@@ -64,6 +67,7 @@ class AudioPlayer {
 				while (playing == true && nBytesRead != -1) {
 					try {
 						nBytesRead = audioInputStream.read(abData, 0, abData.length);
+						soundLevel.level = audioIO.calculateRMSLevel(abData[0..500] as byte[])
 						//AudioPlayer.this.log.info ("level: "+audioIO.calculateRMSLevel(abData[0..200] as byte[]))
 					} catch (IOException e) {
 						e.printStackTrace();

@@ -69,8 +69,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	private boolean shuttingDown = false;
 	private int frameCount = 0;
 
-	
-
 	public boolean startRecording(String fileName) {
 
 		// setState(Frame.ICONIFIED);

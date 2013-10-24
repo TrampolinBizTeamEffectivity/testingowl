@@ -58,6 +58,7 @@ import org.springframework.stereotype.Component;
 
 import ch.sebastianfiechter.testpanorama.FramesSlider;
 import ch.sebastianfiechter.testpanorama.JPlayerDecorator;
+import ch.sebastianfiechter.testpanorama.SoundLevel;
 
 @SuppressWarnings("serial")
 @Component
@@ -69,6 +70,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	
 	@Autowired
 	FramesSlider slider;
+	
+	@Autowired
+	SoundLevel soundLevel;
 
 	private ScreenPlayer screenPlayer;
 
@@ -227,15 +231,16 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void showFrame() {
 
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 8));
 		setTitle("TestingOwl Player");
+		
+		JPanel panel = new JPanel();
+		GridBagLayout gbl = new GridBagLayout();
+		GridBagConstraints gbc = new GridBagConstraints();
+		panel.setLayout(gbl);
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-
 				close();
-
 				decorator.disposing();
 				dispose();
 			}
@@ -244,41 +249,85 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		open = new JButton("Open Recording");
 		open.setActionCommand("open");
 		open.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;	
+		panel.add(open, gbc);
 
 		reset = new JButton("Reset");
 		reset.setActionCommand("reset");
 		reset.setEnabled(false);
 		reset.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;	
+		panel.add(reset, gbc);
 
 		play = new JButton("Play");
 		play.setActionCommand("play");
 		play.setEnabled(false);
 		play.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 2;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;		
+		panel.add(play, gbc);
 
 		fastForward = new JButton("Fast Forward");
 		fastForward.setActionCommand("fastForward");
 		fastForward.setEnabled(false);
 		fastForward.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 3;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;	
+		panel.add(fastForward, gbc);
 
 		pause = new JButton("Pause");
 		pause.setActionCommand("pause");
 		pause.setEnabled(false);
 		pause.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 4;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;		
+		panel.add(pause, gbc);
 
 		close = new JButton("Close File");
 		close.setActionCommand("close");
 		close.setEnabled(false);
 		close.addActionListener(this);
-
-
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 5;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;	
+		panel.add(close, gbc);
 		
-		panel.add(open);
-		panel.add(reset);
-		panel.add(play);
-		panel.add(fastForward);
-		panel.add(pause);
-		panel.add(close);
-		panel.add(createSliderLayout());
+
+		//slieder
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 6;
+		gbc.gridy = 0;
+		gbc.weightx = 1;
+		gbc.weighty = 1;			
+		panel.add(createSliderLayout(), gbc);
+		
+		soundLevel.setSize(30, (int) close.getSize().getHeight());
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 7;
+		gbc.gridy = 0;
+		gbc.weightx = 0;
+		gbc.weighty = 1;
+		panel.add(soundLevel, gbc);
+		
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
