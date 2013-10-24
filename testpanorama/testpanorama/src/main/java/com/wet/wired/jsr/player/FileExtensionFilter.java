@@ -151,32 +151,21 @@ public class FileExtensionFilter extends FileFilter {
          if (f.isDirectory()) {
             return true;
          }
-         String extension = getExtension(f);
-         if (extension != null && filters.get(getExtension(f)) != null) {
-            return true;
+
+         String fileName = f.getAbsolutePath().toLowerCase();
+         
+         Enumeration<Object> extensions = filters.keys();
+         while(extensions.hasMoreElements()){
+        	 String extension = (String) extensions.nextElement(); 
+        	 if (fileName.endsWith(extension)) {
+        		 return true;
+        	 }
          }
-         ;
       }
       return false;
    }
 
-   /**
-    * Return the extension portion of the file's name .
-    * 
-    * @see #getExtension
-    * @see FileFilter#accept
-    */
-   public String getExtension(File f) {
-      if (f != null) {
-         String filename = f.getName();
-         int i = filename.lastIndexOf('.');
-         if (i > 0 && i < filename.length() - 1) {
-            return filename.substring(i + 1).toLowerCase();
-         }
-         ;
-      }
-      return null;
-   }
+
 
    /**
     * Adds a filetype "dot" extension to filter against.

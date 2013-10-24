@@ -97,8 +97,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			FileExtensionFilter filter = new FileExtensionFilter();
 
 			filter = new FileExtensionFilter();
-			filter.addExtension("cap");
-			filter.setDescription("Screen Capture File");
+			filter.addExtension("cap.zip");
+			filter.setDescription("TestingOwl File");
 
 			if (target != null) {
 				fileChooser.setSelectedFile(new File(target));
@@ -107,7 +107,10 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			fileChooser.showOpenDialog(this);
 
 			if (fileChooser.getSelectedFile() != null) {
-				target = fileChooser.getSelectedFile().getAbsolutePath();
+				//target = fileChooser.getSelectedFile().getAbsolutePath();
+				String targetAsZip = fileChooser.getSelectedFile().getAbsolutePath();
+				decorator.unzip(targetAsZip);
+				target = targetAsZip.substring(0, targetAsZip.lastIndexOf("."));
 				open();
 				decorator.open(target);
 			}

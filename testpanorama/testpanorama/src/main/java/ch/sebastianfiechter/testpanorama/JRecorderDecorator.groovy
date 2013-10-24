@@ -51,7 +51,10 @@ class JRecorderDecorator implements ActionListener {
 	AudioRecorder audioRecorder
 
 	@Autowired
-	SoundLevel soundLevel;
+	SoundLevel soundLevel
+	
+	@Autowired
+	Zip zip
 	
 	JButton bug
 	JButton musthave
@@ -215,20 +218,28 @@ class JRecorderDecorator implements ActionListener {
 
 	public File prepareSuggestedFileName() {
 		def dateTime = new Date().format('yyyy-MM-dd-H_m_s')
-		new File("${topic}-${dateTime}.cap");
+		new File("${topic}-${dateTime}.cap.zip");
 	}
 
-	public void saveFile(File fileNameCap) {
-		def fileNameWithoutEnding = fileNameCap.absolutePath[0..-5];
+	public void saveFile(File fileNameCapZip) {
+		def fileNameWithoutEnding = fileNameCapZip.absolutePath[0..-9];
 
 		issues.writeToExcelXlsx(fileNameWithoutEnding);
 		audioRecorder.writeToWavFile(fileNameWithoutEnding)
 	}
 
+	def zip(File fileNameCapZip) {
+		def fileNameWithoutEnding = fileNameCapZip.absolutePath[0..-9];
+		
+		zip.zip(fileNameWithoutEnding)
+	}
+	
 	def cancelSave() {
 		audioRecorder.cancelSave()
 	}
 
+
+	
 	def dispose() {
 		
 		

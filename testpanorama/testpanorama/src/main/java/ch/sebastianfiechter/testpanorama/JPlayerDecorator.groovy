@@ -33,8 +33,15 @@ class JPlayerDecorator {
 	@Autowired
 	AudioPlayer audioPlayer
 	
+	@Autowired
+	Zip zip
+	
 	def listenForPlayStart = false
 		
+	def unzip(String fileNameWithDotCapZip) {
+		zip.unzip(fileNameWithDotCapZip)
+	}
+	
 	def open(String fileNameWithDotCap) {
 		def fileNameWithoutEnding = fileNameWithDotCap[0..-5]
 		issuesFrame.issues = issues.readFromExcelXlsx(fileNameWithoutEnding);

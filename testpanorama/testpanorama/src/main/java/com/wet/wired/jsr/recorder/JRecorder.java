@@ -140,7 +140,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			FileExtensionFilter filter = new FileExtensionFilter();
 
 			filter = new FileExtensionFilter();
-			filter.addExtension("cap");
+			filter.addExtension("cap.zip");
 			filter.setDescription("TestingOwl File");
 
 			fileChooser.setFileFilter(filter);
@@ -168,12 +168,17 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			
 			this.beginWaitForBackgroundProcesses();
 
-			if (!target.getName().endsWith(".cap"))
-				target = new File(target + ".cap");
+			if (!target.getName().endsWith(".cap.zip")) {
+				target = new File(target + ".cap.zip");
+			}
 			
-			FileHelper.copy(temp, target);
+			File capFile = new File(target.getAbsolutePath().substring(0, 
+					target.getAbsolutePath().lastIndexOf(".")));	
+			FileHelper.copy(temp, capFile);
 			
 			decorator.saveFile(target);
+			
+			decorator.zip(target);
 			
 			this.endWaitForBackgroundProcesses();
 		} else {
