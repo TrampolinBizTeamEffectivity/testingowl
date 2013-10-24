@@ -109,14 +109,15 @@ class AudioPlayer {
 				int nBytesRead = 0;
 				double bytesPerSecond = audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits() / 8;
 				
-				int bytesToEat = (int) (secondsAfterStart*bytesPerSecond-1.0)
+				long bytesToEat = (int) (secondsAfterStart*bytesPerSecond-1.0)
 				AudioPlayer.this.log.info ("bytesToEat ${bytesToEat}")
 				if (bytesToEat <= 0) {
 					return
 				}
-				byte[] abData = new byte[bytesToEat]
+				//byte[] abData = new byte[bytesToEat]
 				try {
-					nBytesRead = audioInputStream.read(abData, 0, abData.length);
+					audioInputStream.skip(bytesToEat)
+					//nBytesRead = audioInputStream.read(abData, 0, abData.length);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

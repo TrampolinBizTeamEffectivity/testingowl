@@ -28,7 +28,7 @@ class JPlayerDecorator {
 	Issues issues
 	
 	@Autowired
-	IssuesFrame issuesFrame
+	IssuesWindow issuesFrame
 	
 	@Autowired
 	AudioPlayer audioPlayer

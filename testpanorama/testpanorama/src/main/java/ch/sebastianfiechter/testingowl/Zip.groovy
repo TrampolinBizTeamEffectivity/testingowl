@@ -30,11 +30,19 @@ import org.apache.tools.ant.dispatch.*
 class Zip {
 
 
+	
+	/**
+	 * no compression
+	 * 
+	 * @param filenameWithoutFileEnding
+	 * @return
+	 */
 	def zip(String filenameWithoutFileEnding) {
-
 
 		ZipOutputStream zipFile = new ZipOutputStream(
 				new FileOutputStream("${filenameWithoutFileEnding}.cap.zip"))
+		
+		zipFile.setLevel(ZipOutputStream.STORED);
 
 		addFile(zipFile, "${filenameWithoutFileEnding}.cap")
 		addFile(zipFile, "${filenameWithoutFileEnding}.cap.xlsx")

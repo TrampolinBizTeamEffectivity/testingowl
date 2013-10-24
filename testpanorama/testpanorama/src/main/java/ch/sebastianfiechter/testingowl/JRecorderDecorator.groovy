@@ -224,14 +224,20 @@ class JRecorderDecorator implements ActionListener {
 	public void saveFile(File fileNameCapZip) {
 		def fileNameWithoutEnding = fileNameCapZip.absolutePath[0..-9];
 
+		log.info ("start save xlsx")
 		issues.writeToExcelXlsx(fileNameWithoutEnding);
+		log.info ("stop save xlsx")
+		log.info ("start save wav")
 		audioRecorder.writeToWavFile(fileNameWithoutEnding)
+		log.info ("stop save wav")
 	}
 
 	def zip(File fileNameCapZip) {
 		def fileNameWithoutEnding = fileNameCapZip.absolutePath[0..-9];
 		
+		log.info ("start save zip")
 		zip.zip(fileNameWithoutEnding)
+		log.info ("stop save zip")
 	}
 	
 	def cancelSave() {

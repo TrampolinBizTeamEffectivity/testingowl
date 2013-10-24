@@ -22,9 +22,13 @@ import javax.swing.*
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.jcabi.manifests.Manifests
+
 @Slf4j
 @Component
 class WelcomeWindow {
+	
+	@Autowired
+	Owl owl
 
 	enum Module {Player, Recorder, Converter, Cancel}
 	
@@ -36,16 +40,13 @@ class WelcomeWindow {
 			JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 			 null, new Object[0], null);
 		 //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-		 
-		 
-		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_welcome.png"))
-		def icon = new ImageIcon(img)
+
 		
 		JLabel label = new JLabel("TestingOwl " + fetchAppVersion(), SwingConstants.CENTER)
-		JButton recorder = new JButton("Recorder")
-		JButton player = new JButton("Player")
+		JButton recorder = new JButton("Shoot! (Record)")
+		JButton player = new JButton("Replay.")
 		
-		Object[] complexMsg = [icon, label, recorder, player ];
+		Object[] complexMsg = [owl.icon, label, recorder, player ];
 		JDialog dialog = optionPane.createDialog(null, "TestingOwl Welcome!");
 	
 		//JOptionPane optionPane = new JOptionPane();

@@ -13,22 +13,29 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class IssuesFrameTest {
+class InProgressWindowTest {
 
 	@Autowired
-	IssuesWindow issuesFrame
+	InProgressWindow window
+	
+
 	
 	@Test
-	public void testSelection() {
+	public void testAll() {
+		window.show();
 		
-		issuesFrame.issues = [
-			['id':"1", 'type':IssueType.Bug, 'frameStart':0, 'frameEnd':'10', 'message':'message'], 
-			['id':"2", 'type':IssueType.Musthave,'frameStart':200, 'frameEnd':'210', 'message':'message to musthave']
-		]
+		sleep 1000
 		
-		issuesFrame.show()
-				
-		//fail("Not yet implemented");
+		window.setProgressValue(5)
+		
+		sleep 1000
+		
+		window.setProgressValue(90)
+		
+		sleep 1000
+		
+		window.hide()
+		
 	}
 
 }

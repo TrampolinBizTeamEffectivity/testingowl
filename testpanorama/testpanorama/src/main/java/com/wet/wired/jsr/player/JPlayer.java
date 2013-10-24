@@ -58,6 +58,7 @@ import org.springframework.stereotype.Component;
 
 import ch.sebastianfiechter.testingowl.FramesSlider;
 import ch.sebastianfiechter.testingowl.JPlayerDecorator;
+import ch.sebastianfiechter.testingowl.Owl;
 import ch.sebastianfiechter.testingowl.SoundLevel;
 
 @SuppressWarnings("serial")
@@ -74,6 +75,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	@Autowired
 	SoundLevel soundLevel;
 
+	@Autowired
+	Owl owl;
+	
 	private ScreenPlayer screenPlayer;
 
 	private ImageIcon icon;
@@ -232,6 +236,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	public void showFrame() {
 
 		setTitle("TestingOwl Player");
+		setIconImage(owl.getIcon().getImage());
 		
 		JPanel panel = new JPanel();
 		GridBagLayout gbl = new GridBagLayout();

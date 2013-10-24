@@ -26,6 +26,8 @@
 
 package com.wet.wired.jsr.recorder;
 
+import groovy.util.logging.Slf4j;
+
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Frame;
@@ -50,15 +52,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
+import ch.sebastianfiechter.testingowl.Owl;
 import ch.sebastianfiechter.testingowl.SoundLevel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.impl.SimpleLoggerFactory;
 
 @SuppressWarnings("serial")
 @Component
 public class JRecorder extends JFrame implements ScreenRecorderListener,
 		ActionListener {
 
+	Logger logger = LoggerFactory.getLogger(JRecorder.class);
+	
 	@Autowired
 	JRecorderDecorator decorator;
+	
+	@Autowired
+	Owl owl;
 		
 	private ScreenRecorder recorder;
 	private File temp;
@@ -172,7 +184,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			
 			File capFile = new File(target.getAbsolutePath().substring(0, 
 					target.getAbsolutePath().lastIndexOf(".")));	
+			logger.info("start save cap");
 			FileHelper.copy(temp, capFile);
+			logger.info("stop save cap");
 			
 			decorator.saveFile(target);
 			
@@ -212,6 +226,8 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		});
 		
 		setTitle("TestingOwl Recorder");
+		setIconImage(owl.getIcon().getImage());
+		
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		this.getContentPane().setLayout(gbl);

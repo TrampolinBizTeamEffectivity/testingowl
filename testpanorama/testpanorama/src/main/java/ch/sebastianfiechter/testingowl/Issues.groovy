@@ -74,8 +74,8 @@ class Issues {
 
 
 		//issues
-		for (def i=1; i<issues.size();i++) {
-			Row rowIssue = sheet.createRow(i);
+		for (def i=0; i<issues.size();i++) {
+			Row rowIssue = sheet.createRow(i+1);
 			rowIssue.createCell(0).setCellValue(issues[i].id as int);
 			rowIssue.createCell(1).setCellValue(issues[i].type as String);
 			rowIssue.createCell(2).setCellValue(issues[i].frameStart as int);
