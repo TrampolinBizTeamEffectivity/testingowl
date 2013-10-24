@@ -1,4 +1,4 @@
-package ch.sebastianfiechter.testpanorama
+package ch.sebastianfiechter.testingowl
 
 import java.io.File;
 import java.io.IOException;

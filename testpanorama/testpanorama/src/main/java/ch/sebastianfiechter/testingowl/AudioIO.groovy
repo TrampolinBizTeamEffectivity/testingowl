@@ -1,4 +1,4 @@
-package ch.sebastianfiechter.testpanorama
+package ch.sebastianfiechter.testingowl
 
 import javax.sound.sampled.DataLine;
 

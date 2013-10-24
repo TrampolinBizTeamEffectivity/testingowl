@@ -1,4 +1,4 @@
-package ch.sebastianfiechter.testpanorama
+package ch.sebastianfiechter.testingowl
 
 
 import org.springframework.beans.factory.annotation.*
@@ -11,7 +11,7 @@ import javax.swing.*
 import com.wet.wired.jsr.recorder.*
 import com.wet.wired.jsr.player.*
 import com.wet.wired.jsr.converter.*
-import ch.sebastianfiechter.testpanorama.WelcomeWindow.Module
+import ch.sebastianfiechter.testingowl.WelcomeWindow.Module
 
 
 @Component

@@ -1,4 +1,4 @@
-package ch.sebastianfiechter.testpanorama;
+package ch.sebastianfiechter.testingowl;
 
 import java.awt.Component;
 import java.awt.Dimension;

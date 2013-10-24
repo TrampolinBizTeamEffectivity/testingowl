@@ -1,8 +1,8 @@
-package ch.sebastianfiechter.testpanorama;
+package ch.sebastianfiechter.testingowl;
 
-import ch.sebastianfiechter.testpanorama.Issues.IssueType
+import ch.sebastianfiechter.testingowl.Issues.IssueType
 import static org.junit.Assert.*;
-import ch.sebastianfiechter.testpanorama.*
+import ch.sebastianfiechter.testingowl.*
 
 import java.awt.event.ActionEvent
 

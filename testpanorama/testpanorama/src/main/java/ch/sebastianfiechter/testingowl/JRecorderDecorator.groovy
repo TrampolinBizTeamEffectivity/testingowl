@@ -1,4 +1,4 @@
-package ch.sebastianfiechter.testpanorama
+package ch.sebastianfiechter.testingowl
 
 import com.wet.wired.jsr.recorder.JRecorder
 
@@ -31,8 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import groovy.util.logging.*
-import ch.sebastianfiechter.testpanorama.*
-import ch.sebastianfiechter.testpanorama.Issues.*
+import ch.sebastianfiechter.testingowl.*
+import ch.sebastianfiechter.testingowl.Issues.*
 
 @Slf4j
 @Component

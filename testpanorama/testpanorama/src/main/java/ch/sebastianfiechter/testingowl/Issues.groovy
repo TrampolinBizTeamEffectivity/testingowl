@@ -1,4 +1,4 @@
-package ch.sebastianfiechter.testpanorama
+package ch.sebastianfiechter.testingowl
 
 import org.apache.poi.hssf.util.CellReference
 import org.apache.poi.openxml4j.opc.OPCPackage

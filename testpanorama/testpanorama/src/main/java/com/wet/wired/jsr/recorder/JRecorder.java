@@ -49,8 +49,8 @@ import javax.swing.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ch.sebastianfiechter.testpanorama.JRecorderDecorator;
-import ch.sebastianfiechter.testpanorama.SoundLevel;
+import ch.sebastianfiechter.testingowl.JRecorderDecorator;
+import ch.sebastianfiechter.testingowl.SoundLevel;
 
 @SuppressWarnings("serial")
 @Component

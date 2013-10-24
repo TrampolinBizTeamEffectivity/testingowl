@@ -1,9 +1,9 @@
-package ch.sebastianfiechter.testpanorama;
+package ch.sebastianfiechter.testingowl;
 
 import static org.junit.Assert.*;
 
-import ch.sebastianfiechter.testpanorama.Issues
 import java.awt.event.ActionEvent
+
 import org.junit.Test;
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

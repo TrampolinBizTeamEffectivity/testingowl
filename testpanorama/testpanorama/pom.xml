@@ -139,10 +139,10 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<!-- <mainClass>ch.sebastianfiechter.testpanorama.Main</mainClass> -->
+									<!-- <mainClass>ch.sebastianfiechter.testingowl.Main</mainClass> -->
 
 									<manifestEntries>
-										<Main-Class>ch.sebastianfiechter.testpanorama.Main</Main-Class>
+										<Main-Class>ch.sebastianfiechter.testingowl.Main</Main-Class>
 										<App-Version>${project.version}</App-Version>
 									</manifestEntries>
 								</transformer>

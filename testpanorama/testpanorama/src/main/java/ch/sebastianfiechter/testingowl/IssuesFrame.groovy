@@ -1,4 +1,4 @@
-package ch.sebastianfiechter.testpanorama
+package ch.sebastianfiechter.testingowl
 
 import org.springframework.beans.factory.annotation.Autowired;
 import groovy.swing.SwingBuilder

@@ -1,6 +1,6 @@
-package ch.sebastianfiechter.testpanorama
+package ch.sebastianfiechter.testingowl
 
-import ch.sebastianfiechter.testpanorama.Issues.Issue
+import ch.sebastianfiechter.testingowl.Issues.Issue
 import com.wet.wired.jsr.player.JPlayer
 import com.wet.wired.jsr.recorder.JRecorder
 import java.awt.GridLayout;

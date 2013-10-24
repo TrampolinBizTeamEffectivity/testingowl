@@ -56,9 +56,9 @@ import javax.swing.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ch.sebastianfiechter.testpanorama.FramesSlider;
-import ch.sebastianfiechter.testpanorama.JPlayerDecorator;
-import ch.sebastianfiechter.testpanorama.SoundLevel;
+import ch.sebastianfiechter.testingowl.FramesSlider;
+import ch.sebastianfiechter.testingowl.JPlayerDecorator;
+import ch.sebastianfiechter.testingowl.SoundLevel;
 
 @SuppressWarnings("serial")
 @Component
