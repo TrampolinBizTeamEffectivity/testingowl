@@ -32,7 +32,6 @@ class ZipTest {
 	@Test
 	public void testUnzipOnlyFilename() {
 
-		
 		zip.unzip("src/test/resources/unzip/testissues.cap.zip")
 		
 	}

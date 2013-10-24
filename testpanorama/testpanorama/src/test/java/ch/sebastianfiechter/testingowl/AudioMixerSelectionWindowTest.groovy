@@ -2,7 +2,6 @@ package ch.sebastianfiechter.testingowl;
 
 import ch.sebastianfiechter.testingowl.Issues.IssueType
 import static org.junit.Assert.*;
-import ch.sebastianfiechter.testingowl.*
 
 import java.awt.event.ActionEvent
 
@@ -23,9 +22,9 @@ class AudioMixerSelectionWindowTest {
 	
 	@Test
 	public void testAll() {
-		window.show();
+		//window.show();
 		
-		sleep 100000
+		sleep 1000
 		
 	}
 

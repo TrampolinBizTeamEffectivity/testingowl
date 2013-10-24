@@ -17,16 +17,6 @@ class IssuesTest {
 	@Autowired
 	Issues issues
 	
-	@Test
-	public void testReadFromExcelCsv() {
-		
-
-		List readIssues = Issues.readFromExcelCsv("src/test/resources/testissues")
-		
-		assert 4 == readIssues.size()
-		
-		//fail("Not yet implemented");
-	}
 	
 	@Test
 	public void testReadFromExcelXlsx() {
