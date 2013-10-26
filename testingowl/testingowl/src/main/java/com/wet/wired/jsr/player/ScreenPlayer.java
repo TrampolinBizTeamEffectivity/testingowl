@@ -73,9 +73,14 @@ public class ScreenPlayer implements Runnable {
 		this.listener = listener;
 		this.videoFile = videoFile;
 
+		open();
+	}
+	
+	private void open() {
 		initialize();
 		countTotalFramesAndTime();
-		initialize();
+
+		reset();
 	}
 
 	private void initialize() {
@@ -129,6 +134,7 @@ public class ScreenPlayer implements Runnable {
 		}
 
 		initialize();
+		showFirstFrame();
 
 	}
 
@@ -207,12 +213,11 @@ public class ScreenPlayer implements Runnable {
 		totalFrames = 0;
 		totalTime = 0;
 
-		int result = -1;
 		FrameDecompressor.FramePacket frame;
 		try {
 			frame = decompressor.unpack();
 
-			while ((result = frame.getResult()) != -1) {
+			while (frame.getResult() != -1) {
 				totalTime = frame.getTimeStamp();
 				totalFrames++;
 
@@ -268,6 +273,7 @@ public class ScreenPlayer implements Runnable {
 				} catch (Exception e) {
 				}
 				startTime += 50;
+				listener.playerPaused();
 			}
 
 			try {

@@ -18,4 +18,9 @@ class Owl {
 		new ImageIcon(img)
 	}
 	
+	ImageIcon getWaiting() {
+		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_waiting.gif"))
+		new ImageIcon(img)
+	}
+	
 }

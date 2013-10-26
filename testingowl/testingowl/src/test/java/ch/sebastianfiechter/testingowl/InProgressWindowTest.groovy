@@ -22,9 +22,9 @@ class InProgressWindowTest {
 	
 	@Test
 	public void testAll() {
-		window.show();
+		window.show("Saving, please wait...");
 		
-		sleep 1000
+		sleep 10000
 		
 		window.setProgressValue(5)
 		

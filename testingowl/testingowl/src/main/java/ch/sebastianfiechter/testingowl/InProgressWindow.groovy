@@ -18,6 +18,9 @@ import groovy.util.logging.*
 @Component
 class InProgressWindow {
 	
+	@Autowired
+	Owl owl
+	
 	JWindow dialog
 	
 	JProgressBar progressBar
@@ -26,18 +29,18 @@ class InProgressWindow {
 		progressBar.setValue(val)
 	}
 
-	def show(def progressValue=0, def progressMaxValue=100) {
+	def show(def message, def progressValue=0, def progressMaxValue=100) {
 		
 		JOptionPane optionPane = new JOptionPane("TestingOwl Please wait...",
 			JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 			 null, new Object[0], null);
 		
-		JLabel label = new JLabel("Please be patient...", SwingConstants.CENTER);
+		JLabel label = new JLabel(message, SwingConstants.CENTER);
 		progressBar = new JProgressBar(0, progressMaxValue)
 		progressBar.setValue(progressValue);
 		progressBar.setStringPainted(true);
 
-		Object[] complexMsg = [label, progressBar ];
+		Object[] complexMsg = [owl.waiting, label, progressBar ];
 		optionPane.setMessage(complexMsg);
 
 		dialog = new JWindow()

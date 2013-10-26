@@ -216,7 +216,7 @@ class JRecorderDecorator implements ActionListener {
 		audioRecorder.stopRecording()
 	}
 
-	public File prepareSuggestedFileName() {
+	public File prepareSuggestedFile() {
 		def dateTime = new Date().format('yyyy-MM-dd-H_m_s')
 		new File("${topic}-${dateTime}.cap.zip");
 	}

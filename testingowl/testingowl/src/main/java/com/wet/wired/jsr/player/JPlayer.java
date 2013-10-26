@@ -112,6 +112,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				fileChooser.setSelectedFile(new File(target));
 			}
 			fileChooser.setFileFilter(filter);
+			fileChooser.setCurrentDirectory(new File("."));
 			fileChooser.showOpenDialog(this);
 
 			if (fileChooser.getSelectedFile() != null) {
@@ -120,7 +121,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				decorator.unzip(targetAsZip);
 				target = targetAsZip.substring(0, targetAsZip.lastIndexOf("."));
 				open();
-				decorator.open(target);
 			}
 		} else if (ev.getActionCommand().equals("play")) {
 			play();
@@ -136,26 +136,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	}
 
 	public void playerPaused() {
-
-		open.setEnabled(false);
-		open.setBackground(null);
-
-		reset.setEnabled(true);
-		reset.setBackground(null);
-
-		play.setEnabled(false);
-		play.setBackground(null);
-
-		fastForward.setEnabled(false);
-		fastForward.setBackground(null);
-
-		pause.setEnabled(false);
-		pause.setBackground(null);
-
-		close.setEnabled(true);
-		close.setBackground(null);
-
-		text.setText("Paused playing " + target);
+		//do nothing
 	}
 
 	public void playerStopped() {
@@ -382,49 +363,54 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		return sliderPanel;
 	}
 
-	public boolean open() {
+	public void open() {
 		
-		beginShowWaitingCursor();
+		beginWaitForBackgroundProcesses();
 			
 		if (target != null) {
 			try {
 				screenPlayer = new ScreenPlayer(target, this);
 			} catch (Exception e) {
 				e.printStackTrace();
-				return false;
 			}
 		}
-
-		open.setEnabled(false);
-		open.setBackground(null);
-
-		reset.setEnabled(true);
-		reset.setBackground(null);
-
-		play.setEnabled(true);
-		play.setBackground(null);
-
-		fastForward.setEnabled(true);
-		fastForward.setBackground(null);
-
-		pause.setEnabled(false);
-		pause.setBackground(null);
-
-		close.setEnabled(true);
-		close.setBackground(null);
-
+		decorator.open(target);
+		
+		endWaitForBackgroundProcesses();
+		
 		slider.setMin(1);
 		slider.setMax(screenPlayer.getTotalFrames());
-		slider.setEnabled(true);
+		
+		reset();
 
-		screenPlayer.showFirstFrame();
-		slider.setValueProgrammatically(1);
+//		open.setEnabled(false);
+//		open.setBackground(null);
+//
+//		reset.setEnabled(true);
+//		reset.setBackground(null);
+//
+//		play.setEnabled(true);
+//		play.setBackground(null);
+//
+//		fastForward.setEnabled(true);
+//		fastForward.setBackground(null);
+//
+//		pause.setEnabled(false);
+//		pause.setBackground(null);
+//
+//		close.setEnabled(true);
+//		close.setBackground(null);
+//
+//		slider.setMin(1);
+//		slider.setMax(screenPlayer.getTotalFrames());
+//		slider.setEnabled(true);
+//
+//		screenPlayer.showFirstFrame();
+		//slider.setValueProgrammatically(1);
 
-		endShowWaitingCursor();
 		
 		text.setText("Ready to play " + target);
 
-		return true;
 	}
 
 	public void reset() {
@@ -490,12 +476,12 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void goToFrame(int frame) {
 		
-		beginShowWaitingCursor();
+		beginWaitForBackgroundProcesses();
 		
 		reset();
 		screenPlayer.goToFrame(frame);
 		
-		endShowWaitingCursor();
+		endWaitForBackgroundProcesses();
 		
 		play();
 	}
@@ -609,11 +595,11 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				+ screenPlayer.getTotalFrames() + " Time: " + seconds);
 	}	
 	
-	public void beginShowWaitingCursor() {
+	public void beginWaitForBackgroundProcesses() {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	}
 	
-	public void endShowWaitingCursor() {
+	public void endWaitForBackgroundProcesses() {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 }

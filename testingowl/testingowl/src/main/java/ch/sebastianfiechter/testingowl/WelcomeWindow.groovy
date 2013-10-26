@@ -44,7 +44,7 @@ class WelcomeWindow {
 		
 		JLabel label = new JLabel("TestingOwl " + fetchAppVersion(), SwingConstants.CENTER)
 		JButton recorder = new JButton("Shoot! (Record)")
-		JButton player = new JButton("Replay.")
+		JButton player = new JButton("Review. (Play)")
 		
 		Object[] complexMsg = [owl.icon, label, recorder, player ];
 		JDialog dialog = optionPane.createDialog(null, "TestingOwl Welcome!");

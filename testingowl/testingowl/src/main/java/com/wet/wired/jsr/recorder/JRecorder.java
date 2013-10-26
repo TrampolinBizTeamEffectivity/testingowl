@@ -65,13 +65,13 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		ActionListener {
 
 	Logger logger = LoggerFactory.getLogger(JRecorder.class);
-	
+
 	@Autowired
 	JRecorderDecorator decorator;
-	
+
 	@Autowired
 	Owl owl;
-		
+
 	private ScreenRecorder recorder;
 	private File temp;
 
@@ -92,7 +92,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		if (recorder != null) {
 			return true;
 		}
-		
+
 		if (!decorator.fetchTopicAndMixer(this)) {
 			return false;
 		}
@@ -106,7 +106,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return true;
 	}
 
@@ -142,24 +142,25 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	public void recordingStopped() {
 
 		if (!shuttingDown) {
-			
+
 			decorator.recordStopped();
 
-			UIManager.put("FileChooser.readOnly", true);
-			JFileChooser fileChooser = new JFileChooser();
-			FileExtensionFilter filter = new FileExtensionFilter();
-
-			filter = new FileExtensionFilter();
-			filter.addExtension("cap.zip");
-			filter.setDescription("TestingOwl File");
-
-			fileChooser.setFileFilter(filter);
-			fileChooser.setSelectedFile(decorator.prepareSuggestedFileName());
-			fileChooser.showSaveDialog(this);
-
-			File target = fileChooser.getSelectedFile();
-
-			save(target);
+			// UIManager.put("FileChooser.readOnly", true);
+			// JFileChooser fileChooser = new JFileChooser();
+			// FileExtensionFilter filter = new FileExtensionFilter();
+			//
+			// filter = new FileExtensionFilter();
+			// filter.addExtension("cap.zip");
+			// filter.setDescription("TestingOwl File");
+			//
+			// fileChooser.setFileFilter(filter);
+			// fileChooser.setSelectedFile(decorator.prepareSuggestedFileName());
+			// fileChooser.showSaveDialog(this);
+			//
+			// File target = fileChooser.getSelectedFile();
+			//
+			// save(target);
+			save();
 
 			FileHelper.delete(temp);
 			recorder = null;
@@ -172,30 +173,25 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		} else
 			FileHelper.delete(temp);
 	}
-	
-	public void save(File target) {
-		if (target != null) {
-			
-			this.beginWaitForBackgroundProcesses();
 
-			if (!target.getName().endsWith(".cap.zip")) {
-				target = new File(target + ".cap.zip");
-			}
-			
-			File capFile = new File(target.getAbsolutePath().substring(0, 
-					target.getAbsolutePath().lastIndexOf(".")));	
-			logger.info("start save cap");
-			FileHelper.copy(temp, capFile);
-			logger.info("stop save cap");
-			
-			decorator.saveFile(target);
-			
-			decorator.zip(target);
-			
-			this.endWaitForBackgroundProcesses();
-		} else {
-			decorator.cancelSave();
-		}
+	public void save() {
+
+		this.beginWaitForBackgroundProcesses();
+
+		File target = decorator.prepareSuggestedFile();
+
+		File capFile = new File(target.getAbsolutePath().substring(0,
+				target.getAbsolutePath().lastIndexOf(".")));
+		logger.info("start save cap");
+		FileHelper.copy(temp, capFile);
+		logger.info("stop save cap");
+
+		decorator.saveFile(target);
+
+		decorator.zip(target);
+
+		this.endWaitForBackgroundProcesses();
+
 	}
 
 	public void init(String[] args) {
@@ -213,21 +209,21 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 				System.exit(0);
 			}
 		}
-		
+
 		showFrame();
 
 	}
-	
+
 	private void showFrame() {
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				shutdown();
 			}
 		});
-		
+
 		setTitle("TestingOwl Recorder");
 		setIconImage(owl.getIcon().getImage());
-		
+
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		this.getContentPane().setLayout(gbl);
@@ -241,9 +237,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		this.getContentPane().add(control, gbc);
-		
+
 		decorator.getButtonsAndSoundLevel(this.getContentPane(), gbc);
-		
+
 		text = new JLabel("Ready to record");
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
@@ -254,11 +250,11 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		this.getContentPane().add(text, gbc);
 
 		getContentPane().doLayout();
-		
+
 		this.setAlwaysOnTop(true);
 		this.pack();
 		this.setVisible(true);
-		
+
 	}
 
 	public void shutdown() {
@@ -269,21 +265,20 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			recorder.stopRecording();
 		}
 
-		
 		decorator.dispose();
 		dispose();
-		
+
 		System.exit(0);
 	}
-	
+
 	public void beginWaitForBackgroundProcesses() {
 		control.setEnabled(false);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
+
 	}
-	
+
 	public void endWaitForBackgroundProcesses() {
 		control.setEnabled(true);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-	}	
+	}
 }
