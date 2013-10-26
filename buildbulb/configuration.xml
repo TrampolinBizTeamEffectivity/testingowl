@@ -3,7 +3,7 @@
 	<address>http://deadlock.netbeans.org/hudson/api/xml</address>
 	<user></user>
 	<password></password>
-	<pollintervall>2000</pollintervall>
+	<pollintervall>60000</pollintervall>
 	<jobs>
 		<job>upload</job>
 		<job>NB-Core-Build</job>

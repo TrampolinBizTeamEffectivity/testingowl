@@ -6,7 +6,10 @@ import org.springframework.stereotype.Component
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
 
+import groovy.util.logging.*
+
 @Component
+@Slf4j
 class Main {
 
 	
@@ -51,11 +54,12 @@ class Main {
 	}
 	
 	def poll() {
-		println 'poll'
+		log.info 'poll ' + configuration.config.address
 		
 		configuration.readConfig()
 		def restXml = webSiteReader.read(configuration.config.address, configuration.config.user, configuration.config.password)
-		def status = jobsChecker.checkStatus(restXml, configuration.config.jobs.job as List)
+		def status = jobsChecker.checkStatus(restXml, configuration.config.jobs.job as List)	
+		log.info "got status ${status}"
 		switch (status) {
 			case JobsCheckerService.JobStatus.Success:
 				bulb.showGreen()
