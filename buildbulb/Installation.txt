@@ -1,1 +1,6 @@
-Webmail Notifier Setup.msi ausführen und Programm installieren. Anschliessend kann das Programm wieder deinstalliert werden.
+Webmail Notifier Setup.msi ausführen und Programm installieren. 
+Anschliessend kann das Programm wieder deinstalliert werden.
+
+App als Service installieren: http://support.microsoft.com/kb/137890
+
+configuration.xml entsprechend anpassen.
