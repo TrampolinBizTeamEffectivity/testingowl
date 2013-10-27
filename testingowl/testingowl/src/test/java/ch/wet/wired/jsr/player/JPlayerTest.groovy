@@ -1,4 +1,4 @@
-package com.wet.wired.jsr.recorder;
+package ch.wet.wired.jsr.player;
 
 import static org.junit.Assert.*;
 

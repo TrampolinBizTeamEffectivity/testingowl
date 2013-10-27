@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
@@ -26,117 +27,42 @@ class AudioPlayer {
 
 	@Autowired
 	AudioIO audioIO
-	
+
 	@Autowired
 	SoundLevel soundLevel
 
-	def playing = false
 	File soundFile
-	SourceDataLine line
-	
-	Thread playingThread
-	AudioInputStream audioInputStream
-	AudioFormat audioFormat
+	Clip clip
 
-	
+	MonitoringAudioInputStream sound
+
 	def readFromWav(String filenameWithoutFileEnding) {
+				
 		soundFile = new File("${filenameWithoutFileEnding}.cap.wav");
+		
+		sound = new MonitoringAudioInputStream(
+			AudioSystem.getAudioInputStream(soundFile), audioIO, soundLevel);
+		clip = AudioSystem.getClip();
+		clip.open(sound)
 	}
 
-	def playFromTime(double seconds) {
-
-		log.info "play from time: " + seconds
-		
-		assert soundFile != null
-
-		stopPlaying()
-	
-		playingThread = new Thread() {
-			public void run() {
-				
-				openLine()
-				
-				line.start();
-				
-				goToStartPosition(seconds)
-				
-				int bytesPerSecond = audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits() / 8
-				def abData = new byte[bytesPerSecond];
-				
-				int nBytesRead = 0;
-				while (playing == true && nBytesRead != -1) {
-					try {
-						nBytesRead = audioInputStream.read(abData, 0, abData.length);
-						soundLevel.level = audioIO.calculateRMSLevel(abData[0..500] as byte[])
-						//AudioPlayer.this.log.info ("level: "+audioIO.calculateRMSLevel(abData[0..200] as byte[]))
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					if (nBytesRead >= 0) {
-						int nBytesWritten = line.write(abData, 0, nBytesRead);
-					}
-				}
-				
-				line.drain();
-				line.close();
-				audioInputStream.close();
-			}
-			
-			def openLine() {
-				try {
-					audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-		
-				audioFormat = audioInputStream.getFormat();
-		
-				DataLine.Info info = new DataLine.Info(SourceDataLine.class,
-						audioFormat);
-		
-				line = null;
-				try {
-					line = (SourceDataLine) AudioSystem.getLine(info);
-					line.open(audioFormat);
-				} catch (LineUnavailableException e) {
-					e.printStackTrace()
-				} catch (Exception e) {
-					e.printStackTrace()
-				}
-			}
-		
-			def goToStartPosition(double secondsAfterStart) {
-				int nBytesRead = 0;
-				double bytesPerSecond = audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits() / 8;
-				
-				long bytesToEat = (int) (secondsAfterStart*bytesPerSecond-1.0)
-				AudioPlayer.this.log.info ("bytesToEat ${bytesToEat}")
-				if (bytesToEat <= 0) {
-					return
-				}
-				//byte[] abData = new byte[bytesToEat]
-				try {
-					audioInputStream.skip(bytesToEat)
-					//nBytesRead = audioInputStream.read(abData, 0, abData.length);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		
-			
-		
+	def close() {
+		if (clip != null) {
+			stopPlaying();
+			clip.close();
 		}
-		
-		playing = true
-
-		playingThread.start()
 	}
 	
+	def playFromTime(double seconds) {
+		log.info "play from time: ${seconds}"
+		clip.setFramePosition((sound.getFormat().getFrameRate()*seconds) as int)
+		clip.start()
+	}
+
 
 	def stopPlaying() {
-		playing = false
-		if (playingThread != null && playingThread.isAlive()) {
-			playingThread.join();
-		}
+		clip.stop();
 	}
+	
+
 }

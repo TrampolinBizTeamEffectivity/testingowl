@@ -78,7 +78,7 @@ class JPlayerDecorator {
 	
 	def close() {
 		issuesFrame.dispose()
-		audioPlayer.stopPlaying();
+		audioPlayer.close()
 	}
 	
 	def issueSelected(Issue issue) {

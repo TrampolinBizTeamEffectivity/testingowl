@@ -21,6 +21,13 @@ class MonitoringAudioInputStream extends AudioInputStream {
 	
 	//TimerTask timerTask
 	
+	public MonitoringAudioInputStream(AudioInputStream stream, def io, def level) {
+		super(stream, stream.format, stream.frameLength)
+		
+		audioIO = io
+		soundLevel = level	
+	}
+	
 	public MonitoringAudioInputStream(TargetDataLine targetDataLine, def io, def level) {
 		super(targetDataLine)
 		audioIO = io

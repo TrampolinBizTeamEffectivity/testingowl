@@ -28,13 +28,14 @@ class AudioPlayerTest {
 		sleep 10000
 		
 		audioPlayer.stopPlaying()
+		audioPlayer.close()
 		
 	}
 	
 	@Test
 	public void testPlayFromTime() {
 		audioPlayer.readFromWav("src/test/resources/testcountto10")
-		audioPlayer.playFromTime(2.0 as long)
+		audioPlayer.playFromTime(1.0)
 		
 		sleep 10000
 		
@@ -45,7 +46,7 @@ class AudioPlayerTest {
 	@Test
 	public void testAdjustPlayTimes() {
 		audioPlayer.readFromWav("src/test/resources/testcountto10")
-		audioPlayer.playFromTime(2.0 as long)
+		audioPlayer.playFromTime(4.0 as long)
 		
 		sleep 2000
 		
