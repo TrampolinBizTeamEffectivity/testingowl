@@ -21,7 +21,7 @@ class InProgressWindowTest {
 
 	
 	@Test
-	public void testAll() {
+	public void testHide() {
 		window.show("Saving, please wait...");
 		
 		sleep 10000
@@ -35,6 +35,27 @@ class InProgressWindowTest {
 		sleep 1000
 		
 		window.hide()
+		
+	}
+	
+	@Test
+	public void testWaitForConfirm() {
+		window.show("Saving, please wait...");
+		
+		sleep 1000
+		
+		window.setProgressValue(5)
+		
+		sleep 1000
+		
+		window.setProgressValue(90)
+		
+		sleep 1000
+		
+		window.waitForConfirm()
+		println ("returned from dialog")
+		
+		sleep 10000
 		
 	}
 

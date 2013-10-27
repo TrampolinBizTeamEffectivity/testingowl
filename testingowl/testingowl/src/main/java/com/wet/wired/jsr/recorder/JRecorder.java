@@ -51,6 +51,7 @@ import javax.swing.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ch.sebastianfiechter.testingowl.InProgressWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
 import ch.sebastianfiechter.testingowl.Owl;
 import ch.sebastianfiechter.testingowl.SoundLevel;
@@ -71,6 +72,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 	@Autowired
 	Owl owl;
+	
+	@Autowired
+	InProgressWindow inProgressWindow;
 
 	private ScreenRecorder recorder;
 	private File temp;
@@ -179,19 +183,30 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		this.beginWaitForBackgroundProcesses();
 
 		File target = decorator.prepareSuggestedFile();
+		
+		this.setEnabled(false);
+		inProgressWindow.show(0, 4, "Saving recording to: ", target.getAbsolutePath());
 
-		File capFile = new File(target.getAbsolutePath().substring(0,
-				target.getAbsolutePath().lastIndexOf(".")));
-		logger.info("start save cap");
-		FileHelper.copy(temp, capFile);
-		logger.info("stop save cap");
+		saveVideo(target);
 
 		decorator.saveFile(target);
 
 		decorator.zip(target);
-
+		
 		this.endWaitForBackgroundProcesses();
+		
+		inProgressWindow.waitForConfirm();
+		this.setEnabled(true);
 
+	}
+	
+	public void saveVideo(File target) {
+		File capFile = new File(target.getAbsolutePath().substring(0,
+				target.getAbsolutePath().lastIndexOf(".")));
+		logger.info("start save cap");
+		FileHelper.copy(temp, capFile);
+		inProgressWindow.setProgressValue(1);
+		logger.info("stop save cap");
 	}
 
 	public void init(String[] args) {

@@ -547,7 +547,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void close() {
 
-		screenPlayer.close();
+		if (screenPlayer != null) {
+			screenPlayer.close();
+		}
 		
 		decorator.close();
 
