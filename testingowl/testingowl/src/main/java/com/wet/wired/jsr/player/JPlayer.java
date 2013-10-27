@@ -465,6 +465,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void goToFrame(int frame) {
 
+		beginWaitForBackgroundProcesses();
+		
 		pause();
 
 		if (frame >= screenPlayer.getFrameNr()) {
@@ -474,6 +476,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			reset();
 			screenPlayer.goToFrame(frame);			
 		}
+		
+		endWaitForBackgroundProcesses();
 		
 	}
 
@@ -549,6 +553,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		if (screenPlayer != null) {
 			screenPlayer.close();
+			setFrameLabelText(0, 0);
 		}
 		
 		decorator.close();
@@ -573,7 +578,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		slider.setEnabled(false);
 		
-		setFrameLabelText(0, 0);
+
 
 		text.setText("No recording selected");
 	}
