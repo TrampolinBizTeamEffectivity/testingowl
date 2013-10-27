@@ -50,8 +50,10 @@ class FramesSlider extends JSlider implements ChangeListener, MouseListener {
 	public void stateChanged(ChangeEvent event) {
 		if (!avoidEvent && valueIsAdjusting) {
 			playerPause()
+			//jPlayer.goToFrame(value)
 		} else if (!avoidEvent && !valueIsAdjusting) {
 			jPlayer.goToFrame(value)
+			jPlayer.play();
 		}
 	}
 
@@ -69,7 +71,7 @@ class FramesSlider extends JSlider implements ChangeListener, MouseListener {
 		Thread pauseThread = new Thread() {
 			void run() {
 				jPlayer.pause()
-				jPlayer.setFrameLabelText(val);
+				jPlayer.setFrameLabelText(val, jPlayer.totalTime);
 			}
 		}
 		pauseThread.start()

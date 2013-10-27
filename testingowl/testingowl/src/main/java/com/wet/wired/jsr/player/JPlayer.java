@@ -68,16 +68,16 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	@Autowired
 	JPlayerDecorator decorator;
-	
+
 	@Autowired
 	FramesSlider slider;
-	
+
 	@Autowired
 	SoundLevel soundLevel;
 
 	@Autowired
 	Owl owl;
-	
+
 	private ScreenPlayer screenPlayer;
 
 	private ImageIcon icon;
@@ -116,8 +116,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			fileChooser.showOpenDialog(this);
 
 			if (fileChooser.getSelectedFile() != null) {
-				//target = fileChooser.getSelectedFile().getAbsolutePath();
-				String targetAsZip = fileChooser.getSelectedFile().getAbsolutePath();
+				// target = fileChooser.getSelectedFile().getAbsolutePath();
+				String targetAsZip = fileChooser.getSelectedFile()
+						.getAbsolutePath();
 				decorator.unzip(targetAsZip);
 				target = targetAsZip.substring(0, targetAsZip.lastIndexOf("."));
 				open();
@@ -133,10 +134,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		} else if (ev.getActionCommand().equals("close")) {
 			close();
 		}
-	}
-
-	public void playerPaused() {
-		//do nothing
 	}
 
 	public void playerStopped() {
@@ -158,6 +155,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(true);
 		close.setBackground(null);
+		
+		System.out.println("Stopped Playing at Frame " + screenPlayer.getFrameNr() 
+				+ "/" + getTotalFrames());
 
 		text.setText("Stopped playing " + target);
 	}
@@ -168,14 +168,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			JLabel label = new JLabel(icon);
 
 			scrollPane = new JScrollPane(label);
-			scrollPane
-					.setSize(image.getWidth(this), image.getHeight(this));
+			scrollPane.setSize(image.getWidth(this), image.getHeight(this));
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					getContentPane().add(scrollPane, BorderLayout.CENTER);
 					pack();
-					setSize(getWidth()-100, 400);
+					setSize(getWidth() - 100, 400);
 					setVisible(true);
 					repaint(0);
 				}
@@ -195,12 +194,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		// long time = System.currentTimeMillis() - startTime;
 		long time = frameTime - startTime;
-		
-		decorator.newFrame(frameNumber, (time/1000.0));
-		
-		setFrameLabelText(frameNumber, time/1000.0);
+
+		decorator.newFrame(frameNumber, (time / 1000.0));
 
 		slider.setValueProgrammatically((int) frameNumber);
+
+		setFrameLabelText(frameNumber, time / 1000.0);
+
 	}
 
 	public void init(String[] args) {
@@ -209,7 +209,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		if (args.length == 1) {
 			target = new File(args[0]).getAbsolutePath();
-			decorator.open(target);
 			open();
 		}
 	}
@@ -217,8 +216,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	public void showFrame() {
 
 		setTitle("TestingOwl Player");
-		setIconImage(owl.getIcon().getImage());
-		
+		setIconImage(owl.getWelcome().getImage());
+
 		JPanel panel = new JPanel();
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -239,7 +238,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		gbc.weighty = 1;	
+		gbc.weighty = 1;
 		panel.add(open, gbc);
 
 		reset = new JButton("Reset");
@@ -250,7 +249,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		gbc.weighty = 1;	
+		gbc.weighty = 1;
 		panel.add(reset, gbc);
 
 		play = new JButton("Play");
@@ -261,7 +260,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.gridx = 2;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		gbc.weighty = 1;		
+		gbc.weighty = 1;
 		panel.add(play, gbc);
 
 		fastForward = new JButton("Fast Forward");
@@ -272,7 +271,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.gridx = 3;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		gbc.weighty = 1;	
+		gbc.weighty = 1;
 		panel.add(fastForward, gbc);
 
 		pause = new JButton("Pause");
@@ -283,7 +282,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.gridx = 4;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		gbc.weighty = 1;		
+		gbc.weighty = 1;
 		panel.add(pause, gbc);
 
 		close = new JButton("Close File");
@@ -294,18 +293,17 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.gridx = 5;
 		gbc.gridy = 0;
 		gbc.weightx = 0;
-		gbc.weighty = 1;	
+		gbc.weighty = 1;
 		panel.add(close, gbc);
-		
 
-		//slieder
+		// slieder
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 6;
 		gbc.gridy = 0;
 		gbc.weightx = 1;
-		gbc.weighty = 1;			
+		gbc.weighty = 1;
 		panel.add(createSliderLayout(), gbc);
-		
+
 		soundLevel.setSize(30, (int) close.getSize().getHeight());
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 7;
@@ -313,20 +311,20 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.weightx = 0;
 		gbc.weighty = 1;
 		panel.add(soundLevel, gbc);
-		
+
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
 
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
-		//panel.setBackground(Color.black);
+		// panel.setBackground(Color.black);
 
 		frameLabel = new JLabel("Frame: 0 Time: 0");
-		//frameLabel.setBackground(Color.black);
+		// frameLabel.setBackground(Color.black);
 		frameLabel.setForeground(Color.black);
 		text = new JLabel("No recording selected");
-		//text.setBackground(Color.black);
+		// text.setBackground(Color.black);
 		text.setForeground(Color.black);
 
 		panel.add(text);
@@ -338,77 +336,70 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		this.setSize(700, this.getHeight());
 		this.setVisible(true);
 	}
-	
+
 	private JPanel createSliderLayout() {
 		slider.setEnabled(false);
-		
 
 		JPanel sliderPanel = new JPanel();
-		sliderPanel.setPreferredSize(close.getSize()); //use default size of button
-		
+		sliderPanel.setPreferredSize(close.getSize()); // use default size of
+														// button
+
 		GridBagLayout gbl = new GridBagLayout();
 		sliderPanel.setLayout(gbl);
-		
+
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(2,2,2,2);
+		gbc.insets = new Insets(2, 2, 2, 2);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridheight = 1;
 		gbc.weightx = 1.0;
 		gbl.setConstraints(slider, gbc);
 		sliderPanel.add(slider);
-		
-		
+
 		return sliderPanel;
 	}
 
 	public void open() {
-		
+
 		beginWaitForBackgroundProcesses();
-			
-		if (target != null) {
-			try {
-				screenPlayer = new ScreenPlayer(target, this);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+
+		screenPlayer = new ScreenPlayer(target, this);
+		screenPlayer.open();
 		decorator.open(target);
-		
+
 		endWaitForBackgroundProcesses();
-		
+
 		slider.setMin(1);
 		slider.setMax(screenPlayer.getTotalFrames());
-		
+
 		reset();
 
-//		open.setEnabled(false);
-//		open.setBackground(null);
-//
-//		reset.setEnabled(true);
-//		reset.setBackground(null);
-//
-//		play.setEnabled(true);
-//		play.setBackground(null);
-//
-//		fastForward.setEnabled(true);
-//		fastForward.setBackground(null);
-//
-//		pause.setEnabled(false);
-//		pause.setBackground(null);
-//
-//		close.setEnabled(true);
-//		close.setBackground(null);
-//
-//		slider.setMin(1);
-//		slider.setMax(screenPlayer.getTotalFrames());
-//		slider.setEnabled(true);
-//
-//		screenPlayer.showFirstFrame();
-		//slider.setValueProgrammatically(1);
+		// open.setEnabled(false);
+		// open.setBackground(null);
+		//
+		// reset.setEnabled(true);
+		// reset.setBackground(null);
+		//
+		// play.setEnabled(true);
+		// play.setBackground(null);
+		//
+		// fastForward.setEnabled(true);
+		// fastForward.setBackground(null);
+		//
+		// pause.setEnabled(false);
+		// pause.setBackground(null);
+		//
+		// close.setEnabled(true);
+		// close.setBackground(null);
+		//
+		// slider.setMin(1);
+		// slider.setMax(screenPlayer.getTotalFrames());
+		// slider.setEnabled(true);
+		//
+		// screenPlayer.showFirstFrame();
+		// slider.setValueProgrammatically(1);
 
-		
 		text.setText("Ready to play " + target);
 
 	}
@@ -434,13 +425,13 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(true);
-		
-		setFrameLabelText(0);
-		
+
+		setFrameLabelText(0, screenPlayer.getTotalTime());
+
 		screenPlayer.reset();
-		
+
 		decorator.reset();
-		
+
 		text.setText("Ready to play " + target);
 
 	}
@@ -468,30 +459,43 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		slider.setEnabled(true);
 
 		screenPlayer.play();
-		
+
 		decorator.play();
 
 		text.setText("Playing " + target);
 	}
 
 	public void goToFrame(int frame) {
-		
+
 		beginWaitForBackgroundProcesses();
-		
-		reset();
-		screenPlayer.goToFrame(frame);
+
+		if (frame == screenPlayer.getFrameNr()) {
+			//do nothing, but play
+		} else if (frame > screenPlayer.getFrameNr()) {
+			screenPlayer.goToFrame(frame);
+		} else {
+			//frame is before current frame
+			reset();
+			screenPlayer.goToFrame(frame);			
+		}
 		
 		endWaitForBackgroundProcesses();
-		
-		play();
 	}
 
 	public int getTotalFrames() {
 		return screenPlayer.getTotalFrames();
 	}
+	
+	public long getTotalTime() {
+		return screenPlayer.getTotalTime();
+	}
 
 	public void fastForward() {
 
+		screenPlayer.fastforward();
+
+		decorator.fastForwart();
+		
 		open.setEnabled(false);
 		open.setBackground(null);
 
@@ -512,9 +516,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		slider.setEnabled(true);
 
-		screenPlayer.fastforward();
-		
-		decorator.fastForwart();
+
 
 		text.setText("Fast Forward " + target);
 	}
@@ -542,20 +544,16 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		slider.setEnabled(true);
 
 		screenPlayer.pause();
-		
+
 		decorator.pause();
-		
+
 		text.setText("Paused " + target);
 	}
 
 	public void close() {
 
-		if (screenPlayer != null) {
-			screenPlayer.stop();
-		}
+		screenPlayer.close();
 		
-		
-
 		decorator.close();
 
 		open.setEnabled(true);
@@ -577,28 +575,21 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(false);
+		
+		setFrameLabelText(0, 0);
 
 		text.setText("No recording selected");
 	}
-	
+
 	public void setFrameLabelText(long frame, double seconds) {
 		frameLabel.setText("Frame: " + frame + "/"
 				+ screenPlayer.getTotalFrames() + " Time: " + seconds);
 	}
-	
-	public void setFrameLabelText(long frame) {
-		
-		double seconds = (0.0+frame)/screenPlayer.getTotalFrames()
-				*screenPlayer.getTotalTime()/1000.0;
-		
-		frameLabel.setText("Frame: " + frame + "/"
-				+ screenPlayer.getTotalFrames() + " Time: " + seconds);
-	}	
-	
+
 	public void beginWaitForBackgroundProcesses() {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	}
-	
+
 	public void endWaitForBackgroundProcesses() {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}

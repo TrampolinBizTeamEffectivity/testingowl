@@ -58,36 +58,47 @@ public class ScreenPlayer implements Runnable {
 	private long totalTime;
 
 	private boolean running;
-	private boolean paused;
 	private boolean fastForward;
-
-	private boolean resetReq;
 
 	private FileInputStream iStream;
 	private String videoFile;
 	private int width;
 	private int height;
-
-	public ScreenPlayer(String videoFile, ScreenPlayerListener listener) {
-
-		this.listener = listener;
-		this.videoFile = videoFile;
-
-		open();
-	}
 	
-	private void open() {
-		initialize();
+	public ScreenPlayer(String video, ScreenPlayerListener list) {
+		listener = list;
+		videoFile = video;
+	
+		startTime = 0;
+		frameTime = 0;
+		lastFrameTime = 0;
+
+		frameNr = 0;
+		totalFrames = 0;
+		totalTime = 0;
+
+		running = false;
+		fastForward = false;
+	}
+
+	
+	public void open() {
+		openStream();
+		
 		countTotalFramesAndTime();
 
-		reset();
+		reset();		
 	}
+	
+	private void openStream() {
+		startTime = 0;
+		frameTime = 0;
+		lastFrameTime = 0;
 
-	private void initialize() {
-
-		startTime = System.currentTimeMillis();
-		paused = true;
 		frameNr = 0;
+
+		running = false;
+		fastForward = false;
 
 		try {
 
@@ -105,26 +116,14 @@ public class ScreenPlayer implements Runnable {
 			decompressor = new FrameDecompressor(iStream, width * height);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}	
 
 	}
-
-	public void reset() {
-
-		paused = false;
-		running = false;
-		if (thread != null && thread.isAlive()) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		clearImage();
-
-		resetReq = false;
+	
+	private void closeStream() {
+		
+		//ensure, thread is closed
+		stopThread();
 		
 		try {
 			iStream.close();
@@ -132,81 +131,67 @@ public class ScreenPlayer implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		initialize();
-		showFirstFrame();
-
+		
 	}
-
+	
+	public void reset() {
+		closeStream();
+		openStream();
+		showFirstFrame();
+	}	
+	
 	public void play() {
-
 		fastForward = false;
-		paused = false;
-
-		if (running == false) {
-			thread = new Thread(this, "Screen Player");
-			thread.start();
-		}
+		startThread();
 	}
 
 	public void fastforward() {
 		fastForward = true;
-		paused = false;
-
-		if (running == false) {
-			thread = new Thread(this, "Screen Player");
-			thread.start();
-		}
+		startThread();
 	}
+
 
 	public void pause() {
-		paused = true;
+		stopThread();
 	}
-
-	public void stop() {
-
-		paused = false;
-		running = false;
-		if (thread != null && thread.isAlive()) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+	
+	public void close() {
+		closeStream();
+		
 		clearImage();
 		
-		try {
-			iStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		startTime = 0;
+		frameTime = 0;
+		lastFrameTime = 0;
 
-		listener.playerStopped();
+		frameNr = 0;
+		totalFrames = 0;
+		totalTime = 0;
+
+		running = false;
+		fastForward = false;
 	}
 
 	public void goToFrame(int toFrame) {
+		
+		stopThread();
 
 		FramePacket frame = null;
+		
+		frameTime = 0;
 
 		for (int i = 1; i <= toFrame; i++) {
 			try {
 				frame = decompressor.unpack();
+				frameTime = frame.getTimeStamp();
 				frameNr++;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
-		if (frame != null) {
-			startTime = System.currentTimeMillis() - frame.getTimeStamp();
-		} else {
-			startTime = System.currentTimeMillis();
-		}
-	}
+		startTime = System.currentTimeMillis() - frameTime;
+	}	
 
 	private void countTotalFramesAndTime() {
 		// we have to iterate, because, the file is Zipped
@@ -230,51 +215,49 @@ public class ScreenPlayer implements Runnable {
 
 	}
 
-	public int getTotalFrames() {
-		return totalFrames;
-	}
+	private void showFirstFrame() {
+		try {
+			readFrame();
+			listener.newFrame(frameNr, frameTime);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
 
-	public long getTotalTime() {
-		return totalTime;
+		lastFrameTime = frameTime;
 	}
-
-	public long getFrameTime() {
-		return frameTime;
-	}
-
+	
 	private void clearImage() {
 		mis = new MemoryImageSource(area.width, area.height,
 				new int[frameSize], 0, area.width);
 		mis.setAnimated(true);
 		listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
-	}
-
-	public void showFirstFrame() {
-		try {
-			readFrame();
-			listener.newFrame(frameNr, frameTime);
-		} catch (IOException ioe) {
-			listener.showNewImage(null);
+	}	
+	
+	private void startThread() {
+		if (running == false) {
+			thread = new Thread(this, "Screen Player");
+			thread.start();
 		}
-
-		lastFrameTime = frameTime;
 	}
 
+	private void stopThread() {
+		running = false;
+		if (thread != null && thread.isAlive()) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public synchronized void run() {
 
 		running = true;
+		startTime = System.currentTimeMillis() - frameTime;
 
 		while (running) {
-
-			while (paused && !resetReq) {
-
-				try {
-					Thread.sleep(50);
-				} catch (Exception e) {
-				}
-				startTime += 50;
-				listener.playerPaused();
-			}
 
 			try {
 				readFrame();
@@ -288,8 +271,7 @@ public class ScreenPlayer implements Runnable {
 			if (fastForward == true) {
 				startTime -= (frameTime - lastFrameTime);
 			} else {
-				while ((System.currentTimeMillis() - startTime < frameTime)
-						&& !paused) {
+				while (System.currentTimeMillis() - startTime < frameTime) {
 
 					try {
 						Thread.sleep(100);
@@ -303,16 +285,13 @@ public class ScreenPlayer implements Runnable {
 
 			lastFrameTime = frameTime;
 		}
-
-		// listener.playerStopped();
+		
+		if (frameNr == totalFrames) {
+			listener.playerStopped();
+		}
 	}
 
 	private void readFrame() throws IOException {
-
-		if (resetReq) {
-			reset();
-			return;
-		}
 
 		FrameDecompressor.FramePacket frame = decompressor.unpack();
 
@@ -322,7 +301,6 @@ public class ScreenPlayer implements Runnable {
 		} else if (result == -1) {
 			// paused = true;
 			running = false;
-			listener.playerStopped();
 			return;
 		}
 
@@ -342,4 +320,21 @@ public class ScreenPlayer implements Runnable {
 			return;
 		}
 	}
+	
+	public int getTotalFrames() {
+		return totalFrames;
+	}
+
+	public long getTotalTime() {
+		return totalTime;
+	}
+	
+	public int getFrameNr() {
+		return frameNr;
+	}
+
+	public long getFrameTime() {
+		return frameTime;
+	}
+	
 }

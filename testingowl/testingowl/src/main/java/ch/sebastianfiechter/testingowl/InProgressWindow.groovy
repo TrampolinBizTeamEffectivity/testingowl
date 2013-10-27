@@ -40,7 +40,7 @@ class InProgressWindow {
 		progressBar.setValue(progressValue);
 		progressBar.setStringPainted(true);
 
-		Object[] complexMsg = [owl.waiting, label, progressBar ];
+		Object[] complexMsg = [label, progressBar ];
 		optionPane.setMessage(complexMsg);
 
 		dialog = new JWindow()

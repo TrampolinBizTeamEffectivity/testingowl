@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 class Owl {
 
-	ImageIcon getIcon() {
+	ImageIcon getWelcome() {
 		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_welcome.png"))
 		new ImageIcon(img)
 	}

@@ -84,6 +84,7 @@ class JPlayerDecorator {
 	def issueSelected(Issue issue) {
 		log.info "go to ${issue.frameStart}"
 		jPlayer.goToFrame(issue.frameStart)
+		jPlayer.play();
 	}
 	
 	def disposing() {

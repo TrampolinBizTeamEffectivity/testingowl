@@ -222,7 +222,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		});
 
 		setTitle("TestingOwl Recorder");
-		setIconImage(owl.getIcon().getImage());
+		setIconImage(owl.getWelcome().getImage());
 
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
