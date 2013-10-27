@@ -79,7 +79,7 @@ class AudioRecorder {
 
 	def stopRecording() {
 		
-		monitoringAudioInputStream?.stop()
+		//monitoringAudioInputStream?.stop()
 		
 		if (targetDataLine != null && targetDataLine.active) {
 			targetDataLine.stop();

@@ -17,36 +17,36 @@ class MonitoringAudioInputStream extends AudioInputStream {
 	SoundLevel soundLevel
 	
 	def level = 0
-	def run = false
+	//def run = false
 	
-	TimerTask timerTask
+	//TimerTask timerTask
 	
 	public MonitoringAudioInputStream(TargetDataLine targetDataLine, def io, def level) {
 		super(targetDataLine)
 		audioIO = io
 		soundLevel = level
 		
-		run = true
-		start()
+		//run = true
+		//start()
 	}
 	
-	def start() {
-		timerTask = new Timer().runAfter(5) {
-			updateSoundLevel()
-			if (run == true) {
-				start();
-			}
-		}
-	}
-	
-	def stop() {
-		run = false
-		timerTask?.cancel()
-	}
-	
-	synchronized updateSoundLevel() {
-		soundLevel.setLevel(level)
-	}
+//	def start() {
+//		timerTask = new Timer().runAfter(5) {
+//			updateSoundLevel()
+//			if (run == true) {
+//				start();
+//			}
+//		}
+//	}
+//	
+//	def stop() {
+//		run = false
+//		timerTask?.cancel()
+//	}
+//	
+//	synchronized updateSoundLevel() {
+//		soundLevel.setLevel(level)
+//	}
 
 	@Override
 	public int read() throws IOException {	
@@ -72,6 +72,7 @@ class MonitoringAudioInputStream extends AudioInputStream {
 	def monitor(byte[] data) {
 		//cut audio data to get more significant results
 		level = audioIO.calculateRMSLevel(data[0..200] as byte[])
+		soundLevel.setLevel(level)
 		//log.info ("recording level: " + level);
 	}
 

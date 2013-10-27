@@ -180,9 +180,10 @@ public class ScreenPlayer implements Runnable {
 		
 		frameTime = 0;
 
-		for (int i = 1; i <= toFrame; i++) {
+		for (int i = frameNr+1; i < toFrame; i++) {
 			try {
 				frame = decompressor.unpack();
+				frameSize = frame.getData().length;
 				frameTime = frame.getTimeStamp();
 				frameNr++;
 			} catch (IOException e) {
@@ -190,7 +191,6 @@ public class ScreenPlayer implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		startTime = System.currentTimeMillis() - frameTime;
 	}	
 
 	private void countTotalFramesAndTime() {
@@ -297,9 +297,13 @@ public class ScreenPlayer implements Runnable {
 
 		int result = frame.getResult();
 		if (result == 0) {
+			//empty image, because no change
+			frameNr++;
+			frameSize = frame.getData().length;
+			frameTime = frame.getTimeStamp();
 			return;
 		} else if (result == -1) {
-			// paused = true;
+			//end of file, stop
 			running = false;
 			return;
 		}

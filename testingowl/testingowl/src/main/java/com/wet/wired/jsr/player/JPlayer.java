@@ -156,8 +156,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setEnabled(true);
 		close.setBackground(null);
 		
-		System.out.println("Stopped Playing at Frame " + screenPlayer.getFrameNr() 
-				+ "/" + getTotalFrames());
 
 		text.setText("Stopped playing " + target);
 	}
@@ -467,11 +465,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void goToFrame(int frame) {
 
-		beginWaitForBackgroundProcesses();
+		pause();
 
-		if (frame == screenPlayer.getFrameNr()) {
-			//do nothing, but play
-		} else if (frame > screenPlayer.getFrameNr()) {
+		if (frame >= screenPlayer.getFrameNr()) {
 			screenPlayer.goToFrame(frame);
 		} else {
 			//frame is before current frame
@@ -479,7 +475,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			screenPlayer.goToFrame(frame);			
 		}
 		
-		endWaitForBackgroundProcesses();
 	}
 
 	public int getTotalFrames() {
