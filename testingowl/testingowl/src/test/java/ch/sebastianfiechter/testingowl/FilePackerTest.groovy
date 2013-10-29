@@ -14,25 +14,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class ZipTest {
+class FilePackerTest {
 
 	@Autowired
-	Zip zip
+	FilePacker packer
 	
 	
 	@Test
 	public void testAll() {
-		zip.zip("src/test/resources/testissues")
+		packer.pack("src/test/resources/testissues")
 		
-		zip.unzip("src/test/resources/testissues.cap.zip", "src/test/resources/unzip/")
+		packer.unpack("src/test/resources/testissues")
 		
 	}
 
 	
-	@Test
-	public void testUnzipOnlyFilename() {
-
-		zip.unzip("src/test/resources/unzip/testissues.cap.zip")
-		
-	}
 }

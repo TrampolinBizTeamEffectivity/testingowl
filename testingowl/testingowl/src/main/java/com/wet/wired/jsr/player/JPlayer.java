@@ -105,7 +105,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			FileExtensionFilter filter = new FileExtensionFilter();
 
 			filter = new FileExtensionFilter();
-			filter.addExtension("cap.zip");
+			filter.addExtension("cap.owl");
 			filter.setDescription("TestingOwl File");
 
 			if (target != null) {
@@ -117,10 +117,10 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 			if (fileChooser.getSelectedFile() != null) {
 				// target = fileChooser.getSelectedFile().getAbsolutePath();
-				String targetAsZip = fileChooser.getSelectedFile()
+				String targetAsOwl = fileChooser.getSelectedFile()
 						.getAbsolutePath();
-				decorator.unzip(targetAsZip);
-				target = targetAsZip.substring(0, targetAsZip.lastIndexOf("."));
+				decorator.unpack(targetAsOwl);
+				target = targetAsOwl.substring(0, targetAsOwl.lastIndexOf("."));
 				open();
 			}
 		} else if (ev.getActionCommand().equals("play")) {

@@ -54,7 +54,7 @@ class JRecorderDecorator implements ActionListener {
 	SoundLevel soundLevel
 	
 	@Autowired
-	Zip zip
+	FilePacker filePacker
 	
 	@Autowired
 	InProgressWindow inProgressWindow
@@ -221,11 +221,11 @@ class JRecorderDecorator implements ActionListener {
 
 	public File prepareSuggestedFile() {
 		def dateTime = new Date().format('yyyy-MM-dd-H_m_s')
-		new File("${topic}-${dateTime}.cap.zip");
+		new File("${topic}-${dateTime}.cap.owl");
 	}
 
-	public void saveFile(File fileNameCapZip) {
-		def fileNameWithoutEnding = fileNameCapZip.absolutePath[0..-9];
+	public void saveFile(File fileNameCapOwl) {
+		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
 
 		log.info ("start save xlsx")
 		issues.writeToExcelXlsx(fileNameWithoutEnding);
@@ -237,11 +237,11 @@ class JRecorderDecorator implements ActionListener {
 		log.info ("stop save wav")
 	}
 
-	def zip(File fileNameCapZip) {
-		def fileNameWithoutEnding = fileNameCapZip.absolutePath[0..-9];
+	def pack(File fileNameCapOwl) {
+		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
 		
 		log.info ("start save zip")
-		zip.zip(fileNameWithoutEnding)
+		filePacker.pack(fileNameWithoutEnding)
 		inProgressWindow.setProgressValue(4);
 		log.info ("stop save zip")
 	}

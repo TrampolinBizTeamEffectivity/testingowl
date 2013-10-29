@@ -154,7 +154,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			// FileExtensionFilter filter = new FileExtensionFilter();
 			//
 			// filter = new FileExtensionFilter();
-			// filter.addExtension("cap.zip");
+			// filter.addExtension("cap.owl");
 			// filter.setDescription("TestingOwl File");
 			//
 			// fileChooser.setFileFilter(filter);
@@ -191,7 +191,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		decorator.saveFile(target);
 
-		decorator.zip(target);
+		decorator.pack(target);
 		
 		this.endWaitForBackgroundProcesses();
 		

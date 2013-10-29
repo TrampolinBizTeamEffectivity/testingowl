@@ -34,12 +34,12 @@ class JPlayerDecorator {
 	AudioPlayer audioPlayer
 	
 	@Autowired
-	Zip zip
+	FilePacker filePacker
 	
 	def listenForPlayStart = false
 		
-	def unzip(String fileNameWithDotCapZip) {
-		zip.unzip(fileNameWithDotCapZip)
+	def unpack(String fileNameWithDotCapOwl) {
+		filePacker.unpack(fileNameWithDotCapOwl)
 	}
 	
 	def open(String fileNameWithDotCap) {
