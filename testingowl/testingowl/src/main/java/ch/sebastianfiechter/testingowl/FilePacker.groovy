@@ -86,18 +86,18 @@ class FilePacker {
 	}
 
 
-	def unpack(String filenameWithoutFileEnding) {
+	def unpack(String filenameWithFileEnding) {
 
 		FileInputStream fis = new FileInputStream(
-				"${filenameWithoutFileEnding}.cap.owl");
+				"${filenameWithFileEnding}");
 
 		channel = fis.getChannel()
 
 		currentPosition = 0
 
-		extractFile("${filenameWithoutFileEnding}.cap")
-		extractFile("${filenameWithoutFileEnding}.cap.xlsx")
-		extractFile("${filenameWithoutFileEnding}.cap.wav")
+		extractFile("${filenameWithFileEnding}.cap")
+		extractFile("${filenameWithFileEnding}.cap.xlsx")
+		extractFile("${filenameWithFileEnding}.cap.wav")
 
 		channel.close()
 		fis.close()
