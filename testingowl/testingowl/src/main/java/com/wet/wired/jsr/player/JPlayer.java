@@ -78,7 +78,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	@Autowired
 	Owl owl;
 
-	private ScreenPlayer screenPlayer;
+	@Autowired
+	ScreenPlayer screenPlayer;
 
 	private ImageIcon icon;
 	private JScrollPane scrollPane;
@@ -155,7 +156,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(true);
 		close.setBackground(null);
-		
 
 		text.setText("Stopped playing " + target);
 	}
@@ -362,7 +362,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		beginWaitForBackgroundProcesses();
 
-		screenPlayer = new ScreenPlayer(target, this);
+		screenPlayer.init(target, this);
 		screenPlayer.open();
 		decorator.open(target);
 
@@ -466,25 +466,25 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	public void goToFrame(int frame) {
 
 		beginWaitForBackgroundProcesses();
-		
+
 		pause();
 
 		if (frame >= screenPlayer.getFrameNr()) {
 			screenPlayer.goToFrame(frame);
 		} else {
-			//frame is before current frame
+			// frame is before current frame
 			reset();
-			screenPlayer.goToFrame(frame);			
+			screenPlayer.goToFrame(frame);
 		}
-		
+
 		endWaitForBackgroundProcesses();
-		
+
 	}
 
 	public int getTotalFrames() {
 		return screenPlayer.getTotalFrames();
 	}
-	
+
 	public long getTotalTime() {
 		return screenPlayer.getTotalTime();
 	}
@@ -494,7 +494,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		screenPlayer.fastforward();
 
 		decorator.fastForwart();
-		
+
 		open.setEnabled(false);
 		open.setBackground(null);
 
@@ -514,8 +514,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(true);
-
-
 
 		text.setText("Fast Forward " + target);
 	}
@@ -551,11 +549,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void close() {
 
-		if (screenPlayer != null) {
-			screenPlayer.close();
-			setFrameLabelText(0, 0);
-		}
-		
+		screenPlayer.close();
+		setFrameLabelText(0, 0);
+
 		decorator.close();
 
 		open.setEnabled(true);
@@ -577,8 +573,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(false);
-		
-
 
 		text.setText("No recording selected");
 	}

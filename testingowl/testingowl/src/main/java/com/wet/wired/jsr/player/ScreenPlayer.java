@@ -34,8 +34,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.springframework.stereotype.Component;
+
 import com.wet.wired.jsr.player.FrameDecompressor.FramePacket;
 
+@Component
 public class ScreenPlayer implements Runnable {
 
 	private Thread thread;
@@ -65,7 +68,7 @@ public class ScreenPlayer implements Runnable {
 	private int width;
 	private int height;
 	
-	public ScreenPlayer(String video, ScreenPlayerListener list) {
+	public void init(String video, ScreenPlayerListener list) {
 		listener = list;
 		videoFile = video;
 	

@@ -76,7 +76,10 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	@Autowired
 	InProgressWindow inProgressWindow;
 
-	private ScreenRecorder recorder;
+	@Autowired
+	DesktopScreenRecorder recorder;
+	
+	
 	private File temp;
 
 	private JButton control;
@@ -93,9 +96,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		} catch (InterruptedException e1) {
 		}
 
-		if (recorder != null) {
-			return true;
-		}
 
 		if (!decorator.fetchTopicAndMixer(this)) {
 			return false;
@@ -105,7 +105,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			FileOutputStream oStream = new FileOutputStream(fileName);
 			temp = new File(fileName);
 			temp.deleteOnExit();
-			recorder = new DesktopScreenRecorder(oStream, this);
+			recorder.init(oStream, this);
 			recorder.startRecording();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -115,7 +115,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		if (ev.getActionCommand().equals("start") && recorder == null) {
+		if (ev.getActionCommand().equals("start")) {
 			try {
 				temp = File.createTempFile("temp", "rec");
 
@@ -127,7 +127,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (ev.getActionCommand().equals("stop") && recorder != null) {
+		} else if (ev.getActionCommand().equals("stop")) {
 			text.setText("Stopping");
 			recorder.stopRecording();
 		}
@@ -167,7 +167,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			save();
 
 			FileHelper.delete(temp);
-			recorder = null;
 			frameCount = 0;
 
 			control.setActionCommand("start");
@@ -276,9 +275,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		shuttingDown = true;
 
-		if (recorder != null) {
-			recorder.stopRecording();
-		}
+
+		recorder.stopRecording();
+		
 
 		decorator.dispose();
 		dispose();

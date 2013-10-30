@@ -116,7 +116,7 @@ public abstract class ScreenRecorder implements Runnable {
 
    private StreamPacker streamPacker;
 
-   public ScreenRecorder(OutputStream oStream, ScreenRecorderListener listener) {
+   public void init(OutputStream oStream, ScreenRecorderListener listener) {
 
       this.listener = listener;
       this.oStream = oStream;

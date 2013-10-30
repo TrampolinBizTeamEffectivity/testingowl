@@ -39,15 +39,18 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class DesktopScreenRecorder extends ScreenRecorder {
 
    public static boolean useWhiteCursor;
    private Robot robot;
    private BufferedImage mouseCursor;
 
-   public DesktopScreenRecorder(OutputStream oStream,
+   public void init(OutputStream oStream,
          ScreenRecorderListener listener) {
-      super(oStream, listener);
+      super.init(oStream, listener);
 
       try {
 
