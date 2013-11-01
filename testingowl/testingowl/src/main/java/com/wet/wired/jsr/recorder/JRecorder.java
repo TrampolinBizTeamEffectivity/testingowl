@@ -119,6 +119,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			try {
 				temp = File.createTempFile("temp", "rec");
 
+				
 				if (startRecording(temp.getAbsolutePath())) {
 					control.setActionCommand("stop");
 					control.setText("Stop Recording");
