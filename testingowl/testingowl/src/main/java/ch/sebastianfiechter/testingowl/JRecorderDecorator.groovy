@@ -206,8 +206,6 @@ class JRecorderDecorator implements ActionListener {
 		musthave.enabled = true
 		wish.enabled = true
 		
-		
-
 		audioRecorder.startRecording()
 	}
 
