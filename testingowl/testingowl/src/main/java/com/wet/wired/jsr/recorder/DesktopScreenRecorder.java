@@ -34,6 +34,7 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
@@ -48,7 +49,7 @@ public class DesktopScreenRecorder extends ScreenRecorder {
    private Robot robot;
    private BufferedImage mouseCursor;
 
-   public void init(OutputStream oStream,
+   public void init(FileOutputStream oStream,
          ScreenRecorderListener listener) {
       super.init(oStream, listener);
 
