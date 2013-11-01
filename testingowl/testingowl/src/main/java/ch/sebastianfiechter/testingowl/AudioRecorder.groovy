@@ -42,7 +42,7 @@ class AudioRecorder {
 			return
 		}
 
-		tempFile = new File("tempwav");
+		tempFile = File.createTempFile("temp", "wav")
 		tempFile.deleteOnExit();
 
 		prepareRecording()
