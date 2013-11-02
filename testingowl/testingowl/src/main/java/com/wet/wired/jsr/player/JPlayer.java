@@ -371,6 +371,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		slider.setMin(1);
 		slider.setMax(screenPlayer.getTotalFrames());
 
+		soundLevel.setLevel(0);
+		
 		reset();
 
 		// open.setEnabled(false);

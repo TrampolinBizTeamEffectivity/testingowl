@@ -72,7 +72,6 @@ public class FrameCompressor {
 
 		int inCursor = 0;
 		int outCursor = 0;
-		int blocks = 0;
 
 		boolean inBlock = true;
 		int blockSize = 0;
@@ -114,7 +113,6 @@ public class FrameCompressor {
 			if (blockRed == red && blockGreen == green && blockBlue == blue) {
 				if (inBlock == false) {
 					if (uncompressedCursor > -1) {
-						blocks++;
 						hasChanges = true;
 						packed[uncompressedCursor] = (byte) (blockSize + 0x80);
 					}
@@ -127,7 +125,6 @@ public class FrameCompressor {
 							blankBlocks++;
 							packed[outCursor - 1] = (byte) blankBlocks;
 						} else {
-							blocks++;
 							blankBlocks++;
 							packed[outCursor] = (byte) 0xFF;
 							outCursor++;
@@ -138,7 +135,6 @@ public class FrameCompressor {
 							blankBlocks = 0;
 						}
 					} else {
-						blocks++;
 						hasChanges = true;
 						packed[outCursor] = (byte) blockSize;
 						outCursor++;
@@ -157,7 +153,6 @@ public class FrameCompressor {
 			} else {
 				if (inBlock == true) {
 					if (blockSize > 0) {
-						blocks++;
 						hasChanges = true;
 						packed[outCursor] = (byte) blockSize;
 						outCursor++;
@@ -176,7 +171,6 @@ public class FrameCompressor {
 					blankBlocks = 0;
 				} else if (blockSize == 126 || lastEntry == true) {
 					if (uncompressedCursor > -1) {
-						blocks++;
 						hasChanges = true;
 						packed[uncompressedCursor] = (byte) (blockSize + 0x80);
 					}
