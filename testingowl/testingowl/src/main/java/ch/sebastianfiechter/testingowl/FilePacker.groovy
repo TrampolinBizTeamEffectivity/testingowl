@@ -94,10 +94,12 @@ class FilePacker {
 		channel = fis.getChannel()
 
 		currentPosition = 0
+		
+		def fileNameWithoutFileEnding = filenameWithFileEnding[0..-9]
 
-		extractFile("${filenameWithFileEnding}.cap")
-		extractFile("${filenameWithFileEnding}.cap.xlsx")
-		extractFile("${filenameWithFileEnding}.cap.wav")
+		extractFile("${fileNameWithoutFileEnding}.cap")
+		extractFile("${fileNameWithoutFileEnding}.cap.xlsx")
+		extractFile("${fileNameWithoutFileEnding}.cap.wav")
 
 		channel.close()
 		fis.close()

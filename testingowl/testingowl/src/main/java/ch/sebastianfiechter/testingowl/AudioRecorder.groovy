@@ -22,7 +22,7 @@ class AudioRecorder {
 
 	@Autowired
 	AudioIO audioIO
-	
+
 	@Autowired
 	SoundLevel soundLevel;
 
@@ -33,7 +33,7 @@ class AudioRecorder {
 	TargetDataLine targetDataLine
 	AudioFileFormat.Type targetType
 	MonitoringAudioInputStream monitoringAudioInputStream
-	
+
 
 	def startRecording() {
 
@@ -73,14 +73,14 @@ class AudioRecorder {
 
 		targetType = AudioFileFormat.Type.WAVE;
 
-		monitoringAudioInputStream = new MonitoringAudioInputStream(targetDataLine, 
-			audioIO, soundLevel);
+		monitoringAudioInputStream = new MonitoringAudioInputStream(targetDataLine,
+				audioIO, soundLevel);
 	}
 
 	def stopRecording() {
-		
+
 		//monitoringAudioInputStream?.stop()
-		
+
 		if (targetDataLine != null && targetDataLine.active) {
 			targetDataLine.stop();
 			targetDataLine.close();

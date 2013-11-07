@@ -37,23 +37,6 @@ class MonitoringAudioInputStream extends AudioInputStream {
 		//start()
 	}
 	
-//	def start() {
-//		timerTask = new Timer().runAfter(5) {
-//			updateSoundLevel()
-//			if (run == true) {
-//				start();
-//			}
-//		}
-//	}
-//	
-//	def stop() {
-//		run = false
-//		timerTask?.cancel()
-//	}
-//	
-//	synchronized updateSoundLevel() {
-//		soundLevel.setLevel(level)
-//	}
 
 	@Override
 	public int read() throws IOException {	

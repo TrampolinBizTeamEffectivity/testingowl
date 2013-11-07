@@ -24,10 +24,16 @@ class AudioIOTest {
 	
 	@Test
 	public void testAll() {
-		assert null != AudioIO.getNamesOfMixersSupportingRecording()
+		assert 0 < AudioIO.getNamesOfMixersSupportingRecording().size()
 		def m = AudioIO.getRecordingMixer(AudioIO.getNamesOfMixersSupportingRecording()[0])
 		assert null != AudioIO.getRecordingMixer(AudioIO.getNamesOfMixersSupportingRecording()[0][0..2])
 		assert true == AudioIO.isMixerSupportingAudioFormat(m)
+		
+	}
+	
+	@Test
+	public void testPrintSupportedAudioFormats() {
+		AudioIO.printSupportedAudioFormats()
 		
 	}
 

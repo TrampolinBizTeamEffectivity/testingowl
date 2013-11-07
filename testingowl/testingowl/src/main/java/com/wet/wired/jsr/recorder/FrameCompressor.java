@@ -31,9 +31,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.log4j.Logger;
+
 public class FrameCompressor {
+	
+	public static int FULL_FRAME_INTERVAL = 50;
+	
+	Logger logger = Logger.getLogger(FrameCompressor.class);
 
 	private FramePacket frame;
+	
+	private int frameNr;
+	private int lastFullFrame;
+	private long streamWriterPosition;
 
 	public class FramePacket {
 
@@ -43,16 +53,17 @@ public class FrameCompressor {
 		private int[] previousData;
 		private int[] newData;
 
-		private FramePacket(OutputStream oStream, int frameSize) {
+		private FramePacket(OutputStream oStream) {
 			this.oStream = oStream;
-			previousData = new int[frameSize];
+			//previousData = new int[frameSize];
 		}
 
 		private void nextFrame(int[] frameData, long frameTime) {
 			this.frameTime = frameTime;
 			previousData = newData;
-			newData = null;
+			//newData = null;
 			if (previousData == null) {
+				logger.info("initialized");
 				previousData = new int[frameData.length];
 			}
 
@@ -61,13 +72,22 @@ public class FrameCompressor {
 		}
 	}
 
-	public FrameCompressor(OutputStream oStream, int frameSize) {
-		frame = new FramePacket(oStream, frameSize);
+	public FrameCompressor(OutputStream oStream) {
+		frame = new FramePacket(oStream);
+		
+		frameNr = -1;
+		lastFullFrame = 0;
+		streamWriterPosition = 0;
 	}
 
 	public void pack(int[] newData, long frameTimeStamp) throws IOException {
 		frame.nextFrame(newData, frameTimeStamp);
 
+		frameNr++;
+		if (frameNr % FULL_FRAME_INTERVAL == 0) {
+			lastFullFrame = frameNr;	
+		}
+		
 		byte[] packed = new byte[newData.length * 4];
 
 		int inCursor = 0;
@@ -96,7 +116,8 @@ public class FrameCompressor {
 				lastEntry = true;
 			}
 
-			if (newData[inCursor] == frame.previousData[inCursor]) {
+			//if frameNr % FULL_FRAME_INTERVAL == 0 then produce a full frame
+			if (newData[inCursor] == frame.previousData[inCursor] && frameNr % FULL_FRAME_INTERVAL != 0) {
 				red = 0;
 				green = 0;
 				blue = 0;
@@ -202,22 +223,36 @@ public class FrameCompressor {
 			blockSize++;
 		}
 
+		
+		long swp = streamWriterPosition;
+
 		frame.oStream.write(((int) frame.frameTime & 0xFF000000) >>> 24);
 		frame.oStream.write(((int) frame.frameTime & 0x00FF0000) >>> 16);
 		frame.oStream.write(((int) frame.frameTime & 0x0000FF00) >>> 8);
 		frame.oStream.write(((int) frame.frameTime & 0x000000FF));
-
-		if (hasChanges == false) {
+		streamWriterPosition += 4;
+		
+		//only create empty image if not a fullFrame to save
+		if (hasChanges == false && frameNr % FULL_FRAME_INTERVAL != 0) {
 			frame.oStream.write(0);
+			streamWriterPosition += 1;
 			frame.oStream.flush();
 			frame.newData = frame.previousData;
-
+			
+			//write frameNr, frameTime, bytesPositionInStream=streamPosition,  packSizeBeforeCompression, hasChanges lastFullFrame
+			logger.info(frameNr+"\t"+(frame.frameTime/1000.0)+"\t"+swp
+					+"\t"+(packed.length/1000.0)
+					+"\t"+"-"
+					+"\t"+hasChanges+"\t"+lastFullFrame);			
+		
+			//return after frameTime, but before data, because nothing changed
 			return;
 		} else {
 			frame.oStream.write(1);
+			streamWriterPosition += 1;
 			frame.oStream.flush();
 		}
-
+		
 		ByteArrayOutputStream bO = new ByteArrayOutputStream();
 
 		byte[] bA = new byte[0];
@@ -229,13 +264,21 @@ public class FrameCompressor {
 		bO.close();
 
 		bA = bO.toByteArray();
+		
+		logger.info(frameNr+"\t"+(frame.frameTime/1000.0)+"\t"+swp
+				+"\t"+(packed.length/1000.0)
+				+"\t"+(bA.length/1000.0)
+				+"\t"+hasChanges+"\t"+lastFullFrame);
+		
 
 		frame.oStream.write((bA.length & 0xFF000000) >>> 24);
 		frame.oStream.write((bA.length & 0x00FF0000) >>> 16);
 		frame.oStream.write((bA.length & 0x0000FF00) >>> 8);
 		frame.oStream.write((bA.length & 0x000000FF));
+		streamWriterPosition += 4;
 
 		frame.oStream.write(bA);
+		streamWriterPosition += bA.length;
 		frame.oStream.flush();
 
 	}

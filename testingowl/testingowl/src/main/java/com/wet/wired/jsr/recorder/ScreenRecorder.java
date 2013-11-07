@@ -64,8 +64,8 @@ public abstract class ScreenRecorder implements Runnable {
 		Queue<DataPack> queue = new LinkedList<DataPack>();
 		private FrameCompressor compressor;
 
-		public StreamPacker(OutputStream oStream, int frameSize) {
-			compressor = new FrameCompressor(oStream, frameSize);
+		public StreamPacker(OutputStream oStream) {
+			compressor = new FrameCompressor(oStream);
 
 			new Thread(this, "Stream Packer").start();
 		}
@@ -131,7 +131,7 @@ public abstract class ScreenRecorder implements Runnable {
 		long time = 0;
 
 		frameSize = recordArea.width * recordArea.height;
-		streamPacker = new StreamPacker(oStream, frameSize);
+		streamPacker = new StreamPacker(oStream);
 
 		while (recording) {
 			time = System.currentTimeMillis();
