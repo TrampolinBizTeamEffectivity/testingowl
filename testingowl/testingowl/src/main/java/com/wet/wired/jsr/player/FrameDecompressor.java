@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.zip.GZIPInputStream;
 
 public class FrameDecompressor {
@@ -37,7 +38,7 @@ public class FrameDecompressor {
 
    public class FramePacket {
 
-      private InputStream iStream;
+      private RandomAccessFile iStream;
       private int[] previousData;
       private int result;
       private long frameTimeStamp;
@@ -45,7 +46,7 @@ public class FrameDecompressor {
       private int frameSize;
       private int[] newData;
 
-      private FramePacket(InputStream iStream, int expectedSize) {
+      private FramePacket(RandomAccessFile iStream, int expectedSize) {
          this.frameSize = expectedSize;
          this.iStream = iStream;
          previousData = new int[frameSize];
@@ -72,7 +73,7 @@ public class FrameDecompressor {
 
    public FramePacket frame;
 
-   public FrameDecompressor(InputStream iStream, int frameSize) {
+   public FrameDecompressor(RandomAccessFile iStream, int frameSize) {
       frame = new FramePacket(iStream, frameSize);
    }
 

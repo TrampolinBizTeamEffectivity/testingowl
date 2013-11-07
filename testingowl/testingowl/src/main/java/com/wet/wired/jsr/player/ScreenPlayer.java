@@ -33,6 +33,7 @@ import java.awt.image.MemoryImageSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import org.springframework.stereotype.Component;
 
@@ -63,7 +64,7 @@ public class ScreenPlayer implements Runnable {
 	private boolean running;
 	private boolean fastForward;
 
-	private FileInputStream iStream;
+	private RandomAccessFile iStream;
 	private String videoFile;
 	private int width;
 	private int height;
@@ -105,7 +106,7 @@ public class ScreenPlayer implements Runnable {
 
 		try {
 
-			iStream = new FileInputStream(videoFile);
+			iStream = new RandomAccessFile(videoFile, "r");
 
 			width = iStream.read();
 			width = width << 8;
