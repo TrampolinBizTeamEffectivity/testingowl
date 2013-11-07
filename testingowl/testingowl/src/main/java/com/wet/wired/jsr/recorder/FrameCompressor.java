@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 
 public class FrameCompressor {
 	
-	public static int FULL_FRAME_INTERVAL = 50;
+	public static int FULL_FRAME_INTERVAL = 300;
 	
 	Logger logger = Logger.getLogger(FrameCompressor.class);
 
