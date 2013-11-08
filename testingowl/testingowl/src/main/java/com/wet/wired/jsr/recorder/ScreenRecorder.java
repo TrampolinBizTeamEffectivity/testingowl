@@ -28,15 +28,26 @@ package com.wet.wired.jsr.recorder;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.sebastianfiechter.testingowl.FrameIndexEntry;
 
 public abstract class ScreenRecorder implements Runnable {
+	
+	Logger logger = LoggerFactory.getLogger(ScreenRecorder.class);
 
 	private Rectangle recordArea;
 
@@ -235,6 +246,7 @@ public abstract class ScreenRecorder implements Runnable {
 			}
 		}
 	}
+	
 
 	public boolean isRecording() {
 		return recording;

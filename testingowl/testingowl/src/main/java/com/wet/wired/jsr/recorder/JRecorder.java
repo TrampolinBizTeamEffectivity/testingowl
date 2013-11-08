@@ -87,8 +87,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	@Autowired
 	DesktopScreenRecorder recorder;
 
-	private File temp;
-
 	private JButton control;
 	private JLabel text;
 	private JButton player;
@@ -109,9 +107,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		try {
 			FileOutputStream oStream = new FileOutputStream(fileName);
-			temp = new File(fileName);
+			File temp = new File(fileName);
 			temp.deleteOnExit();
-			recorder.init(oStream, this);
+			recorder.init(oStream, temp, this);
 			recorder.startRecording();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,7 +121,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equals("start")) {
 			try {
-				temp = File.createTempFile("temp", "rec");
+				File temp = File.createTempFile("temp", "rec");
 
 				if (startRecording(temp.getAbsolutePath())) {
 					control.setActionCommand("stop");
@@ -174,7 +172,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		// save(target);
 		save();
 
-		FileHelper.delete(temp);
 		frameCount = 0;
 
 		control.setActionCommand("start");
@@ -216,8 +213,8 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		logger.info("start save cap");
 		try {
 			FileOutputStream fos = new FileOutputStream(capFile);
-			writeFrameIndex(fos.getChannel());
-			writeVideo(fos.getChannel());
+			recorder.writeFrameIndex(fos.getChannel());
+			recorder.writeVideo(fos.getChannel());
 			fos.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -229,50 +226,6 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		logger.info("stop save cap");
 	}
 
-	private void writeFrameIndex(FileChannel targetChannel) {
-
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(recorder.getFrameIndex());
-			oos.close();
-			baos.close();
-
-			ByteBuffer frameIndexLength = ByteBuffer.allocate(4);
-			logger.info("frame index size is: " + baos.toByteArray().length);
-			frameIndexLength.putInt(baos.toByteArray().length);
-			frameIndexLength.flip();
-			targetChannel.write(frameIndexLength);
-
-			ByteBuffer frameIndex = ByteBuffer.wrap(baos.toByteArray());
-			targetChannel.write(frameIndex);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	private void writeVideo(FileChannel targetChannel) {
-
-		try {
-			RandomAccessFile tempVideo = new RandomAccessFile(temp, "r");
-
-			logger.info("will write video length of: " + tempVideo.length()
-					+ " at position: " + targetChannel.position());
-
-			targetChannel.transferFrom(tempVideo.getChannel(),
-					targetChannel.position(), tempVideo.length());
-
-			tempVideo.getChannel().close();
-			tempVideo.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
 
 	public void init(String[] args) {
 
