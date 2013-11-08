@@ -38,11 +38,11 @@ class InProgressWindow implements ActionListener {
 				JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 				null, new Object[0], null);
 
-			
 		def message = ""
 		messages.each { message += it+"<BR>"}
 			
-		JLabel label = new JLabel("<html><body><center>${message}</center></body></html>", SwingConstants.CENTER);
+		JLabel label = new JLabel("<html><body><center>${message}</center></body></html>", 
+			SwingConstants.CENTER);
 		progressBar = new JProgressBar(0, progressMaxValue)
 		progressBar.setValue(progressValue)
 		progressBar.setStringPainted(true)
@@ -84,7 +84,7 @@ class InProgressWindow implements ActionListener {
 				run = false
 				hide()
 			}
-			sleep 100
+			sleep 20
 		}
 	}
 

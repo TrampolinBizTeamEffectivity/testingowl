@@ -16,10 +16,18 @@ import ch.sebastianfiechter.testingowl.WelcomeWindow.Module
 
 @Component
 class Main {
+	
+	static JRecorder recorder
+	static JPlayer player
+	static RecordingConverter converter 
 
 	static main(args) {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/applicationContext.xml");
 
+		recorder = applicationContext.getBean(JRecorder.class)
+		player = applicationContext.getBean(JPlayer.class)
+		converter = applicationContext.getBean(RecordingConverter.class)
+			
 		WelcomeWindow welcome = applicationContext.getBean(WelcomeWindow.class)
 		
 		switch (welcome.show()) {
@@ -27,13 +35,13 @@ class Main {
 				println "Good bye."
 				System.exit(0)
 			case WelcomeWindow.Module.Recorder:
-				applicationContext.getBean(JRecorder.class).init(args)
+				recorder.init(args)
 				break;
 			case  WelcomeWindow.Module.Player:
-				applicationContext.getBean(JPlayer.class).init(args)
+				player.init(args)
 				break;
 			case  WelcomeWindow.Module.Converter:
-				applicationContext.getBean(RecordingConverter.class).init(args)
+				converter.init(args)
 				break;
 		}
 	}

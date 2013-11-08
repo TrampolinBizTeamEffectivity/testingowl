@@ -30,8 +30,11 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import ch.sebastianfiechter.testingowl.FrameIndexEntry;
 
 public abstract class ScreenRecorder implements Runnable {
 
@@ -42,6 +45,8 @@ public abstract class ScreenRecorder implements Runnable {
 
 	private OutputStream oStream;
 
+	private HashMap<Integer, FrameIndexEntry> frameIndex;
+	
 	private boolean recording = false;
 	private boolean running = false;
 
@@ -49,6 +54,7 @@ public abstract class ScreenRecorder implements Runnable {
 	private long frameTime;
 
 	private ScreenRecorderListener listener;
+	
 
 	private class DataPack {
 		public DataPack(int[] newData, long frameTime) {
@@ -64,8 +70,9 @@ public abstract class ScreenRecorder implements Runnable {
 		Queue<DataPack> queue = new LinkedList<DataPack>();
 		private FrameCompressor compressor;
 
-		public StreamPacker(OutputStream oStream) {
-			compressor = new FrameCompressor(oStream);
+		public StreamPacker(OutputStream oStream, 
+				HashMap<Integer, FrameIndexEntry> frameIndex) {
+			compressor = new FrameCompressor(oStream, frameIndex);
 
 			new Thread(this, "Stream Packer").start();
 		}
@@ -131,7 +138,8 @@ public abstract class ScreenRecorder implements Runnable {
 		long time = 0;
 
 		frameSize = recordArea.width * recordArea.height;
-		streamPacker = new StreamPacker(oStream);
+		frameIndex = new HashMap<Integer, FrameIndexEntry>();
+		streamPacker = new StreamPacker(oStream, frameIndex);
 
 		while (recording) {
 			time = System.currentTimeMillis();
@@ -218,11 +226,13 @@ public abstract class ScreenRecorder implements Runnable {
 			count++;
 		}
 
-		try {
-			oStream.flush();
-			oStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (oStream != null) {
+			try {
+				oStream.flush();
+				oStream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -232,5 +242,9 @@ public abstract class ScreenRecorder implements Runnable {
 
 	public int getFrameSize() {
 		return frameSize;
+	}
+	
+	public HashMap<Integer, FrameIndexEntry> getFrameIndex() {
+		return frameIndex;
 	}
 }

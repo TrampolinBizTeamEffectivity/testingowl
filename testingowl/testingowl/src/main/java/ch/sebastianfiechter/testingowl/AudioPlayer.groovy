@@ -61,7 +61,9 @@ class AudioPlayer {
 
 
 	def stopPlaying() {
-		clip.stop();
+		if (clip != null) {
+			clip.stop();
+		}
 	}
 	
 

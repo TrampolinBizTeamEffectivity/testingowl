@@ -37,8 +37,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -53,6 +60,7 @@ import org.springframework.stereotype.Component;
 
 import ch.sebastianfiechter.testingowl.InProgressWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
+import ch.sebastianfiechter.testingowl.Main;
 import ch.sebastianfiechter.testingowl.Owl;
 import ch.sebastianfiechter.testingowl.SoundLevel;
 
@@ -72,30 +80,28 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 	@Autowired
 	Owl owl;
-	
+
 	@Autowired
 	InProgressWindow inProgressWindow;
 
 	@Autowired
 	DesktopScreenRecorder recorder;
-	
-	
+
 	private File temp;
 
 	private JButton control;
 	private JLabel text;
+	private JButton player;
 
-	private boolean shuttingDown = false;
 	private int frameCount = 0;
 
 	public boolean startRecording(String fileName) {
 
-		// setState(Frame.ICONIFIED);
 		try {
 			Thread.sleep(500);
-		} catch (InterruptedException e1) {
+		} catch (InterruptedException e) {
+			// do nothing
 		}
-
 
 		if (!decorator.fetchTopicAndMixer(this)) {
 			return false;
@@ -119,10 +125,10 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			try {
 				temp = File.createTempFile("temp", "rec");
 
-				
 				if (startRecording(temp.getAbsolutePath())) {
 					control.setActionCommand("stop");
 					control.setText("Stop Recording");
+					player.setEnabled(false);
 					decorator.recordStarted();
 				}
 			} catch (Exception e) {
@@ -131,6 +137,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		} else if (ev.getActionCommand().equals("stop")) {
 			text.setText("Stopping");
 			recorder.stopRecording();
+		} else if (ev.getActionCommand().equals("player")) {
+			closeRecorder();
+			Main.getPlayer().init(new String[0]);
 		}
 	}
 
@@ -146,67 +155,123 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 	public void recordingStopped() {
 
-		if (!shuttingDown) {
+		decorator.recordStopped();
 
-			decorator.recordStopped();
+		// UIManager.put("FileChooser.readOnly", true);
+		// JFileChooser fileChooser = new JFileChooser();
+		// FileExtensionFilter filter = new FileExtensionFilter();
+		//
+		// filter = new FileExtensionFilter();
+		// filter.addExtension("cap.owl");
+		// filter.setDescription("TestingOwl File");
+		//
+		// fileChooser.setFileFilter(filter);
+		// fileChooser.setSelectedFile(decorator.prepareSuggestedFileName());
+		// fileChooser.showSaveDialog(this);
+		//
+		// File target = fileChooser.getSelectedFile();
+		//
+		// save(target);
+		save();
 
-			// UIManager.put("FileChooser.readOnly", true);
-			// JFileChooser fileChooser = new JFileChooser();
-			// FileExtensionFilter filter = new FileExtensionFilter();
-			//
-			// filter = new FileExtensionFilter();
-			// filter.addExtension("cap.owl");
-			// filter.setDescription("TestingOwl File");
-			//
-			// fileChooser.setFileFilter(filter);
-			// fileChooser.setSelectedFile(decorator.prepareSuggestedFileName());
-			// fileChooser.showSaveDialog(this);
-			//
-			// File target = fileChooser.getSelectedFile();
-			//
-			// save(target);
-			save();
+		FileHelper.delete(temp);
+		frameCount = 0;
 
-			FileHelper.delete(temp);
-			frameCount = 0;
+		control.setActionCommand("start");
+		control.setText("Start Recording");
 
-			control.setActionCommand("start");
-			control.setText("Start Recording");
+		player.setEnabled(true);
 
-			text.setText("Ready to record");
-		} else
-			FileHelper.delete(temp);
+		text.setText("Ready to record");
+
 	}
 
 	public void save() {
 
 		this.beginWaitForBackgroundProcesses();
 
-		File target = decorator.prepareSuggestedFile();
-		
+		File targetWithCapOwl = decorator.prepareSuggestedFile();
+
 		this.setEnabled(false);
-		inProgressWindow.show(0, 4, "Saving recording to: ", target.getAbsolutePath());
+		inProgressWindow.show(0, 4, "Saving record to: ",
+				targetWithCapOwl.getAbsolutePath());
 
-		saveVideo(target);
+		saveVideo(targetWithCapOwl);
 
-		decorator.saveFile(target);
+		decorator.saveFile(targetWithCapOwl);
 
-		decorator.pack(target);
-		
+		decorator.pack(targetWithCapOwl);
+
 		this.endWaitForBackgroundProcesses();
-		
+
 		inProgressWindow.waitForConfirm();
 		this.setEnabled(true);
 
 	}
-	
-	public void saveVideo(File target) {
-		File capFile = new File(target.getAbsolutePath().substring(0,
-				target.getAbsolutePath().lastIndexOf(".")));
+
+	private void saveVideo(File targetWithCapOwl) {
+		File capFile = new File(targetWithCapOwl.getAbsolutePath().substring(0,
+				targetWithCapOwl.getAbsolutePath().lastIndexOf(".")));
+
 		logger.info("start save cap");
-		FileHelper.copy(temp, capFile);
+		try {
+			FileOutputStream fos = new FileOutputStream(capFile);
+			writeFrameIndex(fos.getChannel());
+			writeVideo(fos.getChannel());
+			fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		inProgressWindow.setProgressValue(1);
 		logger.info("stop save cap");
+	}
+
+	private void writeFrameIndex(FileChannel targetChannel) {
+
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(recorder.getFrameIndex());
+			oos.close();
+			baos.close();
+
+			ByteBuffer frameIndexLength = ByteBuffer.allocate(4);
+			logger.info("frame index size is: " + baos.toByteArray().length);
+			frameIndexLength.putInt(baos.toByteArray().length);
+			frameIndexLength.flip();
+			targetChannel.write(frameIndexLength);
+
+			ByteBuffer frameIndex = ByteBuffer.wrap(baos.toByteArray());
+			targetChannel.write(frameIndex);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void writeVideo(FileChannel targetChannel) {
+
+		try {
+			RandomAccessFile tempVideo = new RandomAccessFile(temp, "r");
+
+			logger.info("will write video length of: " + tempVideo.length()
+					+ " at position: " + targetChannel.position());
+
+			targetChannel.transferFrom(tempVideo.getChannel(),
+					targetChannel.position(), tempVideo.length());
+
+			tempVideo.getChannel().close();
+			tempVideo.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public void init(String[] args) {
@@ -232,12 +297,14 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	private void showFrame() {
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				shutdown();
+				closeRecorder();
+				System.exit(0);
 			}
 		});
 
 		setTitle("TestingOwl Recorder");
 		setIconImage(owl.getWelcome().getImage());
+		getContentPane().removeAll();
 
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -255,6 +322,16 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		decorator.getButtonsAndSoundLevel(this.getContentPane(), gbc);
 
+		player = new JButton("to Player");
+		player.setActionCommand("player");
+		player.addActionListener(this);
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 5;
+		gbc.gridy = 0;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		this.getContentPane().add(player, gbc);
+
 		text = new JLabel("Ready to record");
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
@@ -266,34 +343,29 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		getContentPane().doLayout();
 
-		this.setAlwaysOnTop(true);
 		this.pack();
+		this.setAlwaysOnTop(true);
 		this.setVisible(true);
 
 	}
 
-	public void shutdown() {
-
-		shuttingDown = true;
-
-
+	public void closeRecorder() {
 		recorder.stopRecording();
-		
 
 		decorator.dispose();
 		dispose();
-
-		System.exit(0);
 	}
 
 	public void beginWaitForBackgroundProcesses() {
 		control.setEnabled(false);
+		player.setEnabled(false);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 	}
 
 	public void endWaitForBackgroundProcesses() {
 		control.setEnabled(true);
+		player.setEnabled(true);
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 }

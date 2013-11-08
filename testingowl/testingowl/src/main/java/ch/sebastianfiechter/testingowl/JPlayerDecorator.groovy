@@ -87,9 +87,8 @@ class JPlayerDecorator {
 		jPlayer.play();
 	}
 	
-	def disposing() {
+	def dispose() {
 		issuesFrame.dispose()
-		
 		audioPlayer.stopPlaying()
 	}
 	

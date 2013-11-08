@@ -129,11 +129,13 @@ public class ScreenPlayer implements Runnable {
 		//ensure, thread is closed
 		stopThread();
 		
-		try {
-			iStream.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (iStream != null) {
+			try {
+				iStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -231,10 +233,12 @@ public class ScreenPlayer implements Runnable {
 	}
 	
 	private void clearImage() {
-		mis = new MemoryImageSource(area.width, area.height,
-				new int[frameSize], 0, area.width);
-		mis.setAnimated(true);
-		listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
+		if (area != null) {
+			mis = new MemoryImageSource(area.width, area.height,
+					new int[frameSize], 0, area.width);
+			mis.setAnimated(true);
+			listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
+		}
 	}	
 	
 	private void startThread() {
