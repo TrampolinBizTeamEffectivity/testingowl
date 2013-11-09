@@ -57,14 +57,10 @@ public class DesktopScreenRecorder extends ScreenRecorder {
    private Robot robot;
    private BufferedImage mouseCursor;
    
-   File temp;
-
-   public void init(FileOutputStream oStream, File tem, 
+   public void init(File tempFile, 
          ScreenRecorderListener listener) {
-      super.init(oStream, listener);
+      super.init(tempFile, listener);
       
-      temp = tem;
-
       try {
 
          String mouseCursorFile;
@@ -112,48 +108,5 @@ public class DesktopScreenRecorder extends ScreenRecorder {
       return image;
    }
 
-	public void writeFrameIndex(FileChannel targetChannel) {
 
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(getFrameIndex());
-			oos.close();
-			baos.close();
-
-			ByteBuffer frameIndexLength = ByteBuffer.allocate(4);
-			logger.info("frame index size is: " + baos.toByteArray().length);
-			frameIndexLength.putInt(baos.toByteArray().length);
-			frameIndexLength.flip();
-			targetChannel.write(frameIndexLength);
-
-			ByteBuffer frameIndex = ByteBuffer.wrap(baos.toByteArray());
-			targetChannel.write(frameIndex);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public void writeVideo(FileChannel targetChannel) {
-
-		try {
-			RandomAccessFile tempVideo = new RandomAccessFile(temp, "r");
-
-			logger.info("will write video length of: " + tempVideo.length()
-					+ " at position: " + targetChannel.position());
-
-			targetChannel.transferFrom(tempVideo.getChannel(),
-					targetChannel.position(), tempVideo.length());
-
-			tempVideo.getChannel().close();
-			tempVideo.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
 }

@@ -93,7 +93,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 	private int frameCount = 0;
 
-	public boolean startRecording(String fileName) {
+	public boolean startRecording() {
 
 		try {
 			Thread.sleep(500);
@@ -106,10 +106,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		}
 
 		try {
-			FileOutputStream oStream = new FileOutputStream(fileName);
-			File temp = new File(fileName);
+			File temp = File.createTempFile("temp", "rec");
 			temp.deleteOnExit();
-			recorder.init(oStream, temp, this);
+			recorder.init(temp, this);
 			recorder.startRecording();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -121,9 +120,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equals("start")) {
 			try {
-				File temp = File.createTempFile("temp", "rec");
-
-				if (startRecording(temp.getAbsolutePath())) {
+				if (startRecording()) {
 					control.setActionCommand("stop");
 					control.setText("Stop Recording");
 					player.setEnabled(false);

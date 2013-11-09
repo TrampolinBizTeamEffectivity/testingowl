@@ -29,7 +29,9 @@ package com.wet.wired.jsr.recorder;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -54,6 +56,7 @@ public abstract class ScreenRecorder implements Runnable {
 	private int frameSize;
 	private int[] rawData;
 
+	private File temp;
 	private OutputStream oStream;
 
 	private HashMap<Integer, FrameIndexEntry> frameIndex;
@@ -130,10 +133,18 @@ public abstract class ScreenRecorder implements Runnable {
 
 	private StreamPacker streamPacker;
 
-	public void init(OutputStream oStream, ScreenRecorderListener listener) {
+	public void init(File tempFile, ScreenRecorderListener listener) {
 
 		this.listener = listener;
-		this.oStream = oStream;
+
+	    temp = tempFile;
+		
+		try {
+			this.oStream = new FileOutputStream(tempFile);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void triggerRecordingStop() {
@@ -247,7 +258,51 @@ public abstract class ScreenRecorder implements Runnable {
 		}
 	}
 	
+	public void writeFrameIndex(FileChannel targetChannel) {
 
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(getFrameIndex());
+			oos.close();
+			baos.close();
+
+			ByteBuffer frameIndexLength = ByteBuffer.allocate(4);
+			logger.info("frame index size is: " + baos.toByteArray().length);
+			frameIndexLength.putInt(baos.toByteArray().length);
+			frameIndexLength.flip();
+			targetChannel.write(frameIndexLength);
+
+			ByteBuffer frameIndex = ByteBuffer.wrap(baos.toByteArray());
+			targetChannel.write(frameIndex);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void writeVideo(FileChannel targetChannel) {
+
+		try {
+			RandomAccessFile tempVideo = new RandomAccessFile(temp, "r");
+
+			logger.info("will write video length of: " + tempVideo.length()
+					+ " at position: " + targetChannel.position());
+
+			targetChannel.transferFrom(tempVideo.getChannel(),
+					targetChannel.position(), tempVideo.length());
+
+			tempVideo.getChannel().close();
+			tempVideo.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}	
+	
 	public boolean isRecording() {
 		return recording;
 	}
