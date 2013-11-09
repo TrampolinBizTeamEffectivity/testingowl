@@ -68,7 +68,6 @@ public class FrameCompressor {
 			previousData = newData;
 			//newData = null;
 			if (previousData == null) {
-				logger.info("initialized");
 				previousData = new int[frameData.length];
 			}
 
@@ -232,9 +231,9 @@ public class FrameCompressor {
 		frameIndex.put(frameNr, new FrameIndexEntry(framePacket.frameTime, 
 			streamWriterPosition, lastFullFrame));
 
-		logger.info(frameNr+"\t"+(framePacket.frameTime/1000.0)+"\t"+streamWriterPosition
-			+"\t"+(packed.length/1000.0)
-			+"\t"+hasChanges+"\t"+lastFullFrame);
+//		logger.info(frameNr+"\t"+(framePacket.frameTime/1000.0)+"\t"+streamWriterPosition
+//			+"\t"+(packed.length/1000.0)
+//			+"\t"+hasChanges+"\t"+lastFullFrame);
 		
 
 		framePacket.oStream.write(((int) framePacket.frameTime & 0xFF000000) >>> 24);

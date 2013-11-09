@@ -52,13 +52,13 @@ class JRecorderDecorator implements ActionListener {
 
 	@Autowired
 	SoundLevel soundLevel
-	
+
 	@Autowired
 	FilePacker filePacker
-	
+
 	@Autowired
 	InProgressWindow inProgressWindow
-	
+
 	JButton bug
 	JButton musthave
 	JButton wish
@@ -66,8 +66,8 @@ class JRecorderDecorator implements ActionListener {
 	String topic
 
 	public void getButtonsAndSoundLevel(Container panel, GridBagConstraints gbc ) {
-		
-	
+
+
 		bug = new JButton(text: "Bug", actionCommand: "bug",
 		enabled:false, background: Color.RED);
 		bug.addActionListener(this);
@@ -97,7 +97,7 @@ class JRecorderDecorator implements ActionListener {
 		gbc.weightx = 0;
 		gbc.weighty = 1;
 		panel.add(wish, gbc)
-		
+
 		soundLevel.setSize(30, wish.getSize().height as int)
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 4;
@@ -105,7 +105,6 @@ class JRecorderDecorator implements ActionListener {
 		gbc.weightx = 0;
 		gbc.weighty = 1;
 		panel.add(soundLevel, gbc)
-		
 	}
 
 	@Override
@@ -179,7 +178,7 @@ class JRecorderDecorator implements ActionListener {
 			def value = textArea.text.trim()
 			issues.addIssue(type, startFrame, jRecorder.@frameCount, value)
 		} else {
-			log.info "User canceled Issue reporting."
+			log.info "User cancelled Issue reporting."
 		}
 	}
 
@@ -205,7 +204,7 @@ class JRecorderDecorator implements ActionListener {
 		bug.enabled = true
 		musthave.enabled = true
 		wish.enabled = true
-		
+
 		audioRecorder.startRecording()
 	}
 
@@ -237,22 +236,22 @@ class JRecorderDecorator implements ActionListener {
 
 	def pack(File fileNameCapOwl) {
 		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
-		
+
 		log.info ("start save zip")
 		filePacker.pack(fileNameWithoutEnding)
 		inProgressWindow.setProgressValue(4);
 		log.info ("stop save zip")
 	}
-	
+
 	def cancelSave() {
 		audioRecorder.cancelSave()
 	}
 
 
-	
+
 	def dispose() {
-		
-		
+
+
 		audioRecorder.stopRecording();
 		audioRecorder.cancelSave();
 		log.info "disposed"
