@@ -61,12 +61,11 @@ import org.springframework.stereotype.Component;
 import ch.sebastianfiechter.testingowl.InProgressWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
 import ch.sebastianfiechter.testingowl.Main;
-import ch.sebastianfiechter.testingowl.Owl;
+import ch.sebastianfiechter.testingowl.OwlIcons;
 import ch.sebastianfiechter.testingowl.SoundLevel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.SimpleLoggerFactory;
 
 @SuppressWarnings("serial")
 @Component
@@ -79,7 +78,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	JRecorderDecorator decorator;
 
 	@Autowired
-	Owl owl;
+	OwlIcons owl;
 
 	@Autowired
 	InProgressWindow inProgressWindow;
@@ -253,7 +252,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		});
 
 		setTitle("TestingOwl Recorder");
-		setIconImage(owl.getWelcome().getImage());
+		setIconImage(owl.getWelcomeIcon().getImage());
 		getContentPane().removeAll();
 
 		GridBagLayout gbl = new GridBagLayout();

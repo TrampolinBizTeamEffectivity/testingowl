@@ -24,7 +24,7 @@ class IssuesWindow {
 	JPlayerDecorator jPlayerDecorator
 	
 	@Autowired
-	Owl owl
+	OwlIcons owl
 
 	def frame
 	def swing
@@ -42,7 +42,7 @@ class IssuesWindow {
 
 		frame = swing.frame(title:'TestingOwl Issues', location:[0, 440],
 		size:[700, 150], alwaysOnTop: true, 
-		defaultCloseOperation:WindowConstants.DO_NOTHING_ON_CLOSE, iconImage:owl.welcome.image ) {
+		defaultCloseOperation:WindowConstants.DO_NOTHING_ON_CLOSE, iconImage:owl.welcomeIcon.image ) {
 			panel {
 				borderLayout()
 				scrollPane(constraints:CENTER) {

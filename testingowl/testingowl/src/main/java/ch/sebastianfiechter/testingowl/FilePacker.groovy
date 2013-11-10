@@ -97,16 +97,20 @@ class FilePacker {
 		
 		def fileNameWithoutFileEnding = filenameWithFileEnding[0..-9]
 
-		extractFile("${fileNameWithoutFileEnding}.cap")
-		extractFile("${fileNameWithoutFileEnding}.cap.xlsx")
-		extractFile("${fileNameWithoutFileEnding}.cap.wav")
+		extractFileIfNotYetExists("${fileNameWithoutFileEnding}.cap")
+		extractFileIfNotYetExists("${fileNameWithoutFileEnding}.cap.xlsx")
+		extractFileIfNotYetExists("${fileNameWithoutFileEnding}.cap.wav")
 
 		channel.close()
 		fis.close()
 	}
 
-	def extractFile(def fileName) {
+	def extractFileIfNotYetExists(def fileName) {
 
+		if (new File(fileName).exists() == true) {
+			return
+		}
+		
 		FileOutputStream fos = new FileOutputStream(fileName)
 		FileChannel foc = fos.getChannel()
 

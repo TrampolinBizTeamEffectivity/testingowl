@@ -28,7 +28,10 @@ import com.jcabi.manifests.Manifests
 class WelcomeWindow {
 	
 	@Autowired
-	Owl owl
+	OwlIcons owl
+	
+	@Autowired
+	OwlVersion version
 
 	enum Module {Player, Recorder, Converter, Cancel}
 	
@@ -42,11 +45,11 @@ class WelcomeWindow {
 		 //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
 
 		
-		JLabel label = new JLabel("TestingOwl " + fetchAppVersion(), SwingConstants.CENTER)
+		JLabel label = new JLabel("TestingOwl " + version.version, SwingConstants.CENTER)
 		JButton recorder = new JButton("Shoot! (Record)")
 		JButton player = new JButton("Review. (Play)")
 		
-		Object[] complexMsg = [owl.welcome, label, recorder, player ];
+		Object[] complexMsg = [owl.welcomeIcon, label, recorder, player ];
 		JDialog dialog = optionPane.createDialog(null, "TestingOwl Welcome!");
 	
 		//JOptionPane optionPane = new JOptionPane();
@@ -81,7 +84,4 @@ class WelcomeWindow {
 		
 	}
 	
-	def fetchAppVersion() {
-		return Manifests.exists("App-Version")==true ? Manifests.read("App-Version"): "";
-	}
 }

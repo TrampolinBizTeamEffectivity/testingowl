@@ -18,7 +18,7 @@ import groovy.util.logging.*
 class InProgressWindow implements ActionListener {
 
 	@Autowired
-	Owl owl
+	OwlIcons owl
 
 	JDialog dialog
 

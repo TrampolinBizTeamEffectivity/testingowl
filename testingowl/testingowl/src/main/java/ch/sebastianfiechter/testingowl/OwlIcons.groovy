@@ -11,16 +11,13 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-class Owl {
+class OwlIcons {
 
-	ImageIcon getWelcome() {
+	ImageIcon getWelcomeIcon() {
 		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_welcome.png"))
 		new ImageIcon(img)
 	}
 	
-	ImageIcon getWaiting() {
-		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_waiting.gif"))
-		new ImageIcon(img)
-	}
+
 	
 }
