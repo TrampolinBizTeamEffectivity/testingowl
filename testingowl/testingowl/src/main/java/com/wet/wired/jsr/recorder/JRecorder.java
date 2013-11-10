@@ -58,7 +58,7 @@ import javax.swing.UIManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ch.sebastianfiechter.testingowl.InProgressWindow;
+import ch.sebastianfiechter.testingowl.SaveRecordingWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
 import ch.sebastianfiechter.testingowl.Main;
 import ch.sebastianfiechter.testingowl.OwlIcons;
@@ -81,7 +81,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	OwlIcons owl;
 
 	@Autowired
-	InProgressWindow inProgressWindow;
+	SaveRecordingWindow inProgressWindow;
 
 	@Autowired
 	DesktopScreenRecorder recorder;
@@ -186,8 +186,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		File targetWithCapOwl = decorator.prepareSuggestedFile();
 
 		this.setEnabled(false);
-		inProgressWindow.show(0, 4, "Saving record to: ",
-				targetWithCapOwl.getAbsolutePath());
+		inProgressWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
 
 		saveVideo(targetWithCapOwl);
 

@@ -57,7 +57,7 @@ class JRecorderDecorator implements ActionListener {
 	FilePacker filePacker
 
 	@Autowired
-	InProgressWindow inProgressWindow
+	SaveRecordingWindow inProgressWindow
 
 	JButton bug
 	JButton musthave

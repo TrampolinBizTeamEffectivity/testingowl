@@ -13,16 +13,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = [ "/applicationContext.xml"])
-class InProgressWindowTest {
+class SaveRecordingWindowTest {
 
 	@Autowired
-	InProgressWindow window
+	SaveRecordingWindow window
 	
 
 	
 	@Test
 	public void testHide() {
-		window.show("Saving, please wait...");
+		window.show("C:/filepath/filepath");
 		
 		sleep 10000
 		
@@ -40,7 +40,7 @@ class InProgressWindowTest {
 	
 	@Test
 	public void testWaitForConfirm() {
-		window.show("Saving, please wait...");
+		window.show("C:/filepath");
 		
 		sleep 1000
 		
@@ -51,6 +51,8 @@ class InProgressWindowTest {
 		window.setProgressValue(90)
 		
 		sleep 1000
+		
+		window.setProgressValue(100)
 		
 		window.waitForConfirm()
 		println ("returned from dialog")
