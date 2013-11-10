@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.RandomAccessFile;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -75,8 +76,8 @@ public class ScreenPlayer implements Runnable {
 	private boolean fastForward;
 
 	private RandomAccessFile iStream;
-	private int frameIndexLength;
 	private HashMap<Integer, FrameIndexEntry> frameIndex;
+	private int offsetToFirstFrame;
 	
 	private String videoFile;
 	private int width;
@@ -100,11 +101,8 @@ public class ScreenPlayer implements Runnable {
 
 	
 	public void open() {
-		openStream();
-		
+		openStream();		
 		countTotalFramesAndTime();
-
-		reset();		
 	}
 	
 	private void openStream() {
@@ -141,13 +139,14 @@ public class ScreenPlayer implements Runnable {
 	
 	private void readFrameIndex() {
 		try {
-			frameIndexLength = iStream.readInt();
+			int frameIndexLength = iStream.readInt();
 			logger.info("frame index size is: " + frameIndexLength);
 			byte[] frameIndexBytes = new byte[frameIndexLength];
 			iStream.read(frameIndexBytes);
 			ByteArrayInputStream bais = new ByteArrayInputStream(frameIndexBytes);
 			ObjectInputStream ois = new ObjectInputStream(bais);
 			frameIndex = (HashMap<Integer, FrameIndexEntry>) ois.readObject();
+			offsetToFirstFrame = 4+frameIndexLength+4;
 		} catch (IOException e) {
 
 			e.printStackTrace();
@@ -175,10 +174,20 @@ public class ScreenPlayer implements Runnable {
 	}
 	
 	public void reset() {
-		closeStream();
-		openStream();
 		showFirstFrame();
 	}	
+	
+	private void showFirstFrame() {
+		try {
+			//go to first frame
+			iStream.seek(offsetToFirstFrame);
+			readFrame();
+			listener.newFrame(frameNr, frameTime);
+			lastFrameTime = frameTime;
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+	}
 	
 	public void play() {
 		fastForward = false;
@@ -215,56 +224,56 @@ public class ScreenPlayer implements Runnable {
 	public void goToFrame(int toFrame) {
 		
 		stopThread();
-
-		FramePacket frame = null;
 		
-		frameTime = 0;
-
-		for (int i = frameNr+1; i < toFrame; i++) {
-			try {
-				frame = decompressor.unpack();
-				frameSize = frame.getData().length;
-				frameTime = frame.getTimeStamp();
-				frameNr++;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+		
+			FrameIndexEntry entry = frameIndex.get(toFrame);
+			FrameIndexEntry fullEntry = frameIndex.get(entry.getLastFullFrame());
+			iStream.seek(offsetToFirstFrame+fullEntry.getStreamPosition());
+	
+			FramePacket frame = null;
+			
+			frameTime = 0;
+			frameNr = entry.getLastFullFrame()-1;
+	
+			for (int i = entry.getLastFullFrame(); i < toFrame; i++) {
+					frame = decompressor.unpack();
+					frameSize = frame.getData().length;
+					frameTime = frame.getTimeStamp();
+					frameNr++;
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}	
 
 	private void countTotalFramesAndTime() {
-		// we have to iterate, because, the file is Zipped
-		totalFrames = 0;
-		totalTime = 0;
-
-		FrameDecompressor.FramePacket frame;
-		try {
-			frame = decompressor.unpack();
-
-			while (frame.getResult() != -1) {
-				totalTime = frame.getTimeStamp();
-				totalFrames++;
-
-				frame = decompressor.unpack();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		totalFrames = Collections.max(frameIndex.keySet());
+		totalTime = frameIndex.get(totalFrames).getFrameTime();
+		
+		
+//		// we have to iterate, because, the file is Zipped
+//		totalFrames = 0;
+//		totalTime = 0;
+//
+//		FrameDecompressor.FramePacket frame;
+//		try {
+//			frame = decompressor.unpack();
+//
+//			while (frame.getResult() != -1) {
+//				totalTime = frame.getTimeStamp();
+//				totalFrames++;
+//
+//				frame = decompressor.unpack();
+//			}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 
-	private void showFirstFrame() {
-		try {
-			readFrame();
-			listener.newFrame(frameNr, frameTime);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-
-		lastFrameTime = frameTime;
-	}
 	
 	private void clearImage() {
 		if (area != null) {

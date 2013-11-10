@@ -80,8 +80,8 @@ public class FrameCompressor {
 	public FrameCompressor(OutputStream oStream, HashMap<Integer, FrameIndexEntry> frameInde) {
 		framePacket = new FramePacket(oStream);
 		
-		frameNr = -1;
-		lastFullFrame = 0;
+		frameNr = 0;
+		lastFullFrame = 1;
 		streamWriterPosition = 0;
 		frameIndex = frameInde;
 	}
@@ -231,9 +231,9 @@ public class FrameCompressor {
 		frameIndex.put(frameNr, new FrameIndexEntry(framePacket.frameTime, 
 			streamWriterPosition, lastFullFrame));
 
-//		logger.info(frameNr+"\t"+(framePacket.frameTime/1000.0)+"\t"+streamWriterPosition
-//			+"\t"+(packed.length/1000.0)
-//			+"\t"+hasChanges+"\t"+lastFullFrame);
+		logger.info(frameNr+"\t"+(framePacket.frameTime/1000.0)+"\t"+streamWriterPosition
+			+"\t"+(packed.length/1000.0)
+			+"\t"+hasChanges+"\t"+lastFullFrame);
 		
 
 		framePacket.oStream.write(((int) framePacket.frameTime & 0xFF000000) >>> 24);

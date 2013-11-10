@@ -41,7 +41,7 @@ class Issues {
 
 	def setTopic(String topic) {
 		issues << new Issue(id:++issuesIdCounter, type:IssueType.Topic,
-		frameStart:0, frameEnd:0, message:topic)
+		frameStart:1, frameEnd:1, message:topic)
 	}
 
 	def addIssue(def issueType, int frameStart, int frameEnd, String message) {

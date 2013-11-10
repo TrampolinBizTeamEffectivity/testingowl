@@ -22,7 +22,6 @@ class SoundLevel extends JPanel {
 		level = lev
 		
 		//log.info ("updating sound level: ${level} -> ${finalHeight}");
-		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				repaint(0)

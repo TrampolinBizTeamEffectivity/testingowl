@@ -26,35 +26,20 @@
 
 package com.wet.wired.jsr.recorder;
 
-import groovy.util.logging.Slf4j;
-
-import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.UIManager;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,8 +47,6 @@ import ch.sebastianfiechter.testingowl.SaveRecordingWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
 import ch.sebastianfiechter.testingowl.Main;
 import ch.sebastianfiechter.testingowl.OwlIcons;
-import ch.sebastianfiechter.testingowl.SoundLevel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +64,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	OwlIcons owl;
 
 	@Autowired
-	SaveRecordingWindow inProgressWindow;
+	SaveRecordingWindow saveRecordingWindow;
 
 	@Autowired
 	DesktopScreenRecorder recorder;
@@ -186,7 +169,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		File targetWithCapOwl = decorator.prepareSuggestedFile();
 
 		this.setEnabled(false);
-		inProgressWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
+		saveRecordingWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
 
 		saveVideo(targetWithCapOwl);
 
@@ -196,7 +179,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		this.endWaitForBackgroundProcesses();
 
-		inProgressWindow.waitForConfirm();
+		saveRecordingWindow.waitForConfirm();
 		this.setEnabled(true);
 
 	}
@@ -217,7 +200,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			e.printStackTrace();
 		}
 
-		inProgressWindow.setProgressValue(1);
+		saveRecordingWindow.setProgressValue(1);
 		logger.info("stop save cap");
 	}
 
@@ -238,11 +221,11 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			}
 		}
 
-		showFrame();
+		showWindow();
 
 	}
 
-	private void showFrame() {
+	private void showWindow() {
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				closeRecorder();

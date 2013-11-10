@@ -59,7 +59,9 @@ import org.springframework.stereotype.Component;
 import ch.sebastianfiechter.testingowl.FramesSlider;
 import ch.sebastianfiechter.testingowl.JPlayerDecorator;
 import ch.sebastianfiechter.testingowl.Main;
+import ch.sebastianfiechter.testingowl.OpenRecordingWindow;
 import ch.sebastianfiechter.testingowl.OwlIcons;
+import ch.sebastianfiechter.testingowl.SaveRecordingWindow;
 import ch.sebastianfiechter.testingowl.SoundLevel;
 
 @SuppressWarnings("serial")
@@ -81,6 +83,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	@Autowired
 	ScreenPlayer screenPlayer;
+	
+	@Autowired
+	OpenRecordingWindow openRecordingWindow;
 
 	private ImageIcon icon;
 	private JScrollPane scrollPane;
@@ -120,11 +125,14 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 			if (fileChooser.getSelectedFile() != null) {
 				// target = fileChooser.getSelectedFile().getAbsolutePath();
-				String targetAsOwl = fileChooser.getSelectedFile()
+				String targetCapOwl = fileChooser.getSelectedFile()
 						.getAbsolutePath();
-				decorator.unpack(targetAsOwl);
-				target = targetAsOwl.substring(0, targetAsOwl.lastIndexOf("."));
-				open();
+				target = targetCapOwl.substring(0, targetCapOwl.lastIndexOf("."));
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						open();
+					}
+				});
 			}
 		} else if (ev.getActionCommand().equals("play")) {
 			play();
@@ -211,7 +219,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void init(String[] args) {
 
-		showFrame();
+		showWindow();
 
 		if (args.length == 1) {
 			target = new File(args[0]).getAbsolutePath();
@@ -219,7 +227,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		}
 	}
 
-	public void showFrame() {
+	public void showWindow() {
 
 		setTitle("TestingOwl Player");
 		setIconImage(owl.getWelcomeIcon().getImage());
@@ -378,22 +386,27 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	public void open() {
 
 		beginWaitForBackgroundProcesses();
+		openRecordingWindow.show(0, 4, target+".owl");
+				
+		decorator.unpack(target+".owl");
+		openRecordingWindow.setProgressValue(1);
 
 		screenPlayer.init(target, this);
 		screenPlayer.open();
+		openRecordingWindow.setProgressValue(2);
 		decorator.open(target);
-
-		endWaitForBackgroundProcesses();
 
 		slider.setMin(1);
 		slider.setMax(screenPlayer.getTotalFrames());
 
 		soundLevel.setLevel(0);
 		
-		reset();
-
+		openRecordingWindow.hide();
+		endWaitForBackgroundProcesses();
+		
 		text.setText("Ready to play " + target);
-
+		
+		reset();
 	}
 
 	public void reset() {
@@ -428,7 +441,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		decorator.reset();
 
 		text.setText("Ready to play " + target);
-
 	}
 
 	public void play() {
@@ -468,17 +480,10 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		beginWaitForBackgroundProcesses();
 
 		pause();
-
-		if (frame >= screenPlayer.getFrameNr()) {
-			screenPlayer.goToFrame(frame);
-		} else {
-			// frame is before current frame
-			reset();
-			screenPlayer.goToFrame(frame);
-		}
+		
+		screenPlayer.goToFrame(frame);
 
 		endWaitForBackgroundProcesses();
-
 	}
 
 	public int getTotalFrames() {

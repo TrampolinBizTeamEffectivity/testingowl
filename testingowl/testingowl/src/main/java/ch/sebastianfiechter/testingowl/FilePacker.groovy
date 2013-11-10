@@ -31,12 +31,10 @@ import org.apache.xmlbeans.impl.xb.ltgfmt.impl.TestCaseImpl.FilesImpl;
 @Component
 @Slf4j
 class FilePacker {
-
-
+	
 	FileChannel channel
 
 	long currentPosition
-
 
 	/**
 	 * no compression
