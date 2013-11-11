@@ -23,8 +23,9 @@ import org.springframework.stereotype.Component;
 @Component
 class AudioIO {
 
-	static AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 1, true, true)
-
+	//static AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 1, true, true)
+	static AudioFormat audioFormat = new AudioFormat(8000,16,1,true,false);
+	
 	static getNamesOfMixersSupportingRecording() {
 		def mixerNames = []
 
