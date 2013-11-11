@@ -12,6 +12,7 @@ import org.springframework.web.util.UriUtils
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wet.wired.jsr.player.JPlayer
 import groovy.util.logging.*
 
 @Slf4j
@@ -20,16 +21,22 @@ class OpenRecordingWindow {
 
 	@Autowired
 	OwlIcons owl
+	
+	@Autowired
+	JPlayer player
 
 	JDialog dialog
 
 	JProgressBar progressBar
 
-	def setProgressValue(int val) {
+	def synchronized setProgressValue(int val) {
 		progressBar.setValue(val)
 	}
 
 	def show(int progressValue=0, int progressMaxValue=100, String filePath) {
+		
+		log.info("will show opening dialog")
+		
 		JOptionPane optionPane = new JOptionPane("TestingOwl Please wait...",
 				JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 				null, new Object[0], null);
@@ -46,7 +53,7 @@ class OpenRecordingWindow {
 		Object[] complexMsg = [label, progressBar];
 		optionPane.setMessage(complexMsg);
 
-		dialog = new JDialog((JFrame) null, false)
+		dialog = new JDialog(player, false)
 		dialog.setAlwaysOnTop(true)
 		dialog.setUndecorated(true)
 
@@ -56,7 +63,10 @@ class OpenRecordingWindow {
 
 		dialog.pack();
 		dialog.setLocationRelativeTo(null);
+		
 		dialog.setVisible(true)
+		
+		
 	}
 
 	def hide() {

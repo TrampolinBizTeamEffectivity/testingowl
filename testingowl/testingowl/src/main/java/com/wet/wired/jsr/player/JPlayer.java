@@ -83,7 +83,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	@Autowired
 	ScreenPlayer screenPlayer;
-	
+
 	@Autowired
 	OpenRecordingWindow openRecordingWindow;
 
@@ -127,12 +127,9 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				// target = fileChooser.getSelectedFile().getAbsolutePath();
 				String targetCapOwl = fileChooser.getSelectedFile()
 						.getAbsolutePath();
-				target = targetCapOwl.substring(0, targetCapOwl.lastIndexOf("."));
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						open();
-					}
-				});
+				target = targetCapOwl.substring(0,
+						targetCapOwl.lastIndexOf("."));
+				open();
 			}
 		} else if (ev.getActionCommand().equals("play")) {
 			play();
@@ -169,7 +166,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(true);
 		close.setBackground(null);
-		
+
 		recorder.setEnabled(true);
 		recorder.setBackground(null);
 
@@ -325,7 +322,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.weightx = 0;
 		gbc.weighty = 1;
 		panel.add(soundLevel, gbc);
-				
+
 		recorder = new JButton("to Recorder");
 		recorder.setActionCommand("recorder");
 		recorder.setEnabled(true);
@@ -336,7 +333,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		gbc.weightx = 0;
 		gbc.weighty = 1;
 		panel.add(recorder, gbc);
-		
+
 		panel.doLayout();
 
 		this.getContentPane().add(panel, BorderLayout.NORTH);
@@ -386,27 +383,38 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	public void open() {
 
 		beginWaitForBackgroundProcesses();
-		openRecordingWindow.show(0, 4, target+".owl");
+
+		openRecordingWindow.show(0, 4, target + ".owl");
+
+		new Thread() {
+
+			public void run() {
+				decorator.unpack(target + ".owl");
+				openRecordingWindow.setProgressValue(1);
+
+				screenPlayer.init(target, JPlayer.this);
+
+				screenPlayer.open();
+				openRecordingWindow.setProgressValue(2);
+				decorator.open(target);
+
+				slider.setMin(1);
+				slider.setMax(screenPlayer.getTotalFrames());
+
+				soundLevel.setLevel(0);
+
+				openRecordingWindow.hide();
+				endWaitForBackgroundProcesses();
+
+				text.setText("Ready to play " + target);
 				
-		decorator.unpack(target+".owl");
-		openRecordingWindow.setProgressValue(1);
+				reset();
+			}
+		}.start();
 
-		screenPlayer.init(target, this);
-		screenPlayer.open();
-		openRecordingWindow.setProgressValue(2);
-		decorator.open(target);
+		
 
-		slider.setMin(1);
-		slider.setMax(screenPlayer.getTotalFrames());
-
-		soundLevel.setLevel(0);
 		
-		openRecordingWindow.hide();
-		endWaitForBackgroundProcesses();
-		
-		text.setText("Ready to play " + target);
-		
-		reset();
 	}
 
 	public void reset() {
@@ -430,7 +438,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(true);
-		
+
 		recorder.setEnabled(true);
 		recorder.setBackground(null);
 
@@ -464,7 +472,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(true);
-		
+
 		recorder.setEnabled(false);
 		recorder.setBackground(null);
 
@@ -480,7 +488,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		beginWaitForBackgroundProcesses();
 
 		pause();
-		
+
 		screenPlayer.goToFrame(frame);
 
 		endWaitForBackgroundProcesses();
@@ -519,7 +527,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(true);
-		
+
 		recorder.setEnabled(false);
 		recorder.setBackground(null);
 
@@ -547,7 +555,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		close.setBackground(null);
 
 		slider.setEnabled(true);
-		
+
 		recorder.setEnabled(true);
 		recorder.setBackground(null);
 
@@ -582,7 +590,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		close.setEnabled(false);
 		close.setBackground(null);
-		
+
 		recorder.setEnabled(true);
 		recorder.setBackground(null);
 
@@ -590,11 +598,11 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		text.setText("No recording selected");
 	}
-	
+
 	public void closePlayer() {
 		close();
 		decorator.dispose();
-		dispose();	
+		dispose();
 	}
 
 	public void setFrameLabelText(long frame, double seconds) {

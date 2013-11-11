@@ -7,11 +7,13 @@ import javax.swing.*
 import java.awt.*
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener
-import org.springframework.web.util.UriUtils
 
+import org.springframework.web.util.UriUtils
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wet.wired.jsr.player.JPlayer
+import com.wet.wired.jsr.recorder.JRecorder
 import groovy.util.logging.*
 
 @Slf4j
@@ -20,13 +22,17 @@ class SaveRecordingWindow implements ActionListener {
 
 	@Autowired
 	OwlIcons owl
+	
+	@Autowired
+	JRecorder recorder
 
 	JDialog dialog
 
 	JProgressBar progressBar
 
-	JButton okButton
 	JButton shareButton
+	JButton openPlayerButton
+	JButton okButton
 
 	def pathToFile
 
@@ -57,15 +63,20 @@ class SaveRecordingWindow implements ActionListener {
 		shareButton.addActionListener(this)
 		shareButton.enabled = false
 		
+		openPlayerButton = new JButton("Open Recording in Player")
+		openPlayerButton.actionCommand = "play"
+		openPlayerButton.addActionListener(this)
+		openPlayerButton.enabled = false
+		
 		okButton = new JButton("Close")
 		okButton.actionCommand = "close"
 		okButton.addActionListener(this)
 		okButton.enabled = false
 
-		Object[] complexMsg = [label, progressBar, shareButton, okButton];
+		Object[] complexMsg = [label, progressBar, shareButton, openPlayerButton, okButton];
 		optionPane.setMessage(complexMsg);
 
-		dialog = new JDialog((JFrame) null, false)
+		dialog = new JDialog(recorder, false)
 		//dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.setAlwaysOnTop(true)
 		dialog.setUndecorated(true)
@@ -86,8 +97,9 @@ class SaveRecordingWindow implements ActionListener {
 
 	def waitForConfirm() {
 		clicked = false
-		okButton.enabled = true
 		shareButton.enabled = true
+		openPlayerButton.enabled = true
+		okButton.enabled = true
 		dialog.modal = true
 		def run = true
 
@@ -102,12 +114,22 @@ class SaveRecordingWindow implements ActionListener {
 
 	@Override
 	synchronized void actionPerformed(ActionEvent ae) {
-		if (ae.actionCommand == "close") {
+		if (ae.actionCommand == "play") {
+			openPlayer()
 			clicked = true
 		} else if (ae.actionCommand == "share") {
 			sendMail()
 			clicked = true
+		} else if (ae.actionCommand == "close") {
+			clicked = true
 		}
+	}
+	
+	def openPlayer() {
+		recorder.closeRecorder();
+		String[] record = new String[1]
+		record[0] = pathToFile[0..-5]
+		Main.getPlayer().init(record);
 	}
 	
 	def sendMail() {
@@ -120,5 +142,6 @@ class SaveRecordingWindow implements ActionListener {
 		final URI mailURI = new URI(mailURIStr);
 		desktop.mail(mailURI);
 	}
+	
 	
 }

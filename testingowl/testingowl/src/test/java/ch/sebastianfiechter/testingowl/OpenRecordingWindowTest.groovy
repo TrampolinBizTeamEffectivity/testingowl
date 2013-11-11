@@ -4,6 +4,7 @@ import ch.sebastianfiechter.testingowl.Issues.IssueType
 import static org.junit.Assert.*;
 
 import java.awt.event.ActionEvent
+import javax.swing.JFrame
 
 import org.junit.Test;
 import org.junit.runner.RunWith

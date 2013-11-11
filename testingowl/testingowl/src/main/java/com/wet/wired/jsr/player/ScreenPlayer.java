@@ -180,7 +180,7 @@ public class ScreenPlayer implements Runnable {
 	private void showFirstFrame() {
 		try {
 			//go to first frame
-			iStream.seek(offsetToFirstFrame);
+			goToFrame(1);
 			readFrame();
 			listener.newFrame(frameNr, frameTime);
 			lastFrameTime = frameTime;
