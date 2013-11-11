@@ -2,11 +2,14 @@ package ch.sebastianfiechter.testingowl
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wet.wired.jsr.player.JPlayer
 import groovy.swing.SwingBuilder
 
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 
 import javax.swing.BorderFactory
 import javax.swing.event.ListSelectionEvent
@@ -22,6 +25,9 @@ class IssuesWindow {
 
 	@Autowired
 	JPlayerDecorator jPlayerDecorator
+	
+	@Autowired
+	JPlayer player
 	
 	@Autowired
 	OwlIcons owl
@@ -41,8 +47,7 @@ class IssuesWindow {
 		swing = new SwingBuilder()
 
 		frame = swing.frame(title:'TestingOwl Issues', location:[0, 440],
-		size:[700, 150], alwaysOnTop: true, 
-		defaultCloseOperation:WindowConstants.DO_NOTHING_ON_CLOSE, iconImage:owl.welcomeIcon.image ) {
+		size:[700, 150], alwaysOnTop: true, iconImage:owl.welcomeIcon.image ) {
 			panel {
 				borderLayout()
 				scrollPane(constraints:CENTER) {
@@ -77,6 +82,12 @@ class IssuesWindow {
 				}
 			}
 		}
+		frame.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					player.close();
+				}
+			});
 		frame.show()
 	}
 
