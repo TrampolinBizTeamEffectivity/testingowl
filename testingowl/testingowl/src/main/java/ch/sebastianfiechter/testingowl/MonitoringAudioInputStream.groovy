@@ -3,6 +3,7 @@ package ch.sebastianfiechter.testingowl
 import java.io.IOException;
 
 import javax.sound.sampled.AudioInputStream
+import javax.sound.sampled.SourceDataLine
 import javax.sound.sampled.TargetDataLine
 
 import org.springframework.stereotype.Component
@@ -17,12 +18,9 @@ class MonitoringAudioInputStream extends AudioInputStream {
 	SoundLevel soundLevel
 	
 	def level = 0
-	//def run = false
-	
-	//TimerTask timerTask
 	
 	public MonitoringAudioInputStream(AudioInputStream stream, def io, def level) {
-		super(stream, stream.format, stream.frameLength)
+		super(stream, stream.format, stream.frameLength);
 		
 		audioIO = io
 		soundLevel = level	
@@ -32,9 +30,6 @@ class MonitoringAudioInputStream extends AudioInputStream {
 		super(targetDataLine)
 		audioIO = io
 		soundLevel = level
-		
-		//run = true
-		//start()
 	}
 	
 
@@ -65,9 +60,6 @@ class MonitoringAudioInputStream extends AudioInputStream {
 		soundLevel.setLevel(level)
 		//log.info ("recording level: " + level);
 	}
-
-	
-
 	
 }
 
