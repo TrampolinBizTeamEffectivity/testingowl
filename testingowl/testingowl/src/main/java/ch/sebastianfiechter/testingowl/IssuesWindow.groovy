@@ -15,11 +15,13 @@ import javax.swing.BorderFactory
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 import javax.swing.ListSelectionModel
+import javax.swing.table.*
 
 import org.springframework.stereotype.Component;
-
+import groovy.util.logging.*
 import javax.swing.*
 
+@Slf4j
 @Component
 class IssuesWindow {
 
@@ -31,16 +33,18 @@ class IssuesWindow {
 	
 	@Autowired
 	OwlIcons owl
+	
+	@Autowired
+	Issues issues
 
 	def frame
 	def swing
-	def table
+	JTable table
 
-	def issues
 
 	void show() {
 
-		if (issues.size() == 0) {
+		if (issues.issues.size() == 0) {
 			return
 		}
 
@@ -51,37 +55,40 @@ class IssuesWindow {
 			panel {
 				borderLayout()
 				scrollPane(constraints:CENTER) {
-					table = table(rowSelectionAllowed: true, selectionMode: ListSelectionModel.SINGLE_SELECTION) {
-
-						tableModel(list:issues) {
+					table = table(rowSelectionAllowed: false) {
+//columnSelectionAllowed: false, rowSelectionAllowed: false, editing:true, selectionMode: ListSelectionModel.SINGLE_SELECTION
+						tableModel(list:issues.issues) {
 							closureColumn(header:'ID', preferredWidth:40, read:{row -> return row.id})
 							closureColumn(header:'IssueType', preferredWidth:60, read:{row -> return row.type})
 							closureColumn(header:'Start Frame', preferredWidth:40, read:{row -> return row.frameStart})
 							closureColumn(header:'End Frame', preferredWidth:40, read:{row -> return row.frameEnd})
-							closureColumn(header:'Message', preferredWidth:700-180, cellRenderer: new MultiLineCellRenderer(), read:{row -> return row.message})
+							closureColumn(header:'Message', preferredWidth:700-180, cellRenderer: new MultiLineCellRenderer(), 
+								read:{row -> return row.message})
+							closureColumn(header:'Comment', preferredWidth:350-180, 
+								cellRenderer: new MultiLineCellRenderer(), 
+								cellEditor: new MultiLineCellEditor(),
+								read:{row -> return row.comment}, 
+								write: {row, newValue -> 
+									row.comment = newValue
+									})
 						}
 
-//						current.selectionModel.addListSelectionListener(
-//								new ListSelectionListener() {
-//									public void valueChanged(ListSelectionEvent event) {
-//										if (!event.valueIsAdjusting) {
-//											jPlayerDecorator.issueSelected(issues[table.selectedRow])
-//										}
-//									}
-//								}
-//								)
-						current.addMouseListener(new MouseAdapter() {
-									public void mouseClicked(MouseEvent e) {
-										jPlayerDecorator.issueSelected(issues[table.selectedRow])
-									}
-								})
-						
 						current.setRowHeight(current.getRowHeight() * 3)
 
+						current.addMouseListener(new MouseAdapter() {
+							public void mouseClicked(MouseEvent e) {
+								//only go if once clicked
+								if (e.getClickCount() == 1) {
+									jPlayerDecorator.issueSelected(issues.issues[table.selectedRow])
+								}
+							}
+						})
 					}
 				}
 			}
 		}
+			
+		
 		frame.addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowClosing(WindowEvent e) {

@@ -17,11 +17,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 class OpenRecordingWindowTest {
 
 	@Autowired
-	OpenRecordingWindow window
+	ProcessRecordingWindow window
 	
 	@Test
 	public void testHide() {
-		window.show("C:/filepath/filepath");
+		window.showOpen("C:/filepath/filepath");
 		
 		sleep 1000
 		

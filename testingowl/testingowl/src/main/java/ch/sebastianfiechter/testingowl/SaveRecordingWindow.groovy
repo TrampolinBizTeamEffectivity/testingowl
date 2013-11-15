@@ -119,7 +119,6 @@ class SaveRecordingWindow implements ActionListener {
 			clicked = true
 		} else if (ae.actionCommand == "share") {
 			sendMail()
-			clicked = true
 		} else if (ae.actionCommand == "close") {
 			clicked = true
 		}
@@ -128,7 +127,7 @@ class SaveRecordingWindow implements ActionListener {
 	def openPlayer() {
 		recorder.closeRecorder();
 		String[] record = new String[1]
-		record[0] = pathToFile[0..-5]
+		record[0] = pathToFile[0..-9]
 		Main.getPlayer().init(record);
 	}
 	

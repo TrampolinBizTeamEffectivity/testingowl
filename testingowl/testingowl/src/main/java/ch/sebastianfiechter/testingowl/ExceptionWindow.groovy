@@ -32,7 +32,7 @@ class ExceptionWindow {
 	@Autowired
 	OwlVersion version
 	
-	def show(Exception e) {
+	def show(Throwable e) {
 		
 		def description = "TestingOwl Version: ${version.version}\n" + e.class.toString() + ": " + e.message + "\n"
 		e.stackTrace.each {

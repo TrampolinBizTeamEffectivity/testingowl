@@ -1,4 +1,6 @@
 /*
+ * The current version of this class is heavily refactored by Sebastian Fiechter.
+ * 
  * @(#)ExampleFileFilter.java	1.16 04/07/26
  * 
  * Copyright (c) 2004 Sun Microsystems, Inc. All Rights Reserved.

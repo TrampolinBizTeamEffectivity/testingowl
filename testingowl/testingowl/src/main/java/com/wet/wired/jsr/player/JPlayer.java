@@ -1,26 +1,9 @@
 /*
- * This software is OSI Certified Open Source Software
+ * Original code: Copyright 2000-2001 by Wet-Wired.com Ltd., Portsmouth England
+ * This class is distributed under the MIT License (MIT)
+ * Download original code from: http://code.google.com/p/java-screen-recorder/
  * 
- * The MIT License (MIT)
- * Copyright 2000-2001 by Wet-Wired.com Ltd., Portsmouth England
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a 
- * copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- * and/or sell copies of the Software, and to permit persons to whom the 
- * Software is furnished to do so, subject to the following conditions: 
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software. 
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
- * EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
- * OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * The current version of this class is heavily refactored by Sebastian Fiechter.
  * 
  */
 
@@ -29,20 +12,17 @@ package com.wet.wired.jsr.player;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
-import javax.annotation.PostConstruct;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -59,9 +39,8 @@ import org.springframework.stereotype.Component;
 import ch.sebastianfiechter.testingowl.FramesSlider;
 import ch.sebastianfiechter.testingowl.JPlayerDecorator;
 import ch.sebastianfiechter.testingowl.Main;
-import ch.sebastianfiechter.testingowl.OpenRecordingWindow;
+import ch.sebastianfiechter.testingowl.ProcessRecordingWindow;
 import ch.sebastianfiechter.testingowl.OwlIcons;
-import ch.sebastianfiechter.testingowl.SaveRecordingWindow;
 import ch.sebastianfiechter.testingowl.SoundLevel;
 
 @SuppressWarnings("serial")
@@ -85,7 +64,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	ScreenPlayer screenPlayer;
 
 	@Autowired
-	OpenRecordingWindow openRecordingWindow;
+	ProcessRecordingWindow processRecordingWindow;
 
 	private ImageIcon icon;
 	private JScrollPane scrollPane;
@@ -117,7 +96,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			filter.setDescription("TestingOwl File");
 
 			if (target != null) {
-				fileChooser.setSelectedFile(new File(target));
+				fileChooser.setSelectedFile(new File(target + ".cap.owl"));
 			}
 			fileChooser.setFileFilter(filter);
 			fileChooser.setCurrentDirectory(new File("."));
@@ -128,7 +107,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				String targetCapOwl = fileChooser.getSelectedFile()
 						.getAbsolutePath();
 				target = targetCapOwl.substring(0,
-						targetCapOwl.lastIndexOf("."));
+						targetCapOwl.lastIndexOf(".cap.owl"));
 				open();
 			}
 		} else if (ev.getActionCommand().equals("play")) {
@@ -384,37 +363,33 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		beginWaitForBackgroundProcesses();
 
-		openRecordingWindow.show(0, 4, target + ".owl");
+		processRecordingWindow.showOpen(0, 4, target + ".cap.owl");
 
 		new Thread() {
-
 			public void run() {
-				decorator.unpack(target + ".owl");
-				openRecordingWindow.setProgressValue(1);
+				decorator.setFileNameWithoutEnding(target);
+				decorator.unpack();
+				processRecordingWindow.setProgressValue(1);
 
 				screenPlayer.init(target, JPlayer.this);
 
 				screenPlayer.open();
-				openRecordingWindow.setProgressValue(2);
-				decorator.open(target);
+				processRecordingWindow.setProgressValue(2);
+				decorator.open();
 
 				slider.setMin(1);
 				slider.setMax(screenPlayer.getTotalFrames());
 
 				soundLevel.setLevel(0);
 
-				openRecordingWindow.hide();
+				processRecordingWindow.hide();
 				endWaitForBackgroundProcesses();
 
 				text.setText("Ready to play " + target);
-				
+
 				reset();
 			}
 		}.start();
-
-		
-
-		
 	}
 
 	public void reset() {
@@ -568,35 +543,47 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 	public void close() {
 
-		screenPlayer.close();
-		setFrameLabelText(0, 0);
+		beginWaitForBackgroundProcesses();
 
-		decorator.close();
+		processRecordingWindow.showSaving(0, 4, target + ".cap.owl");
 
-		open.setEnabled(true);
-		open.setBackground(null);
+		new Thread() {
+			public void run() {
 
-		reset.setEnabled(false);
-		reset.setBackground(null);
+				screenPlayer.close();
+				setFrameLabelText(0, 0);
 
-		play.setEnabled(false);
-		play.setBackground(null);
+				decorator.close();
 
-		fastForward.setEnabled(false);
-		fastForward.setBackground(null);
+				open.setEnabled(true);
+				open.setBackground(null);
 
-		pause.setEnabled(false);
-		pause.setBackground(null);
+				reset.setEnabled(false);
+				reset.setBackground(null);
 
-		close.setEnabled(false);
-		close.setBackground(null);
+				play.setEnabled(false);
+				play.setBackground(null);
 
-		recorder.setEnabled(true);
-		recorder.setBackground(null);
+				fastForward.setEnabled(false);
+				fastForward.setBackground(null);
 
-		slider.setEnabled(false);
+				pause.setEnabled(false);
+				pause.setBackground(null);
 
-		text.setText("No recording selected");
+				close.setEnabled(false);
+				close.setBackground(null);
+
+				recorder.setEnabled(true);
+				recorder.setBackground(null);
+
+				slider.setEnabled(false);
+				
+				processRecordingWindow.hide();
+				endWaitForBackgroundProcesses();
+				
+				text.setText("No recording selected");
+			}
+		}.start();
 	}
 
 	public void closePlayer() {

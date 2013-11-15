@@ -29,7 +29,10 @@ class Issues {
 		int frameStart
 		int frameEnd
 		String message
+		String comment
 	}
+	
+	def fileNameWithoutEnding
 
 	List<Issue> issues
 	int issuesIdCounter
@@ -41,16 +44,20 @@ class Issues {
 
 	def setTopic(String topic) {
 		issues << new Issue(id:++issuesIdCounter, type:IssueType.Topic,
-		frameStart:1, frameEnd:1, message:topic)
+		frameStart:1, frameEnd:1, message:topic, comment:"")
 	}
 
 	def addIssue(def issueType, int frameStart, int frameEnd, String message) {
 		issues << new Issue(id:++issuesIdCounter, type:issueType,
-		frameStart:frameStart, frameEnd:frameEnd, message:message)
+		frameStart:frameStart, frameEnd:frameEnd, message:message, comment:"")
 	}
+	
+	
 
-	def writeToExcelXlsx(String filenameWithoutEnding) {
+	def writeToExcelXlsx() {
 
+		assert null != fileNameWithoutEnding
+		
 		Workbook wb = new XSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
 		Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName("Issues"));
@@ -64,14 +71,14 @@ class Issues {
 			'IssueType',
 			'Start Frame',
 			'End Frame',
-			'Message'
+			'Message', 
+			'Comment'
 		]
 
 		for (def i=0; i<rowHeader.size();i++) {
 			// Or do it on one line.
 			rowHead.createCell(i).setCellValue(rowHeader[i]);
 		}
-
 
 		//issues
 		for (def i=0; i<issues.size();i++) {
@@ -81,28 +88,26 @@ class Issues {
 			rowIssue.createCell(2).setCellValue(issues[i].frameStart as int);
 			rowIssue.createCell(3).setCellValue(issues[i].frameEnd as int);
 			rowIssue.createCell(4).setCellValue(issues[i].message as String);
-
+			rowIssue.createCell(5).setCellValue(issues[i].comment as String);
 		}
 
-
 		//delete existing
-		new File("${filenameWithoutEnding}.cap.xlsx").delete()
+		new File("${fileNameWithoutEnding}.cap.xlsx").delete()
 
 		// Write the output to a file
 		FileOutputStream fileOut = new FileOutputStream(
-			"${filenameWithoutEnding}.cap.xlsx");
+			"${fileNameWithoutEnding}.cap.xlsx");
 		wb.write(fileOut);
 		fileOut.close();
-
-
-
 	}
 
-	static List readFromExcelXlsx(String filenameWithoutEnding) {
-
-		List<Issue> readIssues = []
+	def readFromExcelXlsx() {
 		
-		OPCPackage pkg = OPCPackage.open(new File("${filenameWithoutEnding}.cap.xlsx"));
+		assert null != fileNameWithoutEnding
+
+		issues = []
+		
+		OPCPackage pkg = OPCPackage.open(new File("${fileNameWithoutEnding}.cap.xlsx"));
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
 		XSSFSheet sheet1 = wb.getSheetAt(0);
@@ -121,15 +126,14 @@ class Issues {
 			issue.frameStart = row.getCell(2).getNumericCellValue() as int
 			issue.frameEnd = row.getCell(3).getNumericCellValue() as int
 			issue.message = row.getCell(4).getRichStringCellValue() as String
+			issue.comment = row.getCell(5).getRichStringCellValue() as String
 			
 			//ignore first line
 			if (issue.id != "ID") {
-				readIssues << issue
+				issues << issue
 			}
 		}
-		
-		return readIssues
+	
 	}
-
 
 }

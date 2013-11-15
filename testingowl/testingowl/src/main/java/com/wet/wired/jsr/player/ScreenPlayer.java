@@ -1,26 +1,9 @@
 /*
- * This software is OSI Certified Open Source Software
+ * Original code: Copyright 2000-2001 by Wet-Wired.com Ltd., Portsmouth England
+ * This class is distributed under the MIT License (MIT)
+ * Download original code from: http://code.google.com/p/java-screen-recorder/
  * 
- * The MIT License (MIT)
- * Copyright 2000-2001 by Wet-Wired.com Ltd., Portsmouth England
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a 
- * copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- * and/or sell copies of the Software, and to permit persons to whom the 
- * Software is furnished to do so, subject to the following conditions: 
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software. 
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
- * EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
- * OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * The current version of this class is heavily refactored by Sebastian Fiechter.
  * 
  */
 
@@ -117,7 +100,7 @@ public class ScreenPlayer implements Runnable {
 
 		try {
 
-			iStream = new RandomAccessFile(videoFile, "r");
+			iStream = new RandomAccessFile(videoFile+".cap", "r");
 			
 			readFrameIndex();
 
@@ -148,10 +131,8 @@ public class ScreenPlayer implements Runnable {
 			frameIndex = (HashMap<Integer, FrameIndexEntry>) ois.readObject();
 			offsetToFirstFrame = 4+frameIndexLength+4;
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -166,7 +147,6 @@ public class ScreenPlayer implements Runnable {
 			try {
 				iStream.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -248,30 +228,8 @@ public class ScreenPlayer implements Runnable {
 	}	
 
 	private void countTotalFramesAndTime() {
-		
 		totalFrames = Collections.max(frameIndex.keySet());
 		totalTime = frameIndex.get(totalFrames).getFrameTime();
-		
-		
-//		// we have to iterate, because, the file is Zipped
-//		totalFrames = 0;
-//		totalTime = 0;
-//
-//		FrameDecompressor.FramePacket frame;
-//		try {
-//			frame = decompressor.unpack();
-//
-//			while (frame.getResult() != -1) {
-//				totalTime = frame.getTimeStamp();
-//				totalFrames++;
-//
-//				frame = decompressor.unpack();
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
 	}
 
 	
@@ -297,7 +255,6 @@ public class ScreenPlayer implements Runnable {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

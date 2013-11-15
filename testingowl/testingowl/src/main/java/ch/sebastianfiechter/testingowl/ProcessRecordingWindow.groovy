@@ -17,7 +17,7 @@ import groovy.util.logging.*
 
 @Slf4j
 @Component
-class OpenRecordingWindow {
+class ProcessRecordingWindow {
 
 	@Autowired
 	OwlIcons owl
@@ -32,8 +32,16 @@ class OpenRecordingWindow {
 	def synchronized setProgressValue(int val) {
 		progressBar.setValue(val)
 	}
+	
+	def showOpen(int progressValue=0, int progressMaxValue=100, String filePath) {
+		show(progressValue, progressMaxValue, filePath, "Opening recording from:");
+	}
+	
+	def showSaving(int progressValue=0, int progressMaxValue=100, String filePath) {
+		show(progressValue, progressMaxValue, filePath, "Saving recording to:");
+	}
 
-	def show(int progressValue=0, int progressMaxValue=100, String filePath) {
+	def show(int progressValue=0, int progressMaxValue=100, String filePath, String messag) {
 		
 		log.info("will show opening dialog")
 		
@@ -41,7 +49,7 @@ class OpenRecordingWindow {
 				JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 				null, new Object[0], null);
 
-		def message = "Opening recording from: <BR>${filePath}<BR>"
+		def message = "${messag}<BR>${filePath}<BR>"
 			
 		JLabel label = new JLabel("<html><body><center>${message}</center></body></html>", 
 			SwingConstants.CENTER);

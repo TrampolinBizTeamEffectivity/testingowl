@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import groovy.util.logging.*
-import ch.sebastianfiechter.testingowl.*
 import ch.sebastianfiechter.testingowl.Issues.*
 
 @Slf4j
@@ -225,7 +224,8 @@ class JRecorderDecorator implements ActionListener {
 		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
 
 		log.info ("start save xlsx")
-		issues.writeToExcelXlsx(fileNameWithoutEnding);
+		issues.fileNameWithoutEnding = fileNameWithoutEnding
+		issues.writeToExcelXlsx();
 		inProgressWindow.setProgressValue(2);
 		log.info ("stop save xlsx")
 		log.info ("start save wav")
@@ -238,7 +238,8 @@ class JRecorderDecorator implements ActionListener {
 		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
 
 		log.info ("start save zip")
-		filePacker.pack(fileNameWithoutEnding)
+		filePacker.fileNameWithoutEnding = fileNameWithoutEnding
+		filePacker.pack()
 		inProgressWindow.setProgressValue(4);
 		log.info ("stop save zip")
 	}

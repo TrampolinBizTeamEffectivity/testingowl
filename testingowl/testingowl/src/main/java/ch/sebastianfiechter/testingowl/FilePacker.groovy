@@ -35,6 +35,8 @@ class FilePacker {
 	FileChannel channel
 
 	long currentPosition
+	
+	def fileNameWithoutEnding
 
 	/**
 	 * no compression
@@ -42,18 +44,20 @@ class FilePacker {
 	 * @param filenameWithoutFileEnding
 	 * @return
 	 */
-	def pack(String filenameWithoutFileEnding) {
+	def pack() {
 
+		assert fileNameWithoutEnding != null
+		
 		FileOutputStream fos = new FileOutputStream(
-				"${filenameWithoutFileEnding}.cap.owl")
+				"${fileNameWithoutEnding}.cap.owl")
 
 		channel = fos.getChannel()
 
 		currentPosition = 0
 
-		addFile("${filenameWithoutFileEnding}.cap")
-		addFile("${filenameWithoutFileEnding}.cap.xlsx")
-		addFile("${filenameWithoutFileEnding}.cap.wav")
+		addFile("${fileNameWithoutEnding}.cap")
+		addFile("${fileNameWithoutEnding}.cap.xlsx")
+		addFile("${fileNameWithoutEnding}.cap.wav")
 
 		channel.close()
 		fos.close()
@@ -84,20 +88,20 @@ class FilePacker {
 	}
 
 
-	def unpack(String filenameWithFileEnding) {
+	def unpack() {
 
+		assert fileNameWithoutEnding != null
+		
 		FileInputStream fis = new FileInputStream(
-				"${filenameWithFileEnding}");
+				"${fileNameWithoutEnding}.cap.owl");
 
 		channel = fis.getChannel()
 
 		currentPosition = 0
 		
-		def fileNameWithoutFileEnding = filenameWithFileEnding[0..-9]
-
-		extractFileIfNotYetExists("${fileNameWithoutFileEnding}.cap")
-		extractFileIfNotYetExists("${fileNameWithoutFileEnding}.cap.xlsx")
-		extractFileIfNotYetExists("${fileNameWithoutFileEnding}.cap.wav")
+		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap")
+		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap.xlsx")
+		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap.wav")
 
 		channel.close()
 		fis.close()

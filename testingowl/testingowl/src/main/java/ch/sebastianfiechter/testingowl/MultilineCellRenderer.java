@@ -3,31 +3,28 @@ package ch.sebastianfiechter.testingowl;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
 class MultiLineCellRenderer implements TableCellRenderer {
 
-	JScrollPane pane;
 	JTextArea area;
-	
+	JTable table;
 
-	public Component getTableCellRendererComponent(JTable table, Object value,
+	public Component getTableCellRendererComponent(JTable tabl, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
-		
+
+		table = tabl;
+
 		area = new JTextArea();
-		//pane = new JScrollPane(area);
-		//pane.setPreferredSize(new Dimension(pane.getPreferredSize().width, 30));
-		
+		area.setText((value == null) ? "" : value.toString());
+
 		area.setLineWrap(true);
 		area.setWrapStyleWord(true);
 		area.setOpaque(true);
-		
+
 		if (isSelected) {
 			area.setForeground(table.getSelectionForeground());
 			area.setBackground(table.getSelectionBackground());
@@ -37,18 +34,30 @@ class MultiLineCellRenderer implements TableCellRenderer {
 		}
 		area.setFont(table.getFont());
 		if (hasFocus) {
-			area.setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
+			area.setBorder(UIManager
+					.getBorder("Table.focusCellHighlightBorder"));
 			if (table.isCellEditable(row, column)) {
-				area.setForeground(UIManager.getColor("Table.focusCellForeground"));
-				area.setBackground(UIManager.getColor("Table.focusCellBackground"));
+				area.setForeground(UIManager
+						.getColor("Table.focusCellForeground"));
+				area.setBackground(UIManager
+						.getColor("Table.focusCellBackground"));
 			}
 		} else {
-			//area.setBorder(new EmptyBorder(1, 2, 1, 2));
+			// area.setBorder(new EmptyBorder(1, 2, 1, 2));
 		}
+
 		area.setText((value == null) ? "" : value.toString());
-		
-		//updated row height
-		table.setRowHeight(row, area.getPreferredSize().height);
+
+		// updated row height
+		area.setSize(area.getWidth(), area.getPreferredSize().height);
+		area.setMinimumSize(new Dimension(area.getWidth(), area
+				.getPreferredSize().height));
+		area.setMaximumSize(new Dimension(area.getWidth(), area
+				.getPreferredSize().height));
+	
+		if (table.getRowHeight(row) <  area.getPreferredSize().height) {
+			table.setRowHeight(row,  area.getPreferredSize().height);
+		}
 		
 		return area;
 	}
