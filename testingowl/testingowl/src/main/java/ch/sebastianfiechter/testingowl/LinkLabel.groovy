@@ -21,7 +21,6 @@ class LinkLabel extends JLabel implements MouseListener {
 		
 		addMouseListener(this)
 		
-		//font = font.deriveFont(10.0f);
 		cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		enableEvents(MouseEvent.MOUSE_EVENT_MASK);
 	}
