@@ -49,6 +49,8 @@ class MultiLineCellRenderer implements TableCellRenderer {
 		area.setText((value == null) ? "" : value.toString());
 
 		area.setSize(new Dimension(area.getPreferredSize().width, area.getPreferredSize().height));
+//		area.setMinimumSize(new Dimension(area.getPreferredSize().width, area.getPreferredSize().height));
+//		area.setMaximumSize(new Dimension(area.getPreferredSize().width, area.getPreferredSize().height));
 			
 		// updated row height
 		if (table.getRowHeight(row) <  area.getPreferredSize().height) {

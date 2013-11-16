@@ -50,7 +50,7 @@ class IssuesWindow {
 
 		swing = new SwingBuilder()
 
-		frame = swing.frame(title:'TestingOwl Issues', location:[0, 440],
+		frame = swing.frame(title:'TestingOwl Issues: Click on ID to review this issue, insert text in Review-Comment', location:[0, 440],
 		size:[700, 150], alwaysOnTop: true, iconImage:owl.welcomeIcon.image ) {
 			panel {
 				borderLayout()
@@ -64,7 +64,7 @@ class IssuesWindow {
 							closureColumn(header:'End Frame', preferredWidth:40, read:{row -> return row.frameEnd})
 							closureColumn(header:'Message', preferredWidth:700-180, cellRenderer: new MultiLineCellRenderer(), 
 								read:{row -> return row.message})
-							closureColumn(header:'Comment', preferredWidth:350-180, 
+							closureColumn(header:'Review-Comment', preferredWidth:350-180, 
 								cellRenderer: new MultiLineCellRenderer(), 
 								cellEditor: new MultiLineCellEditor(),
 								read:{row -> return row.comment}, 

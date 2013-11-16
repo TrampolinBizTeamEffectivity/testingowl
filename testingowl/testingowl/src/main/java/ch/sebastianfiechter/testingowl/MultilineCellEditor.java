@@ -5,16 +5,13 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.EventObject;
 
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
 class MultiLineCellEditor implements TableCellEditor, DocumentListener {
 
@@ -47,10 +44,10 @@ class MultiLineCellEditor implements TableCellEditor, DocumentListener {
 
 		// updated row height
 		area.setText((value == null) ? "" : value.toString());
-		
+
 		return area;
 	}
-	
+
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		updateRowHeight();
@@ -67,14 +64,29 @@ class MultiLineCellEditor implements TableCellEditor, DocumentListener {
 	}
 
 	private void updateRowHeight() {
-						
-		System.out.println("cellEditor updateRowHeight: " + area.getPreferredSize().height);
-		
-		if (table.getRowHeight(table.getEditingRow()) <  area.getPreferredSize().height) {
-			table.setRowHeight(table.getEditingRow(),   area.getPreferredSize().height);
+
+		// hack to show new line that is empty
+		String text = area.getText();
+		int rows = 1;
+		while (text.indexOf("\n") != -1) {
+			text = text.substring(text.indexOf("\n") + 1);
+			rows++;
+		}
+
+		area.setPreferredSize(new Dimension(area.getPreferredSize().width, rows
+				* area.getFontMetrics(area.getFont()).getHeight()));
+
+//		if (area.getText().endsWith("\n")) {
+//			area.setPreferredSize(new Dimension(
+//				area.getPreferredSize().width,
+//				area.getPreferredSize().height+area.getFontMetrics(area.getFont()).getHeight()));
+//		}
+
+		if (table.getRowHeight(table.getEditingRow()) < area.getPreferredSize().height) {
+			table.setRowHeight(table.getEditingRow(), area.getPreferredSize().height);
 		}
 	}
-		
+
 	@Override
 	public Object getCellEditorValue() {
 		return area.getText();
@@ -105,8 +117,25 @@ class MultiLineCellEditor implements TableCellEditor, DocumentListener {
 		ChangeEvent event = new ChangeEvent(this);
 		for (int i = 0; i < listeners.size(); i++) {
 			listeners.get(i).editingStopped(event);
-		}         
+		}
+
+		updateAllRowHeights();
+
 		return true;
+	}
+
+	private void updateAllRowHeights() {
+		for (int row = 0; row < table.getRowCount(); row++) {
+			int rowHeight = table.getRowHeight();
+
+			for (int column = 0; column < table.getColumnCount(); column++) {
+				Component comp = table.prepareRenderer(
+						table.getCellRenderer(row, column), row, column);
+				rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+			}
+
+			table.setRowHeight(row, rowHeight);
+		}
 	}
 
 	@Override

@@ -118,6 +118,7 @@ class SaveRecordingWindow implements ActionListener {
 			openPlayer()
 			clicked = true
 		} else if (ae.actionCommand == "share") {
+			dialog.setAlwaysOnTop(false)
 			sendMail()
 		} else if (ae.actionCommand == "close") {
 			clicked = true
