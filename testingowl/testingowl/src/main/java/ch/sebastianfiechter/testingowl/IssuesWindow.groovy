@@ -55,7 +55,7 @@ class IssuesWindow {
 			panel {
 				borderLayout()
 				scrollPane(constraints:CENTER) {
-					table = table(rowSelectionAllowed: false) {
+					table = table(rowSelectionAllowed: false, columnSelectionAllowed: false) {
 //columnSelectionAllowed: false, rowSelectionAllowed: false, editing:true, selectionMode: ListSelectionModel.SINGLE_SELECTION
 						tableModel(list:issues.issues) {
 							closureColumn(header:'ID', preferredWidth:40, read:{row -> return row.id})
@@ -77,8 +77,9 @@ class IssuesWindow {
 
 						current.addMouseListener(new MouseAdapter() {
 							public void mouseClicked(MouseEvent e) {
-								//only go if once clicked
-								if (e.getClickCount() == 1) {
+								
+								int colIndex = table.getSelectedColumn();
+								if (colIndex != 5) {
 									jPlayerDecorator.issueSelected(issues.issues[table.selectedRow])
 								}
 							}
