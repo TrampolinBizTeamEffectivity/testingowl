@@ -23,7 +23,7 @@ import javax.swing.*
 
 @Slf4j
 @Component
-class IssuesWindow {
+class ReviewIssuesWindow {
 
 	@Autowired
 	JPlayerDecorator jPlayerDecorator
@@ -56,13 +56,12 @@ class IssuesWindow {
 				borderLayout()
 				scrollPane(constraints:CENTER) {
 					table = table(rowSelectionAllowed: false, columnSelectionAllowed: false) {
-//columnSelectionAllowed: false, rowSelectionAllowed: false, editing:true, selectionMode: ListSelectionModel.SINGLE_SELECTION
 						tableModel(list:issues.issues) {
 							closureColumn(header:'ID', preferredWidth:40, read:{row -> return row.id})
 							closureColumn(header:'IssueType', preferredWidth:60, read:{row -> return row.type})
 							closureColumn(header:'Start Frame', preferredWidth:40, read:{row -> return row.frameStart})
 							closureColumn(header:'End Frame', preferredWidth:40, read:{row -> return row.frameEnd})
-							closureColumn(header:'Message', preferredWidth:700-180, cellRenderer: new MultiLineCellRenderer(), 
+							closureColumn(header:'Message', preferredWidth:350-180, cellRenderer: new MultiLineCellRenderer(), 
 								read:{row -> return row.message})
 							closureColumn(header:'Review-Comment', preferredWidth:350-180, 
 								cellRenderer: new MultiLineCellRenderer(), 
@@ -72,8 +71,6 @@ class IssuesWindow {
 									row.comment = newValue
 									})
 						}
-
-						current.setRowHeight(current.getRowHeight() * 3)
 
 						current.addMouseListener(new MouseAdapter() {
 							public void mouseClicked(MouseEvent e) {

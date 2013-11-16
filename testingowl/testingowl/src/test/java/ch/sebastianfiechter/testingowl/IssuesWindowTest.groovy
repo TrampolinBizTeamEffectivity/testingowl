@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 class IssuesWindowTest {
 
 	@Autowired
-	IssuesWindow issuesWindow
+	ReviewIssuesWindow issuesWindow
 	
 	@Test
 	public void testSelection() {

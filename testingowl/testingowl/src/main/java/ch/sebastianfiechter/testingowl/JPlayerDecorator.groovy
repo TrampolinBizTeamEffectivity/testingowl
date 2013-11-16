@@ -32,7 +32,7 @@ class JPlayerDecorator {
 	Issues issues
 
 	@Autowired
-	IssuesWindow issuesWindow
+	ReviewIssuesWindow issuesWindow
 
 	@Autowired
 	AudioPlayer audioPlayer
