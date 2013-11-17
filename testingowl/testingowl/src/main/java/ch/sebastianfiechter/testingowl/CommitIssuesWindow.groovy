@@ -50,13 +50,13 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 	JDialog dialog
 
 	JScrollPane tablePane
+	JTable table
 	JButton okButton
 
 	def clicked = false
 
 	def showAndWaitForConfirm() {
 		
-
 		dialog = new JDialog(recorder, "TestingOwl Issues: Do you wanna correct some entries? To finish press Okay", false)
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.addWindowListener(this)
@@ -99,8 +99,8 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 	def createTable() {
 		def swing = new SwingBuilder()
 		
-		def table = swing.table(rowSelectionAllowed: false, columnSelectionAllowed: false) {
-			tableModel(list:issues.issues) {
+	    table = swing.table(rowSelectionAllowed: false, columnSelectionAllowed: false) {
+			tableModel(list: issues.issues) {
 				closureColumn(header:'ID', preferredWidth:40, read:{row -> return row.id})
 				closureColumn(header:'IssueType', preferredWidth:60, read:{row -> return row.type})
 				closureColumn(header:'Start Frame', preferredWidth:40, read:{row -> return row.frameStart})

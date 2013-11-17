@@ -185,7 +185,7 @@ class JRecorderDecorator implements ActionListener {
 		if (topicAndMixerWindow.show() == true) {
 
 			issues.reset()
-			issues.setTopic(topicAndMixerWindow.topic)
+			issues.addTopic(topicAndMixerWindow.topic)
 
 			audioRecorder.mixerName = topicAndMixerWindow.mixerName
 

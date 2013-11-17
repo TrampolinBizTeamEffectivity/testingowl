@@ -43,7 +43,7 @@ class Issues {
 		issuesIdCounter = -1
 	}
 
-	def setTopic(String topi) {
+	def addTopic(String topi) {
 		topic = topi
 		addIssue(IssueType.Topic, 1, 1, topic)
 	}

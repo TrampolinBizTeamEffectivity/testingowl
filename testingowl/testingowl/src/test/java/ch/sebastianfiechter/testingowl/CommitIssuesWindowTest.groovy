@@ -25,13 +25,16 @@ class CommitIssuesWindowTest {
 	public void testWaitForConfirm() {
 		
 		issues.issues = [
-			['id':"1", 'type':IssueType.Bug, 'frameStart':0, 'frameEnd':'10', 'message':'message'],
-			['id':"2", 'type':IssueType.Musthave,'frameStart':200, 'frameEnd':'210', 'message':'message to musthave']
+			['id':"1", 'type':IssueType.Topic, 'frameStart':1, 'frameEnd':'11', 'message':'title'],
+			['id':"2", 'type':IssueType.Bug, 'frameStart':11, 'frameEnd':'10', 'message':'message'],
+			['id':"3", 'type':IssueType.Musthave,'frameStart':200, 'frameEnd':'210', 'message':'message to musthave']
 		]
-		
+		issues.topic = "title"
 			
 		window.showAndWaitForConfirm()
 		println ("returned from dialog")
+		
+		println "after: " + issues.topic + " " + issues.issues[0].message;
 		
 		sleep 10000
 		

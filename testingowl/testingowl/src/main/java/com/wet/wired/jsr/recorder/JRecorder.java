@@ -162,6 +162,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		
 		commitIssuesWindow.showAndWaitForConfirm();
 		
+		
 		saveRecordingWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
 
 		saveVideo(targetWithCapOwl);
