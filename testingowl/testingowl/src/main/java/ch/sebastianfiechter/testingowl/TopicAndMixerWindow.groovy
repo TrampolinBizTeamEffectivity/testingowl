@@ -27,12 +27,8 @@ class TopicAndMixerWindow {
 	
 	def show(def parentFrame) {
 		
-		
-		def names = audioIO.getNamesOfMixersSupportingRecording()
-		
-		JComboBox comboTypesList = new JComboBox(names as String[]);
-		if (selectedMixerIndex != null) comboTypesList.selectedIndex = selectedMixerIndex
-		
+		def cancel = false
+				
 		JTextField textField = new JTextField() 
 		textField.addAncestorListener(new AncestorListener() {
 			void ancestorMoved(AncestorEvent event) {
@@ -45,6 +41,18 @@ class TopicAndMixerWindow {
 				textField.requestFocusInWindow();
 			}
 		});
+	
+	def names = audioIO.getNamesOfMixersSupportingRecording()
+	
+	if (names.isEmpty()) {
+		names << "NO MIC INPUT FOUND - CANNOT RECORD, SORRY."
+		textField.enabled = false
+		cancel = true
+	}
+	
+	JComboBox comboTypesList = new JComboBox(names as String[]);
+	if (selectedMixerIndex != null) comboTypesList.selectedIndex =
+		selectedMixerIndex
 		
 		Object[] complexMsg = ["What's the Topic of this session?", textField, "What's your audio device for mic recording?", 
 			comboTypesList ];
@@ -53,7 +61,7 @@ class TopicAndMixerWindow {
 		optionPane.setMessage(complexMsg);
 		optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
 		JDialog dialog = optionPane.createDialog(parentFrame, "Topic And Mic");
-		def cancel = false
+		
 		dialog.addWindowListener(new WindowAdapter() {
 			@Override
 			void windowClosing(WindowEvent event) {

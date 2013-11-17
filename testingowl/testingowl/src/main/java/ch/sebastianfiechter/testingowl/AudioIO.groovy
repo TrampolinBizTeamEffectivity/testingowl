@@ -35,7 +35,7 @@ class AudioIO {
 				mixerNames << it.name
 			}
 		}
-
+		
 		return mixerNames
 	}
 

@@ -22,7 +22,7 @@ class AudioMixerSelectionWindowTest {
 	
 	@Test
 	public void testAll() {
-		//window.show();
+		window.show();
 		
 		sleep 1000
 		
