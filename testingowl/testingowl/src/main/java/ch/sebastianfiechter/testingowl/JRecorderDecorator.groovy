@@ -62,8 +62,6 @@ class JRecorderDecorator implements ActionListener {
 	JButton musthave
 	JButton wish
 
-	String topic
-
 	public void getButtonsAndSoundLevel(Container panel, GridBagConstraints gbc ) {
 
 
@@ -188,7 +186,6 @@ class JRecorderDecorator implements ActionListener {
 
 			issues.reset()
 			issues.setTopic(topicAndMixerWindow.topic)
-			topic = topicAndMixerWindow.topic
 
 			audioRecorder.mixerName = topicAndMixerWindow.mixerName
 
@@ -217,12 +214,15 @@ class JRecorderDecorator implements ActionListener {
 
 	public File prepareSuggestedFile() {
 		def dateTime = new Date().format('yyyy-MM-dd-H_m_s')
-		new File("${topic}-${dateTime}.cap.owl");
+		
+		def saveTopicFileName = issues.topic.replaceAll("[^a-zA-Z0-9]","");
+		
+		new File("${saveTopicFileName}-${dateTime}.cap.owl");
 	}
 
 	public void saveFile(File fileNameCapOwl) {
 		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
-
+		
 		log.info ("start save xlsx")
 		issues.fileNameWithoutEnding = fileNameWithoutEnding
 		issues.writeToExcelXlsx();

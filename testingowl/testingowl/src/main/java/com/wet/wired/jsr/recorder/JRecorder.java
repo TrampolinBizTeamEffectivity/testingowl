@@ -20,16 +20,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ch.sebastianfiechter.testingowl.CommitIssuesWindow;
 import ch.sebastianfiechter.testingowl.SaveRecordingWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
 import ch.sebastianfiechter.testingowl.Main;
 import ch.sebastianfiechter.testingowl.OwlIcons;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +49,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 	@Autowired
 	OwlIcons owl;
+	
+	@Autowired
+	CommitIssuesWindow commitIssuesWindow;
 
 	@Autowired
 	SaveRecordingWindow saveRecordingWindow;
@@ -152,6 +159,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		File targetWithCapOwl = decorator.prepareSuggestedFile();
 
 		this.setEnabled(false);
+		
+		commitIssuesWindow.showAndWaitForConfirm();
+		
 		saveRecordingWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
 
 		saveVideo(targetWithCapOwl);

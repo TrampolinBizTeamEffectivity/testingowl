@@ -35,6 +35,7 @@ class Issues {
 	def fileNameWithoutEnding
 
 	List<Issue> issues
+	def topic
 	int issuesIdCounter
 	
 	def reset() {
@@ -42,9 +43,9 @@ class Issues {
 		issuesIdCounter = -1
 	}
 
-	def setTopic(String topic) {
-		issues << new Issue(id:++issuesIdCounter, type:IssueType.Topic,
-		frameStart:1, frameEnd:1, message:topic, comment:"")
+	def setTopic(String topi) {
+		topic = topi
+		addIssue(IssueType.Topic, 1, 1, topic)
 	}
 
 	def addIssue(def issueType, int frameStart, int frameEnd, String message) {
@@ -52,8 +53,6 @@ class Issues {
 		frameStart:frameStart, frameEnd:frameEnd, message:message, comment:"")
 	}
 	
-	
-
 	def writeToExcelXlsx() {
 
 		assert null != fileNameWithoutEnding
@@ -72,7 +71,7 @@ class Issues {
 			'Start Frame',
 			'End Frame',
 			'Message', 
-			'Comment'
+			'Review-Comment'
 		]
 
 		for (def i=0; i<rowHeader.size();i++) {
