@@ -13,7 +13,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellEditor;
 
-class MultiLineCellEditor implements TableCellEditor, DocumentListener {
+class MultilineCellEditor implements TableCellEditor, DocumentListener {
 
 	JTextArea area;
 	JTable table;

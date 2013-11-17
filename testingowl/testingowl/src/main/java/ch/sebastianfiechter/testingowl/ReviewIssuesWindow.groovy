@@ -61,11 +61,11 @@ class ReviewIssuesWindow {
 							closureColumn(header:'IssueType', preferredWidth:60, read:{row -> return row.type})
 							closureColumn(header:'Start Frame', preferredWidth:40, read:{row -> return row.frameStart})
 							closureColumn(header:'End Frame', preferredWidth:40, read:{row -> return row.frameEnd})
-							closureColumn(header:'Message', preferredWidth:350-180, cellRenderer: new MultiLineCellRenderer(), 
+							closureColumn(header:'Message', preferredWidth:350-180, cellRenderer: new MultilineCellRenderer(), 
 								read:{row -> return row.message})
 							closureColumn(header:'Review-Comment', preferredWidth:350-180, 
-								cellRenderer: new MultiLineCellRenderer(), 
-								cellEditor: new MultiLineCellEditor(),
+								cellRenderer: new MultilineCellRenderer(), 
+								cellEditor: new MultilineCellEditor(),
 								read:{row -> return row.comment}, 
 								write: {row, newValue -> 
 									row.comment = newValue

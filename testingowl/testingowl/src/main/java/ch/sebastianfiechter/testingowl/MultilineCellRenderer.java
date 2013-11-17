@@ -8,7 +8,7 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
-class MultiLineCellRenderer implements TableCellRenderer {
+class MultilineCellRenderer implements TableCellRenderer {
 
 	JTextArea area;
 	JTable table;
