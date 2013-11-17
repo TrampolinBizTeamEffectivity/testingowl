@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 import javax.swing.ListSelectionModel
 import javax.swing.table.*
+import javax.swing.*
 
 import org.springframework.stereotype.Component;
 
@@ -114,13 +115,15 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 						if (row.type == IssueType.Topic) {
 							issues.topic = newValue
 						}
-					})
+					})	
+				closureColumn(header:'Delete', preferredWidth:40, read:{row -> return row.id})
 			}
 
 		}
 		
 		return new JScrollPane(table)
 	}
+	
 
 	def waitForConfirm() {
 		clicked = false
@@ -143,12 +146,14 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 	@Override
 	synchronized void actionPerformed(ActionEvent ae) {
 		if (ae.actionCommand == "okay") {
+			table.cellEditor.stopCellEditing()
 			clicked = true
 		} 
 	}
 	
 	@Override
 	synchronized void windowClosing(WindowEvent e) {
+		table.cellEditor.stopCellEditing()
 		clicked = true
 	}
 }
