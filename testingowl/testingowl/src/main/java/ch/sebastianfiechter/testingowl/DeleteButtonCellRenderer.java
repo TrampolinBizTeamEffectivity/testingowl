@@ -1,5 +1,6 @@
 package ch.sebastianfiechter.testingowl;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
@@ -23,6 +24,7 @@ class DeleteButtonCellRenderer implements TableCellRenderer {
 	public Component getTableCellRendererComponent(JTable tabl, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
 		
+		
 		if (row == 0) {
 			//topic row
 			return null;
@@ -31,6 +33,10 @@ class DeleteButtonCellRenderer implements TableCellRenderer {
 		table = tabl;
 		
 		JButton button = new JButton("Delete");
+		
+		if (hasFocus) {
+			button.setBackground(Color.GRAY);
+		}
 		button.setOpaque(true);
 		
 		return button;

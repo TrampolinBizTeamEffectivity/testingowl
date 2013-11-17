@@ -117,21 +117,28 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 					}
 				})
 				closureColumn(header:'Delete', preferredWidth:80, read:{row -> return row.id},
-					cellRenderer: new DeleteButtonCellRenderer())
+				cellRenderer: new DeleteButtonCellRenderer())
 			}
 			current.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent e) {
-							
+
 							def rowToDelete = table.selectedRow;
-							
-							if (rowToDelete != 0) {				
+							def col = table.selectedColumn
+
+							if (rowToDelete != 0 && col == 5) {
 								if (JOptionPane.showConfirmDialog(dialog,
 								"Delete Issue with ID " + issues.issues[rowToDelete].id + "?",
 								"Delete?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 									issues.issues.minus(issues.issues[rowToDelete]);
 									table.model.fireTableRowsDeleted(rowToDelete,rowToDelete)
-								}
+								} 
+							} 
+							
+							if (col == 5) {
+								//remove focus from button
+								table.changeSelection(rowToDelete, 0, false, false);
 							}
+							
 						}
 					});
 		}
