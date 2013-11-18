@@ -32,7 +32,6 @@ class MonitoringAudioInputStream extends AudioInputStream {
 		soundLevel = level
 	}
 	
-
 	@Override
 	public int read() throws IOException {	
 		def data = super.read()

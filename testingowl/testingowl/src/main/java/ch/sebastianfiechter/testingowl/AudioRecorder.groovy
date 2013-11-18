@@ -57,7 +57,7 @@ class AudioRecorder {
 							AudioSystem.write(monitoringAudioInputStream, targetType, tempFile);
 						} catch (IOException e) {
 							AudioRecorder.this.log.error("cannot write audiostream", e)
-							exceptionWindow.show(e)
+							exceptionWindow.show(e, "Cannot write AudioStream.")
 							e.printStackTrace();
 						}
 					}
@@ -102,8 +102,13 @@ class AudioRecorder {
 		def out = new File("${filenameWithoutEnding}.cap.wav")
 
 		if (tempFile != null && tempFile.exists()) {
-			FileHelper.copy(tempFile, out);
-			tempFile.delete()
+			try {
+				FileHelper.copy(tempFile, out);
+				tempFile.delete()
+			} catch (IOException e) {
+				log.error("cannot write audiofile", e)
+				exceptionWindow.show(e, "Cannot write .wav file.")
+			}
 		}
 
 	}
@@ -113,6 +118,5 @@ class AudioRecorder {
 			tempFile.delete()
 		}
 	}
-
 
 }

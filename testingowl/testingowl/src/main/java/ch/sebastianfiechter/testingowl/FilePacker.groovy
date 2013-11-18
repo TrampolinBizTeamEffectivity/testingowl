@@ -158,12 +158,7 @@ class FilePacker {
 		public int read(ByteBuffer buffer) throws IOException {
 
 			buffer.putLong(fileSize);
-			/*
-			 buffer.put(((fileSize &  0xFF000000) >>> 24) as byte)
-			 buffer.put(((fileSize &  0x00FF0000) >>> 16) as byte)
-			 buffer.put(((fileSize &  0x0000FF00) >>> 8) as byte)
-			 buffer.put((fileSize &  0x000000FF) as byte)
-			 */
+
 			read = true
 
 			return 8;
@@ -197,18 +192,6 @@ class FilePacker {
 
 		@Override
 		public int write(ByteBuffer buffer) throws IOException {
-
-
-			/*
-			 fileSize = buffer.get()
-			 fileSize = fileSize << 8
-			 fileSize += buffer.get()
-			 fileSize = fileSize << 8
-			 fileSize += buffer.get()
-			 fileSize = fileSize << 8
-			 fileSize += buffer.get()
-			 */
-
 			fileSize = buffer.getLong()
 			written = true
 			return 8;

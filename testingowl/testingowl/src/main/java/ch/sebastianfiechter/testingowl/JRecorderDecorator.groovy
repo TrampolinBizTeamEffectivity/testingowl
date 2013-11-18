@@ -248,14 +248,9 @@ class JRecorderDecorator implements ActionListener {
 		audioRecorder.cancelSave()
 	}
 
-
-
 	def dispose() {
-
-
 		audioRecorder.stopRecording();
 		audioRecorder.cancelSave();
 		log.info "disposed"
-
 	}
 }

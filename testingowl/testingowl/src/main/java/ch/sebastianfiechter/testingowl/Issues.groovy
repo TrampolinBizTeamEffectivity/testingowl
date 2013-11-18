@@ -32,11 +32,11 @@ class Issues {
 		String comment
 	}
 	
-	def fileNameWithoutEnding
-
 	List<Issue> issues
 	def topic
 	int issuesIdCounter
+	
+	def fileNameWithoutEnding
 	
 	def reset() {
 		issues = []

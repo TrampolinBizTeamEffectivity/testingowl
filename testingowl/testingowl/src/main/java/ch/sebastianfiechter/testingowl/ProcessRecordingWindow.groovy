@@ -73,8 +73,6 @@ class ProcessRecordingWindow {
 		dialog.setLocationRelativeTo(null);
 		
 		dialog.setVisible(true)
-		
-		
 	}
 
 	def hide() {

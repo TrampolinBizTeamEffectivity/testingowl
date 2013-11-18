@@ -19,13 +19,25 @@ class ExceptionWindowTest {
 	ExceptionWindow window
 
 	@Test
-	public void testAll() {
+	public void testWithoutMessage() {
 
 		try {
 			def i = Integer.parseInt("error");
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			window.show(e);
+		}
+
+	}
+	
+	@Test
+	public void testWithMessage() {
+
+		try {
+			def i = Integer.parseInt("error");
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			window.show(e, "Couldn't parse Integer");
 		}
 
 	}

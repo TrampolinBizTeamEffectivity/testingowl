@@ -10,7 +10,6 @@ import javax.swing.SwingConstants
 
 class LinkLabel extends JLabel implements MouseListener {
 	
-	
 	URI uri
 	
 	public LinkLabel(String text, String url) {
@@ -34,24 +33,20 @@ class LinkLabel extends JLabel implements MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		//do Nothing
-		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		//do Nothing
-		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		//do Nothing
-		
+		//do Nothing	
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		//do Nothing
 	}
-
 }

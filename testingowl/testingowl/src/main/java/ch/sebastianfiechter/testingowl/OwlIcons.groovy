@@ -17,7 +17,5 @@ class OwlIcons {
 		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_welcome.png"))
 		new ImageIcon(img)
 	}
-	
-
-	
+		
 }

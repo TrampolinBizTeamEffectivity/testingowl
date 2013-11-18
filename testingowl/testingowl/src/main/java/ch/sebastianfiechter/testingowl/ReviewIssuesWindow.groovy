@@ -27,13 +27,13 @@ class ReviewIssuesWindow {
 
 	@Autowired
 	JPlayerDecorator jPlayerDecorator
-	
+
 	@Autowired
 	JPlayer player
-	
+
 	@Autowired
 	OwlIcons owl
-	
+
 	@Autowired
 	Issues issues
 
@@ -61,41 +61,40 @@ class ReviewIssuesWindow {
 							closureColumn(header:'IssueType', preferredWidth:60, read:{row -> return row.type})
 							closureColumn(header:'Start Frame', preferredWidth:40, read:{row -> return row.frameStart})
 							closureColumn(header:'End Frame', preferredWidth:40, read:{row -> return row.frameEnd})
-							closureColumn(header:'Message', preferredWidth:350-180, cellRenderer: new MultilineCellRenderer(), 
-								read:{row -> return row.message})
-							closureColumn(header:'Review-Comment', preferredWidth:350-180, 
-								cellRenderer: new MultilineCellRenderer(), 
-								cellEditor: new MultilineCellEditor(),
-								read:{row -> return row.comment}, 
-								write: {row, newValue -> 
-									row.comment = newValue
-									})
+							closureColumn(header:'Message', preferredWidth:350-180, cellRenderer: new MultilineCellRenderer(),
+							read:{row -> return row.message})
+							closureColumn(header:'Review-Comment', preferredWidth:350-180,
+							cellRenderer: new MultilineCellRenderer(),
+							cellEditor: new MultilineCellEditor(),
+							read:{row -> return row.comment},
+							write: {row, newValue ->
+								row.comment = newValue
+							})
 						}
 
 						current.addMouseListener(new MouseAdapter() {
-							public void mouseClicked(MouseEvent e) {
-								
-								int colIndex = table.getSelectedColumn();
-								if (colIndex != 5) {
-									jPlayerDecorator.issueSelected(issues.issues[table.selectedRow])
-								}
-							}
-						})
+									public void mouseClicked(MouseEvent e) {
+
+										int colIndex = table.getSelectedColumn();
+										if (colIndex != 5) {
+											jPlayerDecorator.issueSelected(issues.issues[table.selectedRow])
+										}
+									}
+								})
 					}
 				}
 			}
 		}
-			
-		
+
 		frame.addWindowListener(new WindowAdapter() {
-				@Override
-				public void windowClosing(WindowEvent e) {
-					if (table.cellEditor != null) {
-						table.cellEditor.stopCellEditing()
+					@Override
+					public void windowClosing(WindowEvent e) {
+						if (table.cellEditor != null) {
+							table.cellEditor.stopCellEditing()
+						}
+						player.close();
 					}
-					player.close();
-				}
-			});
+				});
 		frame.show()
 	}
 

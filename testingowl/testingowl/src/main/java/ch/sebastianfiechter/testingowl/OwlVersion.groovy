@@ -17,6 +17,4 @@ class OwlVersion {
 		return Manifests.exists("App-Version")==true ? Manifests.read("App-Version"): "";
 	}
 	
-
-	
 }

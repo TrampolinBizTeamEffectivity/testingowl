@@ -42,7 +42,6 @@ class WelcomeWindow {
 		JOptionPane optionPane = new JOptionPane("TestingOwl Welcome!",
 			JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 			 null, new Object[0], null);
-		 //optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
 
 		LinkLabel trampolin = new LinkLabel("<br>http://testingowl on github.com", "https://github.com/TrampolinBizTeamEffectivity/testingowl")
 		JLabel label = new JLabel("TestingOwl " + version.version, SwingConstants.CENTER)
@@ -54,7 +53,6 @@ class WelcomeWindow {
 		Object[] complexMsg = [mail, owl.welcomeIcon, label, recorder, player, trampolin, license ];
 		JDialog dialog = optionPane.createDialog(null, "TestingOwl Welcome!");
 	
-		//JOptionPane optionPane = new JOptionPane();
 		optionPane.setMessage(complexMsg);
 		
 		recorder.addActionListener(new ActionListener() {
@@ -83,7 +81,6 @@ class WelcomeWindow {
 		dialog.setVisible(true);
 		
 		return result
-		
 	}
 	
 }

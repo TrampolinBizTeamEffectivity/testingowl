@@ -88,11 +88,6 @@ class SaveRecordingWindow implements ActionListener {
 		dialog.pack();
 		dialog.setLocationRelativeTo(null);
 		dialog.setVisible(true)
-
-	}
-
-	def hide() {
-		dialog.setVisible(false)
 	}
 
 	def waitForConfirm() {
@@ -110,6 +105,10 @@ class SaveRecordingWindow implements ActionListener {
 			}
 			sleep 20
 		}
+	}
+	
+	def hide() {
+		dialog.setVisible(false)
 	}
 
 	@Override
@@ -142,6 +141,5 @@ class SaveRecordingWindow implements ActionListener {
 		final URI mailURI = new URI(mailURIStr);
 		desktop.mail(mailURI);
 	}
-	
 	
 }

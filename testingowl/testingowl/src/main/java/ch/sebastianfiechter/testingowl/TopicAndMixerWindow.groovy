@@ -54,7 +54,8 @@ class TopicAndMixerWindow {
 	if (selectedMixerIndex != null) comboTypesList.selectedIndex =
 		selectedMixerIndex
 		
-		Object[] complexMsg = ["What's the Topic of this session?", textField, "What's your audio device for mic recording?", 
+		Object[] complexMsg = ["What's the Topic of this session?", textField, 
+			"What's your audio device for mic recording?", 
 			comboTypesList ];
 	
 		JOptionPane optionPane = new JOptionPane();
@@ -80,8 +81,6 @@ class TopicAndMixerWindow {
 			return true
 		}
 		
-		
 		return false
-		
 	}
 }

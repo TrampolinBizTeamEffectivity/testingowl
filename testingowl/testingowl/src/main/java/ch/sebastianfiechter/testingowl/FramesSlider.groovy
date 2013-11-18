@@ -23,7 +23,6 @@ class FramesSlider extends JSlider implements ChangeListener, MouseListener {
 	
 	def avoidEvent = true
 	
-	
 	@PostConstruct
 	public void init() {
 		orientation =  SwingConstants.HORIZONTAL;
@@ -50,18 +49,15 @@ class FramesSlider extends JSlider implements ChangeListener, MouseListener {
 	public void stateChanged(ChangeEvent event) {
 		if (!avoidEvent && valueIsAdjusting) {
 			playerPause()
-			//jPlayer.goToFrame(value)
 		} else if (!avoidEvent && !valueIsAdjusting) {
 			jPlayer.goToFrame(value)
 			jPlayer.play();
 		}
 	}
 
-	
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		playerPause()
-		
 	}
 	
 	def playerPause() {
@@ -80,27 +76,21 @@ class FramesSlider extends JSlider implements ChangeListener, MouseListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//do nothing
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//do nothing	
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//do nothing		
 	}
-
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//do nothing
 	}
-
 }

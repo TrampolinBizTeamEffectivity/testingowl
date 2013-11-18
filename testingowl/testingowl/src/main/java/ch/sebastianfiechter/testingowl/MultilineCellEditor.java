@@ -76,14 +76,15 @@ class MultilineCellEditor implements TableCellEditor, DocumentListener {
 		area.setPreferredSize(new Dimension(area.getPreferredSize().width, rows
 				* area.getFontMetrics(area.getFont()).getHeight()));
 
-//		if (area.getText().endsWith("\n")) {
-//			area.setPreferredSize(new Dimension(
-//				area.getPreferredSize().width,
-//				area.getPreferredSize().height+area.getFontMetrics(area.getFont()).getHeight()));
-//		}
+		// if (area.getText().endsWith("\n")) {
+		// area.setPreferredSize(new Dimension(
+		// area.getPreferredSize().width,
+		// area.getPreferredSize().height+area.getFontMetrics(area.getFont()).getHeight()));
+		// }
 
 		if (table.getRowHeight(table.getEditingRow()) < area.getPreferredSize().height) {
-			table.setRowHeight(table.getEditingRow(), area.getPreferredSize().height);
+			table.setRowHeight(table.getEditingRow(),
+					area.getPreferredSize().height);
 		}
 	}
 
@@ -132,7 +133,8 @@ class MultilineCellEditor implements TableCellEditor, DocumentListener {
 				Component comp = table.prepareRenderer(
 						table.getCellRenderer(row, column), row, column);
 				if (comp == null) {
-					comp = table.prepareEditor(table.getCellEditor(row, column), row, column);
+					comp = table.prepareEditor(
+							table.getCellEditor(row, column), row, column);
 				}
 				rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
 			}
