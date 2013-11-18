@@ -126,11 +126,14 @@ class MultilineCellEditor implements TableCellEditor, DocumentListener {
 
 	private void updateAllRowHeights() {
 		for (int row = 0; row < table.getRowCount(); row++) {
-			int rowHeight = table.getRowHeight();
+			int rowHeight = 0;
 
 			for (int column = 0; column < table.getColumnCount(); column++) {
 				Component comp = table.prepareRenderer(
 						table.getCellRenderer(row, column), row, column);
+				if (comp == null) {
+					comp = table.prepareEditor(table.getCellEditor(row, column), row, column);
+				}
 				rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
 			}
 
