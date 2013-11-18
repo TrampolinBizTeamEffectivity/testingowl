@@ -41,8 +41,6 @@ class AudioPlayer {
 	def readFromWav(String filenameWithoutFileEnding) {
 
 		soundFile = new File("${filenameWithoutFileEnding}.cap.wav");
-
-		//BufferedInputStream buf = new BufferedInputStream(new FileInputStream(soundFile))
 		
 		sound = new MonitoringAudioInputStream(
 				AudioSystem.getAudioInputStream(soundFile), audioIO, soundLevel);

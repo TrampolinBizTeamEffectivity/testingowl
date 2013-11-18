@@ -90,7 +90,9 @@ class ReviewIssuesWindow {
 		frame.addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowClosing(WindowEvent e) {
-					table.cellEditor.stopCellEditing()
+					if (table.cellEditor != null) {
+						table.cellEditor.stopCellEditing()
+					}
 					player.close();
 				}
 			});

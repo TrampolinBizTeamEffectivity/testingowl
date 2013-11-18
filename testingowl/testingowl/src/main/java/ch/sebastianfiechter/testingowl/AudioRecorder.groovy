@@ -25,6 +25,9 @@ class AudioRecorder {
 
 	@Autowired
 	SoundLevel soundLevel;
+	
+	@Autowired
+	ExceptionWindow exceptionWindow;
 
 	def mixerName = null
 	Thread recordingThread;
@@ -53,6 +56,8 @@ class AudioRecorder {
 						try {
 							AudioSystem.write(monitoringAudioInputStream, targetType, tempFile);
 						} catch (IOException e) {
+							AudioRecorder.this.log.error("cannot write audiostream", e)
+							exceptionWindow.show(e)
 							e.printStackTrace();
 						}
 					}
@@ -78,8 +83,6 @@ class AudioRecorder {
 	}
 
 	def stopRecording() {
-
-		//monitoringAudioInputStream?.stop()
 
 		if (targetDataLine != null && targetDataLine.active) {
 			targetDataLine.stop();

@@ -156,12 +156,11 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		this.beginWaitForBackgroundProcesses();
 
-		File targetWithCapOwl = decorator.prepareSuggestedFile();
-
 		this.setEnabled(false);
 		
 		commitIssuesWindow.showAndWaitForConfirm();
 		
+		File targetWithCapOwl = decorator.prepareSuggestedFile();
 		
 		saveRecordingWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
 

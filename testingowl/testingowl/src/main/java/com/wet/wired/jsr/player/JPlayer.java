@@ -578,6 +578,8 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 				slider.setEnabled(false);
 				
+				soundLevel.setLevel(0);
+				
 				processRecordingWindow.hide();
 				endWaitForBackgroundProcesses();
 				
