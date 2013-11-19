@@ -27,13 +27,18 @@ import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import ch.sebastianfiechter.testingowl.ExceptionWindow;
 import ch.sebastianfiechter.testingowl.FrameIndexEntry;
 
 public abstract class ScreenRecorder implements Runnable {
 	
 	Logger logger = LoggerFactory.getLogger(ScreenRecorder.class);
 
+	@Autowired
+	ExceptionWindow exceptionWindow;
+	
 	private Rectangle recordArea;
 
 	private int frameSize;
@@ -79,6 +84,7 @@ public abstract class ScreenRecorder implements Runnable {
 				try {
 					Thread.sleep(10);
 				} catch (Exception e) {
+					//do nothing
 				}
 			}
 			queue.add(pack);
@@ -95,19 +101,23 @@ public abstract class ScreenRecorder implements Runnable {
 						// long t2 = System.currentTimeMillis();
 						// System.out.println("  pack time:"+(t2-t1));
 
-					} catch (Exception e) {
-						e.printStackTrace();
+					} catch (IOException e) {
 						try {
 							oStream.close();
-						} catch (Exception e2) {
+						} catch (IOException oe) {
+							logger.error("cannot close oStream", oe);
 						}
+						logger.error("cannot pack new data", e);
+						exceptionWindow.show(e,"cannot pack new data");
+					
 						return;
-					}
+					} 
 				}
 				while (queue.isEmpty() == true) {
 					try {
 						Thread.sleep(50);
 					} catch (Exception e) {
+						//do nothing
 					}
 				}
 			}
@@ -125,8 +135,8 @@ public abstract class ScreenRecorder implements Runnable {
 		try {
 			this.oStream = new FileOutputStream(tempFile);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("temp file not found", e);
+			exceptionWindow.show(e, "temp file not found");
 		}
 	}
 
@@ -152,6 +162,7 @@ public abstract class ScreenRecorder implements Runnable {
 				try {
 					Thread.sleep(10);
 				} catch (Exception e) {
+					//do nothing
 				}
 				time = System.currentTimeMillis();
 			}
@@ -160,11 +171,13 @@ public abstract class ScreenRecorder implements Runnable {
 			try {
 				recordFrame();
 			} catch (Exception e) {
-				e.printStackTrace();
 				try {
 					oStream.close();
-				} catch (Exception e2) {
+				} catch (Exception oe) {
+					logger.error("cannot close stream", oe);
 				}
+				logger.error("cannot record frame", e);
+				exceptionWindow.show(e,"cannot record frame");
 				break;
 			}
 		}
@@ -212,8 +225,9 @@ public abstract class ScreenRecorder implements Runnable {
 
 			oStream.write((recordArea.height & 0x0000FF00) >>> 8);
 			oStream.write((recordArea.height & 0x000000FF));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error("cannot write stream record area", e);
+			exceptionWindow.show(e,"cannot write stream record area");
 		}
 
 		new Thread(this, "Screen Recorder").start();
@@ -227,6 +241,7 @@ public abstract class ScreenRecorder implements Runnable {
 			try {
 				Thread.sleep(100);
 			} catch (Exception e) {
+				//do nothing
 			}
 			count++;
 		}
@@ -235,8 +250,9 @@ public abstract class ScreenRecorder implements Runnable {
 			try {
 				oStream.flush();
 				oStream.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error("cannot flush and close stream", e);
+				exceptionWindow.show(e,"cannot flush and close stream");
 			}
 		}
 	}
@@ -260,7 +276,8 @@ public abstract class ScreenRecorder implements Runnable {
 			targetChannel.write(frameIndex);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("cannot write frame index", e);
+			exceptionWindow.show(e, "cannot write frame index");
 		}
 
 	}
@@ -279,9 +296,11 @@ public abstract class ScreenRecorder implements Runnable {
 			tempVideo.getChannel().close();
 			tempVideo.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("temp file not found", e);
+			exceptionWindow.show(e, "temp file not found");
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("cannot transfer from channels", e);
+			exceptionWindow.show(e, "cannot transfer from channels");
 		}
 
 	}	

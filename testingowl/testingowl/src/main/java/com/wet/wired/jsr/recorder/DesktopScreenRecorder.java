@@ -17,79 +17,79 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import ch.sebastianfiechter.testingowl.ExceptionWindow;
 
 @Component
 public class DesktopScreenRecorder extends ScreenRecorder {
 
-   public static boolean useWhiteCursor;
-   private Robot robot;
-   private BufferedImage mouseCursor;
-   
-   public void init(File tempFile, 
-         ScreenRecorderListener listener) {
-      super.init(tempFile, listener);
-      
-      try {
+	@Autowired
+	ExceptionWindow exceptionWindow;
 
-         String mouseCursorFile;
+	Logger log = LoggerFactory.getLogger(DesktopScreenRecorder.class);
 
-         if (useWhiteCursor)
-            mouseCursorFile = "white_cursor.png";
-         else
-            mouseCursorFile = "black_cursor.png";
+	public static boolean useWhiteCursor;
+	private Robot robot;
+	private BufferedImage mouseCursor;
 
-         URL cursorURL = getClass().getClassLoader().getResource(
-               "mouse_cursors/" + mouseCursorFile);
+	public void init(File tempFile, ScreenRecorderListener listener) {
+		super.init(tempFile, listener);
 
-         mouseCursor = ImageIO.read(cursorURL);
+		try {
 
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
-   }
+			String mouseCursorFile;
 
-   public Rectangle initialiseScreenCapture() {
-      try {
-         robot = new Robot();
-      } catch (AWTException awe) {
-         awe.printStackTrace();
-         return null;
-      }
-      return new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-   }
+			if (useWhiteCursor)
+				mouseCursorFile = "white_cursor.png";
+			else
+				mouseCursorFile = "black_cursor.png";
 
-   public Robot getRobot() {
-      return robot;
-   }
+			URL cursorURL = getClass().getClassLoader().getResource(
+					"mouse_cursors/" + mouseCursorFile);
 
-   public BufferedImage captureScreen(Rectangle recordArea) {
-      Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-      BufferedImage image = robot.createScreenCapture(recordArea);
+			mouseCursor = ImageIO.read(cursorURL);
 
-      Graphics2D grfx = image.createGraphics();
+		} catch (Exception e) {
+			log.error("cannot read cursor image", e);
+			exceptionWindow.show(e, "cannot read cursor image");
+		}
+	}
 
-      grfx.drawImage(mouseCursor, mousePosition.x - 8, mousePosition.y - 5,
-            null);
+	public Rectangle initialiseScreenCapture() {
+		try {
+			robot = new Robot();
+		} catch (AWTException e) {
+			log.error("cannot create Robot", e);
+			exceptionWindow.show(e, "cannot create Robot");
+		}
+		return new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+	}
 
-      grfx.dispose();
+	public Robot getRobot() {
+		return robot;
+	}
 
-      return image;
-   }
+	public BufferedImage captureScreen(Rectangle recordArea) {
+		Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+		BufferedImage image = robot.createScreenCapture(recordArea);
 
+		Graphics2D grfx = image.createGraphics();
+
+		grfx.drawImage(mouseCursor, mousePosition.x - 8, mousePosition.y - 5,
+				null);
+
+		grfx.dispose();
+
+		return image;
+	}
 
 }

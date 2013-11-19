@@ -34,7 +34,7 @@ class ExceptionWindow {
 	
 	def show(Throwable e, String message="") {
 		
-		def description = "${message}\nTestingOwl Version: ${version.version}\n" + e.class.toString() + ": " + e.message + "\n"
+		def description = "Message: ${message}\nTestingOwl Version: ${version.version}\n" + e.class.toString() + ": " + e.message + "\n"
 		e.stackTrace.each {
 			description += it.toString() + "\n"
 		}

@@ -14,8 +14,7 @@ import java.awt.Toolkit;
 import java.awt.image.ColorModel;
 import java.awt.image.MemoryImageSource;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.RandomAccessFile;
@@ -24,17 +23,21 @@ import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ch.sebastianfiechter.testingowl.ExceptionWindow;
 import ch.sebastianfiechter.testingowl.FrameIndexEntry;
 
 import com.wet.wired.jsr.player.FrameDecompressor.FramePacket;
-import com.wet.wired.jsr.recorder.JRecorder;
 
 @Component
 public class ScreenPlayer implements Runnable {
-	
-	Logger logger = LoggerFactory.getLogger(ScreenPlayer.class);
+
+	@Autowired
+	ExceptionWindow exceptionWindow;
+
+	Logger log = LoggerFactory.getLogger(ScreenPlayer.class);
 
 	private Thread thread;
 
@@ -61,15 +64,15 @@ public class ScreenPlayer implements Runnable {
 	private RandomAccessFile iStream;
 	private HashMap<Integer, FrameIndexEntry> frameIndex;
 	private int offsetToFirstFrame;
-	
+
 	private String videoFile;
 	private int width;
 	private int height;
-	
+
 	public void init(String video, ScreenPlayerListener list) {
 		listener = list;
 		videoFile = video;
-	
+
 		startTime = 0;
 		frameTime = 0;
 		lastFrameTime = 0;
@@ -82,12 +85,11 @@ public class ScreenPlayer implements Runnable {
 		fastForward = false;
 	}
 
-	
 	public void open() {
-		openStream();		
+		openStream();
 		countTotalFramesAndTime();
 	}
-	
+
 	private void openStream() {
 		startTime = 0;
 		frameTime = 0;
@@ -100,8 +102,8 @@ public class ScreenPlayer implements Runnable {
 
 		try {
 
-			iStream = new RandomAccessFile(videoFile+".cap", "r");
-			
+			iStream = new RandomAccessFile(videoFile + ".cap", "r");
+
 			readFrameIndex();
 
 			width = iStream.read();
@@ -114,61 +116,72 @@ public class ScreenPlayer implements Runnable {
 
 			area = new Rectangle(width, height);
 			decompressor = new FrameDecompressor(iStream, width * height);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-
-	}
-	
-	private void readFrameIndex() {
-		try {
-			int frameIndexLength = iStream.readInt();
-			logger.info("frame index size is: " + frameIndexLength);
-			byte[] frameIndexBytes = new byte[frameIndexLength];
-			iStream.read(frameIndexBytes);
-			ByteArrayInputStream bais = new ByteArrayInputStream(frameIndexBytes);
-			ObjectInputStream ois = new ObjectInputStream(bais);
-			frameIndex = (HashMap<Integer, FrameIndexEntry>) ois.readObject();
-			offsetToFirstFrame = 4+frameIndexLength+4;
+		} catch (FileNotFoundException e) {
+			log.error("video file not found", e);
+			exceptionWindow.show(e, "video file not found");
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("cannot read stream from video", e);
+			exceptionWindow.show(e, "cannot read stream from video");
 		}
 
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private void readFrameIndex() {
+		try {
+			int frameIndexLength = iStream.readInt();
+			log.info("frame index size is: " + frameIndexLength);
+			byte[] frameIndexBytes = new byte[frameIndexLength];
+			iStream.read(frameIndexBytes);
+			ByteArrayInputStream bais = new ByteArrayInputStream(
+					frameIndexBytes);
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			frameIndex = (HashMap<Integer, FrameIndexEntry>) ois.readObject();
+			offsetToFirstFrame = 4 + frameIndexLength + 4;
+		} catch (IOException e) {
+			log.error("cannot read frameIndex", e);
+			exceptionWindow.show(e, "cannot read frameIndex");
+		} catch (ClassNotFoundException e) {
+			log.error("cannot cast frame index from stream to HashMap", e);
+			exceptionWindow.show(e,
+					"cannot cast frame index from stream to HashMap");
+		}
+
+	}
+
 	private void closeStream() {
-		
-		//ensure, thread is closed
+
+		// ensure, thread is closed
 		stopThread();
-		
+
 		if (iStream != null) {
 			try {
 				iStream.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.info("cannot close stream", e);
+				// do nothing
 			}
 		}
-		
+
 	}
-	
+
 	public void reset() {
 		showFirstFrame();
-	}	
-	
+	}
+
 	private void showFirstFrame() {
 		try {
-			//go to first frame
+			// go to first frame
 			goToFrame(1);
 			readFrame();
 			listener.newFrame(frameNr, frameTime);
 			lastFrameTime = frameTime;
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		} catch (IOException e) {
+			log.error("cannot read frame, cannot unpack frame", e);
+			exceptionWindow.show(e, "cannot read frame, cannot unpack frame");
 		}
 	}
-	
+
 	public void play() {
 		fastForward = false;
 		startThread();
@@ -179,16 +192,15 @@ public class ScreenPlayer implements Runnable {
 		startThread();
 	}
 
-
 	public void pause() {
 		stopThread();
 	}
-	
+
 	public void close() {
 		closeStream();
-		
+
 		clearImage();
-		
+
 		startTime = 0;
 		frameTime = 0;
 		lastFrameTime = 0;
@@ -202,37 +214,38 @@ public class ScreenPlayer implements Runnable {
 	}
 
 	public void goToFrame(int toFrame) {
-		
+
 		stopThread();
-		
+
 		try {
-		
+
 			FrameIndexEntry entry = frameIndex.get(toFrame);
-			FrameIndexEntry fullEntry = frameIndex.get(entry.getLastFullFrame());
-			iStream.seek(offsetToFirstFrame+fullEntry.getStreamPosition());
-	
+			FrameIndexEntry fullEntry = frameIndex
+					.get(entry.getLastFullFrame());
+			iStream.seek(offsetToFirstFrame + fullEntry.getStreamPosition());
+
 			FramePacket frame = null;
-			
+
 			frameTime = 0;
-			frameNr = entry.getLastFullFrame()-1;
-	
+			frameNr = entry.getLastFullFrame() - 1;
+
 			for (int i = entry.getLastFullFrame(); i < toFrame; i++) {
-					frame = decompressor.unpack();
-					frameSize = frame.getData().length;
-					frameTime = frame.getTimeStamp();
-					frameNr++;
+				frame = decompressor.unpack();
+				frameSize = frame.getData().length;
+				frameTime = frame.getTimeStamp();
+				frameNr++;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("cannot seek or unpack", e);
+			exceptionWindow.show(e, "cannot seek or unpack");
 		}
-	}	
+	}
 
 	private void countTotalFramesAndTime() {
 		totalFrames = Collections.max(frameIndex.keySet());
 		totalTime = frameIndex.get(totalFrames).getFrameTime();
 	}
 
-	
 	private void clearImage() {
 		if (area != null) {
 			mis = new MemoryImageSource(area.width, area.height,
@@ -240,8 +253,8 @@ public class ScreenPlayer implements Runnable {
 			mis.setAnimated(true);
 			listener.showNewImage(Toolkit.getDefaultToolkit().createImage(mis));
 		}
-	}	
-	
+	}
+
 	private void startThread() {
 		if (running == false) {
 			thread = new Thread(this, "Screen Player");
@@ -255,11 +268,12 @@ public class ScreenPlayer implements Runnable {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.info("waiting for stopping thread.join exception", e);
+				exceptionWindow.show(e, "waiting for stopping thread.join exception");
 			}
 		}
 	}
-	
+
 	public synchronized void run() {
 
 		running = true;
@@ -271,7 +285,7 @@ public class ScreenPlayer implements Runnable {
 				readFrame();
 				listener.newFrame(frameNr, frameTime);
 			} catch (IOException ioe) {
-				ioe.printStackTrace();
+				log.info("couldn't read frame, will show null image", ioe);
 				listener.showNewImage(null);
 				break;
 			}
@@ -284,6 +298,7 @@ public class ScreenPlayer implements Runnable {
 					try {
 						Thread.sleep(100);
 					} catch (Exception e) {
+						//do nothing
 					}
 				}
 
@@ -293,7 +308,7 @@ public class ScreenPlayer implements Runnable {
 
 			lastFrameTime = frameTime;
 		}
-		
+
 		if (frameNr == totalFrames) {
 			listener.playerStopped();
 		}
@@ -305,13 +320,13 @@ public class ScreenPlayer implements Runnable {
 
 		int result = frame.getResult();
 		if (result == 0) {
-			//empty image, because no change
+			// empty image, because no change
 			frameNr++;
 			frameSize = frame.getData().length;
 			frameTime = frame.getTimeStamp();
 			return;
 		} else if (result == -1) {
-			//end of file, stop
+			// end of file, stop
 			running = false;
 			return;
 		}
@@ -331,8 +346,9 @@ public class ScreenPlayer implements Runnable {
 					area.width);
 			return;
 		}
+
 	}
-	
+
 	public int getTotalFrames() {
 		return totalFrames;
 	}
@@ -340,7 +356,7 @@ public class ScreenPlayer implements Runnable {
 	public long getTotalTime() {
 		return totalTime;
 	}
-	
+
 	public int getFrameNr() {
 		return frameNr;
 	}
@@ -348,5 +364,5 @@ public class ScreenPlayer implements Runnable {
 	public long getFrameTime() {
 		return frameTime;
 	}
-	
+
 }

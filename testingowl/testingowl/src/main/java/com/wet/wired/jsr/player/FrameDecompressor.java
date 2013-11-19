@@ -12,13 +12,17 @@ package com.wet.wired.jsr.player;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.log4j.Logger;
+
 public class FrameDecompressor {
+	
    private static final int ALPHA = 0xFF000000;
 
+   Logger log = Logger.getLogger(FrameDecompressor.class);
+   
    public class FramePacket {
 
       private RandomAccessFile iStream;
@@ -132,6 +136,7 @@ public class FrameDecompressor {
          bO.flush();
          bO.close();
       } catch (Exception e) {
+    	 log.info("unpack read exception that is corrected in catch itself", e);
          e.printStackTrace();
          frame.result = 0;
          return frame;

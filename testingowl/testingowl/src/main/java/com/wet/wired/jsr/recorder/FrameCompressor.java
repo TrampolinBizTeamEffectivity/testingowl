@@ -23,7 +23,7 @@ public class FrameCompressor {
 	
 	public static int FULL_FRAME_INTERVAL = 300;
 	
-	Logger logger = Logger.getLogger(FrameCompressor.class);
+	Logger log = Logger.getLogger(FrameCompressor.class);
 
 	private FramePacket framePacket;
 	
@@ -214,9 +214,9 @@ public class FrameCompressor {
 		frameIndex.put(frameNr, new FrameIndexEntry(framePacket.frameTime, 
 			streamWriterPosition, lastFullFrame));
 
-		logger.info(frameNr+"\t"+(framePacket.frameTime/1000.0)+"\t"+streamWriterPosition
-			+"\t"+(packed.length/1000.0)
-			+"\t"+hasChanges+"\t"+lastFullFrame);
+//		log.info(frameNr+"\t"+(framePacket.frameTime/1000.0)+"\t"+streamWriterPosition
+//			+"\t"+(packed.length/1000.0)
+//			+"\t"+hasChanges+"\t"+lastFullFrame);
 		
 
 		framePacket.oStream.write(((int) framePacket.frameTime & 0xFF000000) >>> 24);

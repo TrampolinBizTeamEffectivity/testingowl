@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ch.sebastianfiechter.testingowl.CommitIssuesWindow;
+import ch.sebastianfiechter.testingowl.ExceptionWindow;
 import ch.sebastianfiechter.testingowl.SaveRecordingWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
 import ch.sebastianfiechter.testingowl.Main;
@@ -48,8 +49,11 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	JRecorderDecorator decorator;
 
 	@Autowired
+	ExceptionWindow exceptionWindow;
+
+	@Autowired
 	OwlIcons owl;
-	
+
 	@Autowired
 	CommitIssuesWindow commitIssuesWindow;
 
@@ -83,7 +87,8 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			recorder.init(temp, this);
 			recorder.startRecording();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("cannot create temp file", e);
+			exceptionWindow.show(e, "cannot create temp file");
 		}
 
 		return true;
@@ -91,15 +96,11 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 	public void actionPerformed(ActionEvent ev) {
 		if (ev.getActionCommand().equals("start")) {
-			try {
-				if (startRecording()) {
-					control.setActionCommand("stop");
-					control.setText("Stop Recording");
-					player.setEnabled(false);
-					decorator.recordStarted();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (startRecording()) {
+				control.setActionCommand("stop");
+				control.setText("Stop Recording");
+				player.setEnabled(false);
+				decorator.recordStarted();
 			}
 		} else if (ev.getActionCommand().equals("stop")) {
 			text.setText("Stopping");
@@ -157,11 +158,11 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 		this.beginWaitForBackgroundProcesses();
 
 		this.setEnabled(false);
-		
+
 		commitIssuesWindow.showAndWaitForConfirm();
-		
+
 		File targetWithCapOwl = decorator.prepareSuggestedFile();
-		
+
 		saveRecordingWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
 
 		saveVideo(targetWithCapOwl);
@@ -188,15 +189,16 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			recorder.writeVideo(fos.getChannel());
 			fos.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("cannot save cap file", e);
+			exceptionWindow.show(e,"cannot save cap file");
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("cannot close outputstream", e);
+			exceptionWindow.show(e, "cannot close outputstream");
 		}
 
 		saveRecordingWindow.setProgressValue(1);
 		logger.info("stop save cap");
 	}
-
 
 	public void init(String[] args) {
 
