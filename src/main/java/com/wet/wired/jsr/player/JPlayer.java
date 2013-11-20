@@ -596,7 +596,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 	}
 
 	public void setFrameLabelText(long frame, double milliSeconds) {
-		
+				
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.S");
 		df.setTimeZone(TimeZone.getTimeZone("GMT"));
 		String currentTime = df.format(milliSeconds);

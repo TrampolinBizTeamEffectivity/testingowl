@@ -67,7 +67,7 @@ class FramesSlider extends JSlider implements ChangeListener, MouseListener {
 		Thread pauseThread = new Thread() {
 			void run() {
 				jPlayer.pause()
-				jPlayer.setFrameLabelText(val, jPlayer.totalTime);
+				jPlayer.setFrameLabelText(val, 0);
 			}
 		}
 		pauseThread.start()
