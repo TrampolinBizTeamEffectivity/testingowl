@@ -22,6 +22,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -189,7 +191,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		slider.setValueProgrammatically((int) frameNumber);
 
-		setFrameLabelText(frameNumber, time / 1000.0);
+		setFrameLabelText(frameNumber, time);
 
 	}
 
@@ -323,7 +325,6 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		frameLabel = new JLabel("Frame: 0 Time: 0");
 		frameLabel.setForeground(Color.black);
 		text = new JLabel("No recording selected");
-		// text.setBackground(Color.black);
 		text.setForeground(Color.black);
 
 		panel.add(text);
@@ -594,9 +595,18 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 		dispose();
 	}
 
-	public void setFrameLabelText(long frame, double seconds) {
+	public void setFrameLabelText(long frame, double milliSeconds) {
+		
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.S");
+		df.setTimeZone(TimeZone.getTimeZone("GMT"));
+		String currentTime = df.format(milliSeconds);
+		
+		String totalTime = df.format(getTotalTime());
+		
+		
 		frameLabel.setText("Frame: " + frame + "/"
-				+ screenPlayer.getTotalFrames() + " Time: " + seconds);
+				+ screenPlayer.getTotalFrames() + " Time: " + currentTime + "/" 
+				+ totalTime);
 	}
 
 	public void beginWaitForBackgroundProcesses() {

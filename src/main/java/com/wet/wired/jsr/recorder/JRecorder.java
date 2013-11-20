@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -114,10 +116,12 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	public void frameRecorded(boolean fullFrame, long frameTime) {
 		frameCount++;
 		if (text != null) {
-			String seconds = "" + frameTime / 1000;
-			String milliseconds = String.format("%04d", frameTime % 1000);
-			text.setText("Frame: " + frameCount + " Time: " + seconds + "."
-					+ milliseconds);
+			
+			SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.S");
+			df.setTimeZone(TimeZone.getTimeZone("GMT"));
+			String time = df.format(frameTime);
+			
+			text.setText("Frame: " + frameCount + " Time: " + time);
 		}
 	}
 

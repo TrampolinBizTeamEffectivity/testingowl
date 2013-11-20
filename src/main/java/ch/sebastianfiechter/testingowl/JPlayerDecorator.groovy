@@ -76,10 +76,10 @@ class JPlayerDecorator {
 		listenForPlayStart = true
 	}
 
-	def newFrame(long frameNumber, double frameTime) {
+	def newFrame(long frameNumber, double frameTimeInSeconds) {
 		if (listenForPlayStart == true) {
-			log.info "play from newFrame with time " + frameTime
-			audioPlayer.playFromTime(frameTime)
+			log.info "play from newFrame with time " + frameTimeInSeconds
+			audioPlayer.playFromTime(frameTimeInSeconds)
 			listenForPlayStart = false;
 		}
 	}
