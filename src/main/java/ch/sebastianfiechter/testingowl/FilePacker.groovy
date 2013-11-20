@@ -32,6 +32,9 @@ import org.apache.xmlbeans.impl.xb.ltgfmt.impl.TestCaseImpl.FilesImpl;
 @Slf4j
 class FilePacker {
 	
+	@Autowired
+	ExceptionWindow exceptionWindow
+	
 	FileChannel channel
 
 	long currentPosition
@@ -71,7 +74,14 @@ class FilePacker {
 		//first write file size to channel
 		writeFileSize(fic)
 		//now write the data
-		channel.transferFrom(fic, currentPosition, fic.size())
+		log.info("begin transform file from file with size " + fic.size())
+		try {
+			channel.transferFrom(fic, currentPosition, fic.size())
+		} catch (IOException e) {
+			log.error("couldn't transfer from file with size: " + fic.size(), e)
+			exceptionWindow.show(e, "couldn't transfer from file with size: ")
+		}
+		log.info("end transform file from file with size " + fic.size())
 		currentPosition += fic.size()
 		fic.close()
 		fis.close()
