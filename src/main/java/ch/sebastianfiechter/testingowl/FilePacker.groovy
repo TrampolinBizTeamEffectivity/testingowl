@@ -31,15 +31,62 @@ import org.apache.xmlbeans.impl.xb.ltgfmt.impl.TestCaseImpl.FilesImpl;
 @Component
 @Slf4j
 class FilePacker {
-	
+
 	@Autowired
 	ExceptionWindow exceptionWindow
-	
+
 	FileChannel channel
 
 	long currentPosition
-	
+
 	def fileNameWithoutEnding
+	
+	def fileSizeToStop =  Long.MAX_VALUE
+
+	@Slf4j
+	class PackerSurveillance extends Thread {
+
+		def fileName
+		
+		private lastFileSize
+		private File file
+		private running;
+		
+		
+		void run() {
+			running = true
+
+			file = new File(fileName)
+			
+			lastFileSize = 0
+			
+			while (running) {
+				if (file.exists()) {
+					log.info("${file.name} size " + file.size())
+					if (lastFileSize == file.size()) {
+						//uups, nothing happend
+						log.info("${file.name} fileSize didnt change")
+					}
+					lastFileSize = file.size()
+				} else {
+					log.info("${file.name} doesnt exist yet.")
+				}
+				
+				if (lastFileSize >= fileSizeToStop) {
+					break;
+				}
+
+				sleep(5)
+			};
+		}
+
+		synchronized void stopThread() {
+			log.info("${file.name} surveillance stopping...")
+			running = false
+			this.join()
+			log.info("${file.name} surveillance stopped")
+		}
+	}
 
 	/**
 	 * no compression
@@ -50,7 +97,14 @@ class FilePacker {
 	def pack() {
 
 		assert fileNameWithoutEnding != null
-		
+
+		File file = new File("${fileNameWithoutEnding}.cap.owl");
+		if (file.exists()) file.delete();
+
+		PackerSurveillance ps = new PackerSurveillance(
+				fileName:"${fileNameWithoutEnding}.cap.owl")
+		ps.start()
+
 		FileOutputStream fos = new FileOutputStream(
 				"${fileNameWithoutEnding}.cap.owl")
 
@@ -64,6 +118,8 @@ class FilePacker {
 
 		channel.close()
 		fos.close()
+
+		ps.stopThread();
 	}
 
 	def addFile(def fileName) {
@@ -101,14 +157,14 @@ class FilePacker {
 	def unpack() {
 
 		assert fileNameWithoutEnding != null
-		
+
 		FileInputStream fis = new FileInputStream(
 				"${fileNameWithoutEnding}.cap.owl");
 
 		channel = fis.getChannel()
 
 		currentPosition = 0
-		
+
 		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap")
 		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap.xlsx")
 		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap.wav")
@@ -122,7 +178,7 @@ class FilePacker {
 		if (new File(fileName).exists() == true) {
 			return
 		}
-		
+
 		FileOutputStream fos = new FileOutputStream(fileName)
 		FileChannel foc = fos.getChannel()
 
