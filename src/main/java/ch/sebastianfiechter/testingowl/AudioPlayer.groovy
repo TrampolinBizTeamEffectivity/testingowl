@@ -30,6 +30,9 @@ class AudioPlayer {
 
 	@Autowired
 	SoundLevel soundLevel
+	
+	@Autowired
+	ExceptionWindow exceptionWindow
 
 	File soundFile
 	MonitoringAudioInputStream sound
@@ -48,7 +51,12 @@ class AudioPlayer {
 		AudioFormat audioFormat = sound.getFormat();
 		DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 		soundLine = (SourceDataLine) AudioSystem.getLine(info);
-		soundLine.open(audioFormat);
+		try {
+			soundLine.open(audioFormat);
+		} catch (LineUnavailableException e) {
+			log.error("cannot open audio line to play", e);
+			exceptionWindow.show(e, "cannot open audio line to play")	
+		}
 	}
 	
 	def playFromTime(double seconds) {
