@@ -546,7 +546,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		beginWaitForBackgroundProcesses();
 
-		processRecordingWindow.showSaving(0, 4, target + ".cap.owl");
+		processRecordingWindow.showSavingInPlayer(0, 4, target + ".cap.owl");
 
 		new Thread() {
 			public void run() {

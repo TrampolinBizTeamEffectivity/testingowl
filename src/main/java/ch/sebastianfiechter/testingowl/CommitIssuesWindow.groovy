@@ -47,7 +47,8 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 
 	def showAndWaitForConfirm() {
 
-		dialog = new JDialog(recorder, "TestingOwl Issues: Do you wanna correct some entries? To finish press Okay", false)
+		dialog = new JDialog(recorder, "TestingOwl Issues: Do you wanna correct some entries? "+
+			"To finish press Okay", true)
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.addWindowListener(this)
 		dialog.setAlwaysOnTop(true)
@@ -68,7 +69,7 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 		okButton = new JButton("Okay")
 		okButton.actionCommand = "okay"
 		okButton.addActionListener(this)
-		okButton.enabled = false
+		okButton.enabled = true
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -78,11 +79,8 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 
 		dialog.getRootPane().setDefaultButton(okButton)
 
-		//dialog.pack();
 		dialog.setLocationRelativeTo(null);
 		dialog.setVisible(true)
-
-		waitForConfirm()
 	}
 
 	def createTable() {
@@ -136,20 +134,6 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 	}
 
 
-	def waitForConfirm() {
-		clicked = false
-		okButton.enabled = true
-		dialog.modal = true
-		def run = true
-		while (run) {
-			if (clicked == true) {
-				run = false
-				hide()
-			}
-			sleep 20
-		}
-	}
-
 	def hide() {
 		dialog.setVisible(false)
 	}
@@ -157,14 +141,18 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 	@Override
 	synchronized void actionPerformed(ActionEvent ae) {
 		if (ae.actionCommand == "okay") {
-			if (table.cellEditor != null) table.cellEditor.stopCellEditing()
-			clicked = true
+			if (table.cellEditor != null) {
+				 table.cellEditor.stopCellEditing()
+			}
+			hide()
 		}
 	}
 
 	@Override
 	synchronized void windowClosing(WindowEvent e) {
-		if (table.cellEditor != null) table.cellEditor.stopCellEditing()
-		clicked = true
+		if (table.cellEditor != null) {
+			table.cellEditor.stopCellEditing()
+		}
+		hide()
 	}
 }

@@ -56,7 +56,7 @@ class JRecorderDecorator implements ActionListener {
 	FilePacker filePacker
 
 	@Autowired
-	SaveRecordingWindow inProgressWindow
+	ProcessRecordingWindow processRecordingWindow
 
 	JButton bug
 	JButton musthave
@@ -226,11 +226,11 @@ class JRecorderDecorator implements ActionListener {
 		log.info ("start save xlsx")
 		issues.fileNameWithoutEnding = fileNameWithoutEnding
 		issues.writeToExcelXlsx();
-		inProgressWindow.setProgressValue(2);
+		processRecordingWindow.setProgressValue(2);
 		log.info ("stop save xlsx")
 		log.info ("start save wav")
 		audioRecorder.writeToWavFile(fileNameWithoutEnding)
-		inProgressWindow.setProgressValue(3);
+		processRecordingWindow.setProgressValue(3);
 		log.info ("stop save wav")
 	}
 
@@ -240,7 +240,7 @@ class JRecorderDecorator implements ActionListener {
 		log.info ("start save zip")
 		filePacker.fileNameWithoutEnding = fileNameWithoutEnding
 		filePacker.pack()
-		inProgressWindow.setProgressValue(4);
+		processRecordingWindow.setProgressValue(4);
 		log.info ("stop save zip")
 	}
 

@@ -18,7 +18,6 @@ class SaveRecordingWindowTest {
 	@Autowired
 	SaveRecordingWindow window
 	
-
 	
 	@Test
 	public void testHide() {

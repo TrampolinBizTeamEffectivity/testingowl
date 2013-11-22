@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wet.wired.jsr.player.JPlayer
+import com.wet.wired.jsr.recorder.JRecorder
 import groovy.util.logging.*
 
 @Slf4j
@@ -24,8 +25,12 @@ class ProcessRecordingWindow {
 	
 	@Autowired
 	JPlayer player
+	
+	@Autowired
+	JRecorder recorder
 
 	JDialog dialog
+	JFrame parent
 
 	JProgressBar progressBar
 
@@ -34,16 +39,22 @@ class ProcessRecordingWindow {
 	}
 	
 	def showOpen(int progressValue=0, int progressMaxValue=100, String filePath) {
-		show(progressValue, progressMaxValue, filePath, "Opening recording from:");
+		show(progressValue, progressMaxValue, filePath, "Opening recording from:", player);
 	}
 	
-	def showSaving(int progressValue=0, int progressMaxValue=100, String filePath) {
-		show(progressValue, progressMaxValue, filePath, "Saving recording to:");
+	def showSavingInPlayer(int progressValue=0, int progressMaxValue=100, String filePath) {
+		show(progressValue, progressMaxValue, filePath, "Saving recording to:", player);
+	}
+	
+	def showSavingInRecorder(int progressValue=0, int progressMaxValue=100, String filePath) {
+		show(progressValue, progressMaxValue, filePath, "Saving recording to:", recorder);
 	}
 
-	def show(int progressValue=0, int progressMaxValue=100, String filePath, String messag) {
+	def show(int progressValue=0, int progressMaxValue=100, String filePath, String messag, JFrame parentFrame) {
 		
-		log.info("will show opening dialog")
+		log.info("will show processing dialog")
+		parent = parentFrame;
+		parent.setEnabled(false);
 		
 		JOptionPane optionPane = new JOptionPane("TestingOwl Please wait...",
 				JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
@@ -61,7 +72,7 @@ class ProcessRecordingWindow {
 		Object[] complexMsg = [label, progressBar];
 		optionPane.setMessage(complexMsg);
 
-		dialog = new JDialog(player, false)
+		dialog = new JDialog(parent, false)
 		dialog.setAlwaysOnTop(true)
 		dialog.setUndecorated(true)
 
@@ -81,6 +92,7 @@ class ProcessRecordingWindow {
 		sleep 1000
 		
 		dialog.setVisible(false)
+		parent.setEnabled(true)
 	}
 
 }

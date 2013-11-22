@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import ch.sebastianfiechter.testingowl.CommitIssuesWindow;
 import ch.sebastianfiechter.testingowl.ExceptionWindow;
+import ch.sebastianfiechter.testingowl.ProcessRecordingWindow;
 import ch.sebastianfiechter.testingowl.SaveRecordingWindow;
 import ch.sebastianfiechter.testingowl.JRecorderDecorator;
 import ch.sebastianfiechter.testingowl.Main;
@@ -63,6 +64,9 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 	@Autowired
 	CommitIssuesWindow commitIssuesWindow;
 
+	@Autowired
+	ProcessRecordingWindow processRecordingWindow;
+	
 	@Autowired
 	SaveRecordingWindow saveRecordingWindow;
 
@@ -187,25 +191,23 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		this.beginWaitForBackgroundProcesses();
 
-		this.setEnabled(false);
-
 		commitIssuesWindow.showAndWaitForConfirm();
 
 		File targetWithCapOwl = decorator.prepareSuggestedFile();
 
-		saveRecordingWindow.show(0, 4, targetWithCapOwl.getAbsolutePath());
-
+		processRecordingWindow.showSavingInRecorder(0, 4, targetWithCapOwl.getAbsolutePath());
+		
 		saveVideo(targetWithCapOwl);
 
 		decorator.saveFile(targetWithCapOwl);
 
 		decorator.pack(targetWithCapOwl);
 
+		processRecordingWindow.hide();
+		
+		saveRecordingWindow.showAndWaitForConfirm(targetWithCapOwl.getAbsolutePath());
+		
 		this.endWaitForBackgroundProcesses();
-
-		saveRecordingWindow.waitForConfirm();
-		this.setEnabled(true);
-
 	}
 
 	private void saveVideo(File targetWithCapOwl) {
@@ -226,7 +228,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			exceptionWindow.show(e, "cannot close outputstream");
 		}
 
-		saveRecordingWindow.setProgressValue(1);
+		processRecordingWindow.setProgressValue(1);
 		logger.info("stop save cap");
 	}
 
