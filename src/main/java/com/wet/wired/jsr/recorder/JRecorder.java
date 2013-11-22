@@ -9,6 +9,7 @@
 
 package com.wet.wired.jsr.recorder;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -44,6 +45,9 @@ import org.slf4j.LoggerFactory;
 @Component
 public class JRecorder extends JFrame implements ScreenRecorderListener,
 		ActionListener {
+	
+	static final long MAX_RECORDTIME_IN_MILLIS = 1000*60*120; //2 hours
+	
 
 	Logger logger = LoggerFactory.getLogger(JRecorder.class);
 
@@ -105,8 +109,7 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 				decorator.recordStarted();
 			}
 		} else if (ev.getActionCommand().equals("stop")) {
-			text.setText("Stopping");
-			recorder.stopRecording();
+			stop();
 		} else if (ev.getActionCommand().equals("player")) {
 			closeRecorder();
 			Main.getPlayer().init(new String[0]);
@@ -121,8 +124,31 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 			df.setTimeZone(TimeZone.getTimeZone("GMT"));
 			String time = df.format(frameTime);
 			
-			text.setText("Frame: " + frameCount + " Time: " + time);
+			String totalTime = df.format(MAX_RECORDTIME_IN_MILLIS);
+			
+			if ((MAX_RECORDTIME_IN_MILLIS-frameTime)<=30000) {
+				text.setForeground(Color.RED);
+			} else {
+				text.setForeground(Color.BLACK);
+			}
+			
+			text.setText("Frame: " + frameCount + " Time: " + time + "/" + totalTime);
+			
+			checkAutoStop(frameTime);
+			
 		}
+	}
+	
+	private void checkAutoStop(long frameTime) {
+		if (frameTime >= MAX_RECORDTIME_IN_MILLIS) {
+			stop();
+		}
+	}
+	
+	private void stop() {
+		text.setForeground(Color.BLACK);
+		text.setText("Stopping");
+		recorder.stopRecording();
 	}
 
 	public void recordingStopped() {

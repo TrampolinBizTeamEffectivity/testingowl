@@ -234,6 +234,7 @@ public abstract class ScreenRecorder implements Runnable {
 	}
 
 	public void stopRecording() {
+				
 		triggerRecordingStop();
 
 		int count = 0;
