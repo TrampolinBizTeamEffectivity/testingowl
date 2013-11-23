@@ -48,7 +48,7 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 	def showAndWaitForConfirm() {
 
 		dialog = new JDialog(recorder, "TestingOwl Issues: Do you wanna correct some entries? "+
-			"To finish press Okay", true)
+				"To finish press Okay", true)
 		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		dialog.addWindowListener(this)
 		dialog.setAlwaysOnTop(true)
@@ -115,20 +115,20 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 								if (JOptionPane.showConfirmDialog(dialog,
 								"Delete Issue with ID " + issues.issues[rowToDelete].id + "?",
 								"Delete?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-									issues.issues.minus(issues.issues[rowToDelete]);
+									log.info("will delete row ${rowToDelete}")
+									issues.issues.minus(issues.issues[rowToDelete])
+									log.info("will fireTableRowsDeleted")
 									table.model.fireTableRowsDeleted(rowToDelete,rowToDelete)
-								} 
-							} 
-							
+								}
+							}
+
 							if (col == 5) {
 								//remove focus from button
 								table.changeSelection(rowToDelete, 0, false, false);
 							}
-							
 						}
 					});
 		}
-
 
 		return new JScrollPane(table)
 	}
@@ -142,7 +142,7 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 	synchronized void actionPerformed(ActionEvent ae) {
 		if (ae.actionCommand == "okay") {
 			if (table.cellEditor != null) {
-				 table.cellEditor.stopCellEditing()
+				table.cellEditor.stopCellEditing()
 			}
 			hide()
 		}
