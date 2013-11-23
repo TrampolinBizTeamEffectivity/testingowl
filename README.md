@@ -32,3 +32,4 @@ Special Features
 
 - The maximum recording time is set to 2 hours. Contact me, if you want more :-)
 - Your notes are saved as Excel-File (.xlsx). So you can review it and work with it in Excel.
+
