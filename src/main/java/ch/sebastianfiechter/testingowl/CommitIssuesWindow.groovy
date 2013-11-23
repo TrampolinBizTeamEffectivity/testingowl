@@ -1,6 +1,7 @@
 package ch.sebastianfiechter.testingowl
 
 import groovy.swing.SwingBuilder
+import groovy.swing.factory.TableFactory;
 import groovy.util.logging.Slf4j;
 
 import java.awt.GridBagConstraints
@@ -17,11 +18,13 @@ import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JOptionPane;
+import javax.swing.table.TableCellRenderer
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.wet.wired.jsr.recorder.JRecorder;
+
 import ch.sebastianfiechter.testingowl.Issues.IssueType
 
 @Slf4j
@@ -102,29 +105,19 @@ class CommitIssuesWindow extends WindowAdapter implements ActionListener {
 						issues.topic = newValue
 					}
 				})
-				closureColumn(header:'Delete', preferredWidth:80, read:{row -> return row.id},
+				closureColumn(header:'Delete', type:JButton.class, preferredWidth:80, read:{row -> return row.id},
 				cellRenderer: new DeleteButtonCellRenderer())
 			}
 			current.addMouseListener(new MouseAdapter() {
+						@Override
 						public void mouseClicked(MouseEvent e) {
+							log.info("mouseClicked " + table.selectedColumn + "/" + table.selectedRow)
 
-							def rowToDelete = table.selectedRow;
-							def col = table.selectedColumn
+							TableCellRenderer value = table.getCellRenderer(table.selectedRow, table.selectedColumn);
 
-							if (rowToDelete != 0 && col == 5) {
-								if (JOptionPane.showConfirmDialog(dialog,
-								"Delete Issue with ID " + issues.issues[rowToDelete].id + "?",
-								"Delete?", JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
-									log.info("will delete row ${rowToDelete}")
-									issues.issues.minus(issues.issues[rowToDelete])
-									log.info("will fireTableRowsDeleted")
-									table.model.fireTableRowsDeleted(rowToDelete,rowToDelete)
-								}
-							}
+							if (value instanceof DeleteButtonCellRenderer) {
 
-							if (col == 5) {
-								//remove focus from button
-								table.changeSelection(rowToDelete, 0, false, false);
+								(( DeleteButtonCellRenderer)value).deleteRow(CommitIssuesWindow.this);
 							}
 						}
 					});

@@ -215,7 +215,7 @@ class JRecorderDecorator implements ActionListener {
 	public File prepareSuggestedFile() {
 		def dateTime = new Date().format('yyyy-MM-dd-H_m_s')
 		
-		def saveTopicFileName = issues.topic.replaceAll("[^a-zA-Z0-9]","");
+		def saveTopicFileName = issues.topic.replaceAll("[^a-zA-Z0-9 ]","");
 		
 		new File("${saveTopicFileName}-${dateTime}.cap.owl");
 	}
