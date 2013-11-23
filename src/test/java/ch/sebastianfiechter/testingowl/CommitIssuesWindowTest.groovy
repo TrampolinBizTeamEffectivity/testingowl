@@ -27,7 +27,9 @@ class CommitIssuesWindowTest {
 		issues.issues = [
 			['id':"1", 'type':IssueType.Topic, 'frameStart':1, 'frameEnd':'11', 'message':'title'],
 			['id':"2", 'type':IssueType.Bug, 'frameStart':11, 'frameEnd':'10', 'message':'message'],
-			['id':"3", 'type':IssueType.Musthave,'frameStart':200, 'frameEnd':'210', 'message':'message to musthave']
+			['id':"3", 'type':IssueType.Musthave,'frameStart':200, 'frameEnd':'210', 'message':'message to musthave'],
+			['id':"4", 'type':IssueType.Musthave,'frameStart':250, 'frameEnd':'270', 'message':'message to musthave'],
+			['id':"5", 'type':IssueType.Musthave,'frameStart':280, 'frameEnd':'290', 'message':'message to musthave']
 		]
 		issues.topic = "title"
 			
