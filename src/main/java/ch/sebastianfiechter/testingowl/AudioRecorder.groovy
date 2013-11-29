@@ -6,6 +6,7 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
@@ -73,8 +74,13 @@ class AudioRecorder {
 		DataLine.Info lineInfo = new DataLine.Info(
 				TargetDataLine.class, audioIO.audioFormat);
 
-		targetDataLine = (TargetDataLine) mixer.getLine(lineInfo);
-		targetDataLine.open(audioIO.audioFormat);
+		try {
+			targetDataLine = (TargetDataLine) mixer.getLine(lineInfo);
+			targetDataLine.open(audioIO.audioFormat);
+		} catch (LineUnavailableException e) {
+			log.error("cannot open targetDataLine", e)
+			exceptionWindow.show(e, "cannot open targetDataLine")
+		}
 
 		targetType = AudioFileFormat.Type.WAVE;
 
