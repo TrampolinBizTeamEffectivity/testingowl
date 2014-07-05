@@ -43,14 +43,14 @@ class WelcomeWindow {
 			JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 			 null, new Object[0], null);
 
-		LinkLabel trampolin = new LinkLabel("<br>http://testingowl on github.com", "https://github.com/TrampolinBizTeamEffectivity/testingowl")
+		LinkLabel github = new LinkLabel("<br>http://testingowl on github.com", "https://github.com/sebastianfiechter/testingowl")
 		JLabel label = new JLabel("TestingOwl " + version.version, SwingConstants.CENTER)
 		JButton recorder = new JButton("Shoot! (Record)")
 		JButton player = new JButton("Review. (Play)")
-		LinkLabel mail = new LinkLabel("sebastian.fiechter@trampolin.biz", "mailto:sebastian.fiechter@trampolin.biz")
-		JLabel license = new JLabel("(c) trampolin.biz, MIT License", SwingConstants.CENTER)
+		LinkLabel mail = new LinkLabel("se@sebastianfiechter.ch", "mailto:se@sebastianfiechter.ch")
+		JLabel license = new JLabel("(c) Sebastian Fiechter, MIT License", SwingConstants.CENTER)
 		
-		Object[] complexMsg = [mail, owl.welcomeIcon, label, recorder, player, trampolin, license ];
+		Object[] complexMsg = [mail, owl.welcomeIcon, label, recorder, player, github, license ];
 		JDialog dialog = optionPane.createDialog(null, "TestingOwl Welcome!");
 	
 		optionPane.setMessage(complexMsg);

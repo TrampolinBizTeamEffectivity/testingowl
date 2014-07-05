@@ -1,7 +1,7 @@
 testingowl
 ==========
 
-<img src="https://github.com/TrampolinBizTeamEffectivity/testingowl/blob/master/src/main/resources/testingowl_welcome.png?raw=true" align="left" hspace="10" alt="TestingOwl Logo" /> Shoot your Tests by recording audio and video and easy set markers for Bugs and other Requirements. Replay all and relax. Markers are played as fast as you can click.
+<img src="https://github.com/sebastianfiechter/testingowl/blob/master/src/main/resources/testingowl_welcome.png?raw=true" align="left" hspace="10" alt="TestingOwl Logo" /> Shoot your Tests by recording audio and video and easy set markers for Bugs and other Requirements. Replay all and relax. Markers are played as fast as you can click.
 
 This app uses Code from http://code.google.com/p/java-screen-recorder/
 
