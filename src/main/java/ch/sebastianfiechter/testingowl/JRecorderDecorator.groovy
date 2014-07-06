@@ -13,6 +13,7 @@ import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
 import java.awt.event.WindowStateListener
 
+import javax.swing.ImageIcon
 import javax.swing.JButton
 import javax.swing.JDialog
 import javax.swing.JFrame
@@ -37,6 +38,9 @@ import ch.sebastianfiechter.testingowl.Issues.*
 @Component
 class JRecorderDecorator implements ActionListener {
 
+	@Autowired
+	OwlIcons owlIcons
+	
 	@Autowired
 	Issues issues
 
@@ -65,7 +69,7 @@ class JRecorderDecorator implements ActionListener {
 	public void getButtonsAndSoundLevel(Container panel, GridBagConstraints gbc ) {
 
 
-		bug = new JButton(text: "Bug", actionCommand: "bug",
+		bug = new JButton(text: "Bug", actionCommand: "bug", icon: owlIcons.getIssueTypeIcon(IssueType.Bug), 
 		enabled:false, background: Color.RED);
 		bug.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
@@ -75,7 +79,7 @@ class JRecorderDecorator implements ActionListener {
 		gbc.weighty = 1;
 		panel.add(bug, gbc);
 
-		musthave = new JButton(text: "Must Have!", actionCommand: "musthave",
+		musthave = new JButton(text: "Must Have!", actionCommand: "musthave", icon: owlIcons.getIssueTypeIcon(IssueType.Musthave),
 		enabled:false, background: Color.ORANGE);
 		musthave.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
@@ -85,7 +89,7 @@ class JRecorderDecorator implements ActionListener {
 		gbc.weighty = 1;
 		panel.add(musthave, gbc);
 
-		wish = new JButton(text: "Wish", actionCommand: "wish",
+		wish = new JButton(text: "Wish", actionCommand: "wish", icon: owlIcons.getIssueTypeIcon(IssueType.Wish),
 		enabled:false, background: Color.GREEN);
 		wish.addActionListener(this);
 		gbc.fill = GridBagConstraints.BOTH;
@@ -158,6 +162,7 @@ class JRecorderDecorator implements ActionListener {
 		JOptionPane optionPane = new JOptionPane();
 		optionPane.setMessage(complexMsg);
 		optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+		optionPane.setIcon(owlIcons.getIssueTypeIcon(type));
 
 		JDialog dialog = optionPane.createDialog(jRecorder, title);
 		def cancel = false

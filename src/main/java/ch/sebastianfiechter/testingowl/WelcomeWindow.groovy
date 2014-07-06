@@ -32,6 +32,9 @@ class WelcomeWindow {
 	
 	@Autowired
 	OwlVersion version
+	
+	@Autowired
+	I18N i18n	
 
 	enum Module {Player, Recorder, Converter, Cancel}
 	
@@ -39,7 +42,7 @@ class WelcomeWindow {
 		
 		def result = null
 		
-		JOptionPane optionPane = new JOptionPane("TestingOwl Welcome!",
+		JOptionPane optionPane = new JOptionPane("TestingOwl "+i18n.v("welcome"),
 			JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 			 null, new Object[0], null);
 
@@ -51,7 +54,7 @@ class WelcomeWindow {
 		JLabel license = new JLabel("(c) Sebastian Fiechter, MIT License", SwingConstants.CENTER)
 		
 		Object[] complexMsg = [owl.welcomeIcon, label, recorder, player, github, license ];
-		JDialog dialog = optionPane.createDialog(null, "TestingOwl Welcome!");
+		JDialog dialog = optionPane.createDialog(null, "TestingOwl "+i18n.v("welcome"));
 	
 		optionPane.setMessage(complexMsg);
 		

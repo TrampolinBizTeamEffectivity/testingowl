@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 class OwlVersion {
 
 	String getVersion() {
-		return Manifests.exists("App-Version")==true ? Manifests.read("App-Version"): "";
+		return Manifests.exists("App-Version")==true ? Manifests.read("App-Version"): "[version]";
 	}
 	
 }

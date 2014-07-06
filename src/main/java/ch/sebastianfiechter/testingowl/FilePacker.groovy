@@ -161,6 +161,8 @@ class FilePacker {
 		FileInputStream fis = new FileInputStream(
 				"${fileNameWithoutEnding}.cap.owl");
 
+		//check if files already exists, if one doesn't -> unzip
+		
 		channel = fis.getChannel()
 
 		currentPosition = 0

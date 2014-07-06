@@ -18,4 +18,11 @@ class OwlIcons {
 		new ImageIcon(img)
 	}
 		
+	ImageIcon getIssueTypeIcon(Issues.IssueType type) {
+		
+		BufferedImage img = ImageIO.read(this.class.classLoader.getResource("testingowl_"+type.name().toLowerCase()+".png"))
+		new ImageIcon(img)
+	}	
+	
+	
 }
