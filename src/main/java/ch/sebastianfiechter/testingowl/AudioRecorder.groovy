@@ -103,9 +103,9 @@ class AudioRecorder {
 	def writeToWavFile(String filenameWithoutEnding) {
 
 		//delete existing
-		new File("${filenameWithoutEnding}.cap.wav").delete()
+		new File("${filenameWithoutEnding}.owl.wav").delete()
 
-		def out = new File("${filenameWithoutEnding}.cap.wav")
+		def out = new File("${filenameWithoutEnding}.owl.wav")
 
 		if (tempFile != null && tempFile.exists()) {
 			try {

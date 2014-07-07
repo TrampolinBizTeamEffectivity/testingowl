@@ -222,11 +222,11 @@ class JRecorderDecorator implements ActionListener {
 		
 		def saveTopicFileName = issues.topic.replaceAll("[^a-zA-Z0-9 ]","");
 		
-		new File("${saveTopicFileName}-${dateTime}.cap.owl");
+		new File("${saveTopicFileName}-${dateTime}.owl");
 	}
 
-	public void saveFile(File fileNameCapOwl) {
-		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
+	public void saveFile(File fileNameOwl) {
+		def fileNameWithoutEnding = fileNameOwl.absolutePath[0..-5];
 		
 		log.info ("start save xlsx")
 		issues.fileNameWithoutEnding = fileNameWithoutEnding
@@ -239,8 +239,8 @@ class JRecorderDecorator implements ActionListener {
 		log.info ("stop save wav")
 	}
 
-	def pack(File fileNameCapOwl) {
-		def fileNameWithoutEnding = fileNameCapOwl.absolutePath[0..-9];
+	def pack(File fileNameOwl) {
+		def fileNameWithoutEnding = fileNameOwl.absolutePath[0..-5];
 
 		log.info ("start save zip")
 		filePacker.fileNameWithoutEnding = fileNameWithoutEnding

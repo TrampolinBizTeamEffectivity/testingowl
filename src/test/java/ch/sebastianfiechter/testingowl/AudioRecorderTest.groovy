@@ -35,7 +35,7 @@ class AudioRecorderTest {
 		
 		audioRecorder.stopRecording()
 		
-		new File("src/test/resources/testRec.cap.wav").deleteOnExit();
+		new File("src/test/resources/testRec.owl.wav").deleteOnExit();
 		
 		audioRecorder.writeToWavFile("src/test/resources/testRec")
 		

@@ -94,11 +94,11 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 			FileExtensionFilter filter = new FileExtensionFilter();
 
 			filter = new FileExtensionFilter();
-			filter.addExtension("cap.owl");
+			filter.addExtension("owl");
 			filter.setDescription("TestingOwl File");
 
 			if (target != null) {
-				fileChooser.setSelectedFile(new File(target + ".cap.owl"));
+				fileChooser.setSelectedFile(new File(target + ".owl"));
 			}
 			fileChooser.setFileFilter(filter);
 			fileChooser.setCurrentDirectory(new File("."));
@@ -109,7 +109,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 				String targetCapOwl = fileChooser.getSelectedFile()
 						.getAbsolutePath();
 				target = targetCapOwl.substring(0,
-						targetCapOwl.lastIndexOf(".cap.owl"));
+						targetCapOwl.lastIndexOf(".owl"));
 				open();
 			}
 		} else if (ev.getActionCommand().equals("play")) {
@@ -364,7 +364,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		beginWaitForBackgroundProcesses();
 
-		processRecordingWindow.showOpen(0, 4, target + ".cap.owl");
+		processRecordingWindow.showOpen(0, 4, target + ".owl.cap");
 
 		new Thread() {
 			public void run() {
@@ -546,7 +546,7 @@ public class JPlayer extends JFrame implements ScreenPlayerListener,
 
 		beginWaitForBackgroundProcesses();
 
-		processRecordingWindow.showSavingInPlayer(0, 4, target + ".cap.owl");
+		processRecordingWindow.showSavingInPlayer(0, 4, target + ".owl");
 
 		new Thread() {
 			public void run() {

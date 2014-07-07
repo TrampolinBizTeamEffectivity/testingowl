@@ -43,7 +43,7 @@ class AudioPlayer {
 
 	def readFromWav(String filenameWithoutFileEnding) {
 
-		soundFile = new File("${filenameWithoutFileEnding}.cap.wav");
+		soundFile = new File("${filenameWithoutFileEnding}.owl.wav");
 		
 		sound = new MonitoringAudioInputStream(
 				AudioSystem.getAudioInputStream(soundFile), audioIO, soundLevel);

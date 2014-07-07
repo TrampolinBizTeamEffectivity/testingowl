@@ -102,7 +102,7 @@ public class ScreenPlayer implements Runnable {
 
 		try {
 
-			iStream = new RandomAccessFile(videoFile + ".cap", "r");
+			iStream = new RandomAccessFile(videoFile + ".owl.cap", "r");
 
 			readFrameIndex();
 

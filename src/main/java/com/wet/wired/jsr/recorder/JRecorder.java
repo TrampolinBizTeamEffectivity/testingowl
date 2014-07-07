@@ -193,26 +193,26 @@ public class JRecorder extends JFrame implements ScreenRecorderListener,
 
 		commitIssuesWindow.showAndWaitForConfirm();
 
-		File targetWithCapOwl = decorator.prepareSuggestedFile();
+		File targetWithOwl = decorator.prepareSuggestedFile();
 
-		processRecordingWindow.showSavingInRecorder(0, 4, targetWithCapOwl.getAbsolutePath());
+		processRecordingWindow.showSavingInRecorder(0, 4, targetWithOwl.getAbsolutePath());
 		
-		saveVideo(targetWithCapOwl);
+		saveVideo(targetWithOwl);
 
-		decorator.saveFile(targetWithCapOwl);
+		decorator.saveFile(targetWithOwl);
 
-		decorator.pack(targetWithCapOwl);
+		decorator.pack(targetWithOwl);
 
 		processRecordingWindow.hide();
 		
-		saveRecordingWindow.showAndWaitForConfirm(targetWithCapOwl.getAbsolutePath());
+		saveRecordingWindow.showAndWaitForConfirm(targetWithOwl.getAbsolutePath());
 		
 		this.endWaitForBackgroundProcesses();
 	}
 
-	private void saveVideo(File targetWithCapOwl) {
-		File capFile = new File(targetWithCapOwl.getAbsolutePath().substring(0,
-				targetWithCapOwl.getAbsolutePath().lastIndexOf(".")));
+	private void saveVideo(File targetWithOwl) {
+		File capFile = new File(targetWithOwl.getAbsolutePath().substring(0,
+				targetWithOwl.getAbsolutePath().lastIndexOf("."))+".owl.cap");
 
 		logger.info("start save cap");
 		try {

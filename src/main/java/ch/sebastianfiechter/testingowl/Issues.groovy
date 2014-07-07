@@ -91,11 +91,11 @@ class Issues {
 		}
 
 		//delete existing
-		new File("${fileNameWithoutEnding}.cap.xlsx").delete()
+		new File("${fileNameWithoutEnding}.owl.xlsx").delete()
 
 		// Write the output to a file
 		FileOutputStream fileOut = new FileOutputStream(
-			"${fileNameWithoutEnding}.cap.xlsx");
+			"${fileNameWithoutEnding}.owl.xlsx");
 		wb.write(fileOut);
 		fileOut.close();
 	}
@@ -106,7 +106,7 @@ class Issues {
 
 		issues = []
 		
-		OPCPackage pkg = OPCPackage.open(new File("${fileNameWithoutEnding}.cap.xlsx"));
+		OPCPackage pkg = OPCPackage.open(new File("${fileNameWithoutEnding}.owl.xlsx"));
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
 		XSSFSheet sheet1 = wb.getSheetAt(0);

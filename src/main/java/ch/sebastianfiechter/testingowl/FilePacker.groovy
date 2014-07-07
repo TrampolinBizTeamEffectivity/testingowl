@@ -98,23 +98,23 @@ class FilePacker {
 
 		assert fileNameWithoutEnding != null
 
-		File file = new File("${fileNameWithoutEnding}.cap.owl");
+		File file = new File("${fileNameWithoutEnding}.owl");
 		if (file.exists()) file.delete();
 
 		PackerSurveillance ps = new PackerSurveillance(
-				fileName:"${fileNameWithoutEnding}.cap.owl")
+				fileName:"${fileNameWithoutEnding}.owl")
 		ps.start()
 
 		FileOutputStream fos = new FileOutputStream(
-				"${fileNameWithoutEnding}.cap.owl")
+				"${fileNameWithoutEnding}.owl")
 
 		channel = fos.getChannel()
 
 		currentPosition = 0
 
-		addFile("${fileNameWithoutEnding}.cap")
-		addFile("${fileNameWithoutEnding}.cap.xlsx")
-		addFile("${fileNameWithoutEnding}.cap.wav")
+		addFile("${fileNameWithoutEnding}.owl.cap")
+		addFile("${fileNameWithoutEnding}.owl.xlsx")
+		addFile("${fileNameWithoutEnding}.owl.wav")
 
 		channel.close()
 		fos.close()
@@ -159,7 +159,7 @@ class FilePacker {
 		assert fileNameWithoutEnding != null
 
 		FileInputStream fis = new FileInputStream(
-				"${fileNameWithoutEnding}.cap.owl");
+				"${fileNameWithoutEnding}.owl");
 
 		//check if files already exists, if one doesn't -> unzip
 		
@@ -167,9 +167,9 @@ class FilePacker {
 
 		currentPosition = 0
 
-		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap")
-		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap.xlsx")
-		extractFileIfNotYetExists("${fileNameWithoutEnding}.cap.wav")
+		extractFileIfNotYetExists("${fileNameWithoutEnding}.owl.cap")
+		extractFileIfNotYetExists("${fileNameWithoutEnding}.owl.xlsx")
+		extractFileIfNotYetExists("${fileNameWithoutEnding}.owl.wav")
 
 		channel.close()
 		fis.close()

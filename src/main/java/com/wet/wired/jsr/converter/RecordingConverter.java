@@ -43,7 +43,7 @@ public class RecordingConverter implements ControllerListener, DataSinkListener 
 
       if ((args.length != 1) || !args[0].endsWith("cap")) {
          System.out
-               .println("Usage: java -jar screen_cap_to_video.jar <screen_cap_file.cap>");
+               .println("Usage: java -jar screen_cap_to_video.jar <screen_cap_file.owl.cap>");
          return;
       }
 
